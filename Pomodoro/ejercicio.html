@@ -1,1 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusQuest - Tu Aventura de Productividad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Orbitron:wght@400;700&family=Uncial+Antiqua&family=Pirata+One&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Variables de Temas */
+        :root {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Montserrat', sans-serif; --color-bg: #f0f4f8; --color-surface: #ffffff; --color-text-primary: #1e293b; --color-text-secondary: #475569; --color-primary: #3b82f6; --color-primary-dark: #2563eb; --color-accent: #10b981; --color-progress-bar: var(--color-primary); --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --color-difficulty-easy: #10b981; --color-difficulty-normal: #3b82f6; --color-difficulty-hard: #f97316; --color-difficulty-epic: #ef4444;
+        }
+        .theme-fantasy {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'MedievalSharp', cursive; --color-bg: #f3e9d2; --color-surface: #c6b5a0; --color-text-primary: #4a2c2a; --color-text-secondary: #6f453a; --color-primary: #8a5a44; --color-primary-dark: #6e4836; --color-accent: #a53f2b;
+            --color-difficulty-easy: #22c55e; --color-difficulty-normal: #8a5a44; --color-difficulty-hard: #a53f2b; --color-difficulty-epic: #b91c1c;
+        }
+        .theme-space {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Orbitron', sans-serif; --color-bg: #0d1117; --color-surface: #161b22; --color-text-primary: #c9d1d9; --color-text-secondary: #8b949e; --color-primary: #58a6ff; --color-primary-dark: #388bfd; --color-accent: #3fb950; --shadow: 0 0 15px rgba(88, 166, 255, 0.2);
+            --color-difficulty-easy: #3fb950; --color-difficulty-normal: #58a6ff; --color-difficulty-hard: #f59e0b; --color-difficulty-epic: #ff7b72;
+        }
+        .theme-forest {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Uncial Antiqua', cursive; --color-bg: #dde5b6; --color-surface: #a98d78; --color-text-primary: #443830; --color-text-secondary: #634f42; --color-primary: #606c38; --color-primary-dark: #283618; --color-accent: #bc4749;
+            --color-difficulty-easy: #283618; --color-difficulty-normal: #606c38; --color-difficulty-hard: #bc4749; --color-difficulty-epic: #7f1d1d;
+        }
+        .theme-pirate {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Pirata One', cursive; --color-bg: #1a2a3a; --color-surface: #4a3e2a; --color-text-primary: #f2e9c9; --color-text-secondary: #d4b88b; --color-primary: #e6b333; --color-primary-dark: #c8962c; --color-accent: #d62828; --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+            --color-difficulty-easy: #22c55e; --color-difficulty-normal: #e6b333; --color-difficulty-hard: #d62828; --color-difficulty-epic: #ff8c00;
+        }
+        .theme-dungeon {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'MedievalSharp', cursive;
+            --color-bg: #222222; --color-surface: #3c3c3c; --color-text-primary: #e0e0e0; --color-text-secondary: #a0a0a0; --color-primary: #ff8c00; --color-primary-dark: #cc7000; --color-accent: #8a2be2; --shadow: 0 4px 8px rgba(0,0,0,0.5);
+            --color-difficulty-easy: #16a34a; --color-difficulty-normal: #ff8c00; --color-difficulty-hard: #ef4444; --color-difficulty-epic: #8a2be2;
+        }
+        .theme-volcano {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Orbitron', sans-serif; --color-bg: #221c1a; --color-surface: #4d312f; --color-text-primary: #f2f2f2; --color-text-secondary: #d9d9d9; --color-primary: #ff6a00; --color-primary-dark: #cc5500; --color-accent: #ff0000; --shadow: 0 0 15px rgba(255, 106, 0, 0.3);
+            --color-difficulty-easy: #16a34a; --color-difficulty-normal: #ff6a00; --color-difficulty-hard: #ff0000; --color-difficulty-epic: #eab308;
+        }
+        .theme-beach {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Uncial Antiqua', cursive; --color-bg: #e6f7ff; --color-surface: #fdf5e6; --color-text-primary: #4a6c6f; --color-text-secondary: #8c9fa3; --color-primary: #87ceeb; --color-primary-dark: #6495ed; --color-accent: #ffcc00;
+            --color-difficulty-easy: #10b981; --color-difficulty-normal: #87ceeb; --color-difficulty-hard: #ffcc00; --color-difficulty-epic: #f97316;
+        }
+        .theme-sky {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'Orbitron', sans-serif; --color-bg: #b0e0e6; --color-surface: #e0f2f7; --color-text-primary: #34495e; --color-text-secondary: #5d6d7e; --color-primary: #5dade2; --color-primary-dark: #2e86c1; --color-accent: #a5d8f3;
+            --color-difficulty-easy: #10b981; --color-difficulty-normal: #5dade2; --color-difficulty-hard: #f97316; --color-difficulty-epic: #ef4444;
+        }
+        .theme-mines {
+            --font-main: 'Montserrat', sans-serif; --font-special: 'MedievalSharp', cursive; --color-bg: #2c2c2c; --color-surface: #4f4f4f; --color-text-primary: #f0f0f0; --color-text-secondary: #b0b0b0; --color-primary: #a0522d; --color-primary-dark: #8b4513; --color-accent: #ffd700;
+            --color-difficulty-easy: #16a34a; --color-difficulty-normal: #a0522d; --color-difficulty-hard: #ffd700; --color-difficulty-epic: #ef4444;
+        }
+
+        /* Estilos Base */
+        body { font-family: var(--font-main); background-color: var(--color-bg); color: var(--color-text-primary); transition: background-color 0.5s, color 0.5s; }
+        .font-special { font-family: var(--font-special); }
+        .surface { background-color: var(--color-surface); box-shadow: var(--shadow); transition: background-color 0.5s, box-shadow 0.5s; }
+        .btn-primary { background-color: var(--color-primary); color: white; transition: background-color 0.3s; }
+        .btn-primary:hover { background-color: var(--color-primary-dark); }
+        .btn-accent { background-color: var(--color-accent); color: white; transition: background-color 0.3s; }
+        .progress-bar-circle { transition: stroke-dashoffset 0.5s linear; stroke: var(--color-progress-bar); }
+        .class-btn.active { border-color: var(--color-accent); transform: scale(1.05); }
+
+        /* AÑADIDO: Estilos para inputs y selects temáticos */
+        .themed-input, .themed-select {
+            background-color: color-mix(in srgb, var(--color-bg) 50%, var(--color-surface));
+            color: var(--color-text-primary);
+            border-color: var(--color-primary);
+        }
+        .themed-input::placeholder {
+            color: var(--color-text-secondary);
+            opacity: 0.8;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        .animate-fadeOut { animation: fadeOut 0.3s ease-out forwards; }
+        @keyframes reward-popup { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        .reward-popup { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); animation: reward-popup 0.5s ease-out forwards; }
+        @keyframes levelUpGlow { 0%, 100% { box-shadow: 0 0 15px 5px var(--color-accent); } 50% { box-shadow: 0 0 25px 10px var(--color-accent); } }
+        .animate-levelUp { animation: levelUpGlow 1s ease-in-out; }
+        @keyframes fly-to-profile { 0% { opacity: 1; transform: translate(0, 0) scale(1); } 100% { opacity: 0; transform: translate(var(--tx, 0), var(--ty, 0)) scale(0.2); } }
+        .flying-reward { position: fixed; z-index: 100; animation: fly-to-profile 0.8s ease-in forwards; }
+        @keyframes flash-border { 0%, 100% { box-shadow: 0 0 0 2px transparent; } 50% { box-shadow: 0 0 0 2px var(--color-accent); } }
+        .animate-flash { animation: flash-border 0.5s ease-out; }
+
+        @keyframes highlight {
+            0%, 100% { box-shadow: var(--shadow); transform: scale(1); }
+            50% { box-shadow: 0 0 20px 8px var(--color-primary); transform: scale(1.02); }
+        }
+        .animate-highlight {
+            animation: highlight 1.5s ease-out;
+        }
+
+        /* Estilos de Logros y Tienda */
+        .achievement-locked { filter: grayscale(100%); opacity: 0.6; }
+        .achievement-unlocked { border-color: var(--color-accent) !important; }
+        .store-item[disabled] { filter: grayscale(80%); cursor: not-allowed; opacity: 0.7; }
+        
+        .class-btn.locked {
+            filter: grayscale(80%);
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        /* Animaciones del Héroe */
+        .hero-animation-container { position: relative; width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; overflow: hidden; }
+        .hero-animation-container > * { position: absolute; transition: all 0.3s ease-in-out; will-change: transform, opacity; }
+        .hero-animation-container .campfire { font-size: 4rem; line-height: 1; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 0; }
+        .hero-animation-container .hero-resting, .hero-animation-container .hero-sleeping { bottom: 0; left: 50%; transform: translateX(-50%); z-index: 1; }
+        .hero-animation-container .hero-fighting { left: 30%; transform: translateX(-50%); animation: heroAttack 0.8s infinite alternate; z-index: 1; }
+        .hero-animation-container .monster { right: 30%; transform: translateX(50%); animation: monsterShake 0.6s infinite alternate; z-index: 1; }
+        @keyframes heroAttack { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-30%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes monsterShake { 0% { transform: translateX(50%); } 25% { transform: translateX(45%); } 75% { transform: translateX(55%); } 100% { transform: translateX(50%); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500">
+
+    <div class="w-full max-w-7xl mx-auto">
+        <!-- Encabezado --><header class="flex justify-between items-center mb-4">
+            <h1 class="font-special text-4xl md:text-5xl" id="main-title">FocusQuest</h1>
+            <div class="flex items-center gap-4">
+                <button id="achievements-btn" class="btn-primary px-3 py-2 rounded-lg text-2xl" title="Ver Logros">🏆</button>
+                <span id="theme-icon">🎨</span>
+                <select id="theme-switcher" class="themed-select surface rounded-lg p-2 border-2" title="Cambiar Tema">
+                    <option value="theme-fantasy">Aventura Fantástica</option>
+                    <option value="theme-space">Explorador Espacial</option>
+                    <option value="theme-forest">Aventura en el Bosque</option>
+                    <option value="theme-pirate">Aventura Pirata</option>
+                    <option value="theme-dungeon">Aventura en la Mazmorra</option>
+                    <option value="theme-volcano">Aventura Volcánica</option>
+                    <option value="theme-beach">Aventura en la Playa</option>
+                    <option value="theme-sky">Aventura en el Cielo</option>
+                    <option value="theme-mines">Aventura en las Minas</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Contenedor Principal --><main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Columna Izquierda --><div class="flex flex-col gap-6">
+                <!-- Perfil del Aventurero --><section class="surface rounded-2xl p-6">
+                    <h2 class="font-special text-2xl mb-1 text-center">Perfil del Héroe</h2>
+                    <p class="text-xs text-center mb-4" style="color: var(--color-text-secondary);">Tu progreso en la aventura</p>
+                    <div class="flex flex-col items-center gap-4 relative">
+                        <div id="reward-container" class="absolute top-0"></div>
+                        <div id="avatar" class="w-24 h-24 rounded-full flex items-center justify-center text-4xl border-4 transition-all" style="border-color: var(--color-primary); background-color: var(--color-accent);"><span id="avatar-icon">🧑‍🚀</span></div>
+                        <div class="text-center">
+                            <p class="font-bold text-lg" style="color: var(--color-text-primary);">Nivel <span id="level">1</span></p>
+                            <div class="w-48 bg-gray-300 rounded-full h-4 mt-1"><div id="exp-bar" class="h-4 rounded-full" style="width: 0%; background-color: var(--color-primary);"></div></div>
+                            <p class="text-sm mt-1" style="color: var(--color-text-secondary);"><span id="exp">0</span> / <span id="exp-to-next-level">100</span> EXP</p>
+                        </div>
+                        <p class="font-bold text-lg" style="color: var(--color-accent);"><span id="coins">0</span> FocusCoins 🪙</p>
+                    </div>
+                </section>
+                <!-- Clase de Aventurero --><section class="surface rounded-2xl p-6">
+                    <h2 class="font-special text-2xl mb-1 text-center">Clase de Héroe</h2>
+                    <p class="text-xs text-center mb-4" style="color: var(--color-text-secondary);">Elige tu arquetipo</p>
+                    <div id="class-selection" class="grid grid-cols-2 gap-2 text-center">
+                        <button class="class-btn p-2 rounded-lg border-2 transition-all" data-class="aventurero" title="Rol equilibrado con un pequeño bonus a todo"><span class="text-3xl">🧑‍🚀</span><p class="text-xs font-semibold">Aventurero</p></button>
+                        <button class="class-btn p-2 rounded-lg border-2 transition-all" data-class="guerrero" title="+10% EXP en todas las misiones"><span class="text-3xl">⚔️</span><p class="text-xs font-semibold">Guerrero</p></button>
+                        <button class="class-btn p-2 rounded-lg border-2 transition-all" data-class="mago" title="+10% FocusCoins en todas las misiones"><span class="text-3xl">🔮</span><p class="text-xs font-semibold">Mago</p></button>
+                        <button class="class-btn p-2 rounded-lg border-2 transition-all" data-class="explorador" title="10% de probabilidad de obtener recompensas dobles"><span class="text-3xl">🗺️</span><p class="text-xs font-semibold">Explorador</p></button>
+                    </div>
+                    <p id="class-description" class="text-sm text-center mt-3" style="color: var(--color-text-secondary); min-height: 20px;"></p>
+                </section>
+                <!-- Tienda de Recompensas --><section id="store-section" class="surface rounded-2xl p-6">
+                    <h2 class="font-special text-2xl mb-1 text-center">Arsenal del Héroe</h2>
+                    <p class="text-xs text-center mb-4" style="color: var(--color-text-secondary);">Invierte tus ganancias</p>
+                    <div id="store-grid">
+                        <h3 class="font-semibold col-span-2 text-lg font-special" style="color: var(--color-text-primary);">Clases</h3>
+                        <div id="store-classes" class="grid grid-cols-3 gap-2 mb-4"></div>
+                        <h3 class="font-semibold col-span-2 text-lg font-special" style="color: var(--color-text-primary);">Iconos</h3>
+                        <div id="store-icons" class="grid grid-cols-3 gap-2 mb-4"></div>
+                        <h3 class="font-semibold col-span-2 text-lg font-special" style="color: var(--color-text-primary);">Bordes</h3>
+                        <div id="store-borders" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Columna Central: Interfaz Principal --><section class="surface rounded-2xl p-6 flex flex-col items-center justify-around gap-4 order-first lg:order-none min-h-[500px]">
+                <div class="hero-animation-container rounded-lg relative w-full h-40" id="hero-animation-display">
+                    <div id="hero-fighting" class="hero-fighting hidden"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10l-4 4h3l-4 4"/><path d="M14 6L8 12H5l-3 3 3 3h3l6-6"/><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2zM8 22h8"/></svg></div>
+                    <div id="monster-fighting" class="monster hidden"></div>
+                    <div id="hero-resting" class="hero-resting hidden"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2z"/><path d="M18 6h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2"/><path d="M6 6h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6"/><path d="M12 14v4"/><path d="M10 14h4"/><path d="M8 22h8"/></svg></div>
+                    <div id="hero-sleeping" class="hero-sleeping hidden"><svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-4 0V4a2 2 0 0 1 2-2z"/><path d="M12 14v4"/><path d="M10 14h4"/><path d="M8 22h8"/><path d="M6 10l-2 4h16l-2-4"/></svg></div>
+                    <div class="campfire hidden" id="campfire">🔥</div>
+                </div>
+                
+                <div id="timer-controls-wrapper" class="flex flex-col items-center gap-4">
+                     <div class="relative w-64 h-64">
+                        <svg class="w-full h-full" viewBox="0 0 100 100"><circle class="text-gray-300" stroke-width="7" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" /><circle id="progress-ring" class="progress-bar-circle" stroke-width="7" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" style="transform: rotate(-90deg); transform-origin: 50% 50%;" /></svg>
+                        <div id="timer-display" class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center"><p id="cycle-counter" class="font-bold text-lg" style="color: var(--color-accent);"></p><span class="font-special text-6xl font-bold">25:00</span></div>
+                    </div>
+                    <div id="mode-buttons" class="flex gap-2"><button class="mode-btn btn-primary px-4 py-2 rounded-lg" data-mode="focus" title="Iniciar sesión de trabajo">Trabajo</button><button class="mode-btn btn-primary px-4 py-2 rounded-lg" data-mode="shortBreak" title="Iniciar descanso corto">Descanso</button><button class="mode-btn btn-primary px-4 py-2 rounded-lg" data-mode="longBreak" title="Iniciar descanso largo">Descanso Largo</button></div>
+                    <div class="flex gap-4"><button id="start-pause-btn" class="btn-accent text-xl px-12 py-3 rounded-lg" title="Iniciar o pausar el temporizador">Iniciar</button><button id="reset-btn" class="btn-primary px-4 py-3 rounded-lg" title="Reiniciar Temporizador"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button></div>
+                </div>
+                
+                 <div class="text-center mt-2">
+                     <details><summary class="cursor-pointer font-semibold" style="color: var(--color-text-secondary);">Configuración de Tiempo</summary>
+                        <div class="mt-4 flex flex-col gap-4 p-4 surface rounded-lg">
+                           <div class="flex flex-wrap items-center justify-center gap-y-4 gap-x-2">
+                                <div class="flex flex-col items-center"><label>Trabajo</label><div class="flex"><input type="number" id="focus-duration" class="themed-input w-16 text-center rounded-l border-2 p-1" value="25"><select id="focus-unit" class="themed-select rounded-r border-2 border-l-0 p-1"><option value="seconds">Seg</option><option value="minutes" selected>Min</option><option value="hours">Hrs</option></select></div></div>
+                                <div class="flex flex-col items-center"><label>Descanso</label><div class="flex"><input type="number" id="short-break-duration" class="themed-input w-16 text-center rounded-l border-2 p-1" value="5"><select id="short-break-unit" class="themed-select rounded-r border-2 border-l-0 p-1"><option value="seconds">Seg</option><option value="minutes" selected>Min</option><option value="hours">Hrs</option></select></div></div>
+                                <div class="flex flex-col items-center"><label>Descanso L.</label><div class="flex"><input type="number" id="long-break-duration" class="themed-input w-16 text-center rounded-l border-2 p-1" value="15"><select id="long-break-unit" class="themed-select rounded-r border-2 border-l-0 p-1"><option value="seconds">Seg</option><option value="minutes" selected>Min</option><option value="hours">Hrs</option></select></div></div>
+                           </div>
+                        </div>
+                     </details>
+                </div>
+            </section>
+
+            <!-- Columna Derecha: Misiones --><section class="surface rounded-2xl p-6">
+                <h2 class="font-special text-2xl mb-1 text-center">Tablón de Misiones</h2>
+                <p class="text-xs text-center mb-4" style="color: var(--color-text-secondary);">Elige tu próximo desafío</p>
+                <div class="flex flex-col gap-2 mb-4">
+                    <input type="text" id="new-task-input" placeholder="Añadir nueva misión..." class="themed-input w-full p-2 rounded-lg border-2">
+                    <div class="flex gap-2"><select id="task-difficulty" class="themed-select w-full p-2 rounded-lg border-2"><option value="1">Fácil (+0%)</option><option value="1.25">Normal (+25%)</option><option value="1.5">Difícil (+50%)</option><option value="2">Épica (+100%)</option></select><button id="add-task-btn" class="btn-primary px-4 rounded-lg text-2xl" title="Añadir Misión">+</button></div>
+                </div><div id="task-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
+            </section>
+        </main>
+        
+        <!-- Modals --><div id="modal-container">
+            <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4"><div class="surface p-8 rounded-2xl text-center max-w-sm w-full animate-fadeIn"><p id="modal-icon" class="text-5xl mb-4"></p><h3 id="modal-title" class="font-special text-2xl mb-2"></h3><p id="modal-message" class="mb-6" style="color: var(--color-text-secondary);"></p><div id="modal-buttons" class="flex gap-4 justify-center"></div></div></div>
+            <div id="achievements-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4"><div class="surface p-6 rounded-2xl max-w-2xl w-full animate-fadeIn"><div class="flex justify-between items-center mb-4"><h3 class="font-special text-3xl">Salón de los Héroes</h3><button id="achievements-close-btn" class="text-2xl">&times;</button></div><div id="achievements-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto"></div></div></div>
+            <div id="event-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4"><div class="surface p-8 rounded-2xl text-center max-w-sm w-full animate-fadeIn"><p id="event-icon" class="text-5xl mb-4"></p><h3 id="event-title" class="font-special text-2xl mb-2"></h3><p id="event-message" class="mb-6" style="color: var(--color-text-secondary);"></p><div id="event-choices" class="flex flex-col gap-2"></div></div></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dom = {
+                body: document.body, themeSwitcher: document.getElementById('theme-switcher'), mainTitle: document.getElementById('main-title'), themeIcon: document.getElementById('theme-icon'),
+                avatar: document.getElementById('avatar'), avatarIcon: document.getElementById('avatar-icon'), levelEl: document.getElementById('level'), expEl: document.getElementById('exp'), expToNextLevelEl: document.getElementById('exp-to-next-level'), expBar: document.getElementById('exp-bar'), coinsEl: document.getElementById('coins'), classBtns: document.querySelectorAll('.class-btn'), classDescription: document.getElementById('class-description'), classSelection: document.getElementById('class-selection'),
+                store: {
+                    grid: document.getElementById('store-grid'),
+                    classes: document.getElementById('store-classes'),
+                    icons: document.getElementById('store-icons'),
+                    borders: document.getElementById('store-borders'),
+                },
+                storeSection: document.getElementById('store-section'), 
+                timerDisplay: document.querySelector('#timer-display span'), cycleCounter: document.getElementById('cycle-counter'), progressRing: document.getElementById('progress-ring'), startPauseBtn: document.getElementById('start-pause-btn'), resetBtn: document.getElementById('reset-btn'), modeButtons: document.querySelectorAll('.mode-btn'),
+                focusDurationInput: document.getElementById('focus-duration'), focusUnitSelect: document.getElementById('focus-unit'),
+                shortBreakDurationInput: document.getElementById('short-break-duration'), shortBreakUnitSelect: document.getElementById('short-break-unit'),
+                longBreakDurationInput: document.getElementById('long-break-duration'), longBreakUnitSelect: document.getElementById('long-break-unit'),
+                newTaskInput: document.getElementById('new-task-input'), taskDifficulty: document.getElementById('task-difficulty'), addTaskBtn: document.getElementById('add-task-btn'), taskList: document.getElementById('task-list'),
+                modal: document.getElementById('modal'), modalIcon: document.getElementById('modal-icon'), modalTitle: document.getElementById('modal-title'), modalMessage: document.getElementById('modal-message'), modalButtons: document.getElementById('modal-buttons'),
+                achievementsModal: document.getElementById('achievements-modal'), achievementsBtn: document.getElementById('achievements-btn'), achievementsCloseBtn: document.getElementById('achievements-close-btn'), achievementsList: document.getElementById('achievements-list'),
+                eventModal: document.getElementById('event-modal'), eventIcon: document.getElementById('event-icon'), eventTitle: document.getElementById('event-title'), eventMessage: document.getElementById('event-message'), eventChoices: document.getElementById('event-choices'),
+                heroAnimationDisplay: document.getElementById('hero-animation-display'), heroFighting: document.getElementById('hero-fighting'), monsterFighting: document.getElementById('monster-fighting'), heroResting: document.getElementById('hero-resting'), heroSleeping: document.getElementById('hero-sleeping'), campfire: document.getElementById('campfire'),
+                inspirationContainer: document.getElementById('inspiration-container'),
+                campQuote: document.getElementById('camp-quote'),
+                campActionBtn: document.getElementById('camp-action-btn'),
+            };
+
+            let timerInterval;
+            let combatInterval;
+            let state = {};
+            const defaultState = {
+                isRunning: false, currentMode: 'focus', timeLeft: 25 * 60, focusCount: 0, tasks: [],
+                stats: { level: 1, exp: 0, coins: 0, avatarIcon: '🧑‍🚀', avatarBorder: 'var(--color-primary)', playerClass: 'aventurero', completedTasks: 0, pomodorosToday: 0, ownedItems: [], ownedClasses: ['aventurero'] },
+                settings: { focusDuration: 25, focusUnit: 'minutes', shortBreakDuration: 5, shortBreakUnit: 'minutes', longBreakDuration: 15, longBreakUnit: 'minutes', theme: 'theme-fantasy' },
+                achievements: { amanecerDelHeroe: { unlocked: false, progress: 0 }, maestroDelTomate: { unlocked: false, progress: 0 }, forjadorDeHabitos: { unlocked: false, progress: 0 }, bestiaDeCarga: { unlocked: false, progress: 0 }, ojoDeDragon: { unlocked: false, progress: 0 }, eruditoDeLaTorre: { unlocked: false, progress: 0 } },
+                lastStreakDate: null
+            };
+            
+            const STORE_ITEMS = {
+                'class-guerrero': { name: 'Clase: Guerrero', type: 'class', value: 'guerrero', cost: 200, icon: '⚔️' },
+                'class-mago': { name: 'Clase: Mago', type: 'class', value: 'mago', cost: 200, icon: '🔮' },
+                'class-explorador': { name: 'Clase: Explorador', type: 'class', value: 'explorador', cost: 300, icon: '🗺️' },
+                'icon-wizard': { name: 'Icono: Mago', type: 'icon', value: '🧙‍♂️', cost: 50, icon: '🧙‍♂️' },
+                'icon-coder': { name: 'Icono: Programador', type: 'icon', value: '🧑‍💻', cost: 50, icon: '🧑‍💻' },
+                'icon-pirate': { name: 'Icono: Pirata', type: 'icon', value: '☠️', cost: 75, icon: '☠️' },
+                'icon-dungeon': { name: 'Icono: Calavera', type: 'icon', value: '💀', cost: 75, icon: '💀' },
+                'border-gold': { name: 'Borde: Oro', type: 'border', value: 'gold', cost: 100, isHtml: true, content: `<div class="w-8 h-8 rounded-full border-4 border-yellow-500 mx-auto"></div>` },
+                'border-cyan': { name: 'Borde: Cian', type: 'border', value: 'cyan', cost: 100, isHtml: true, content: `<div class="w-8 h-8 rounded-full border-4 border-cyan-400 mx-auto"></div>` },
+                'border-forest': { name: 'Borde: Bosque', type: 'border', value: 'forest', cost: 150, isHtml: true, content: `<div class="w-8 h-8 rounded-full border-4 border-green-800 mx-auto"></div>` },
+                'border-dungeon': { name: 'Borde: Mazmorra', type: 'border', value: 'dungeon', cost: 150, isHtml: true, content: `<div class="w-8 h-8 rounded-full border-4 border-purple-600 mx-auto"></div>` },
+            };
+
+            const MONSTERS = [ 
+                { name: 'Esqueleto', svg: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2"/><path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/></svg>`},
+                { name: 'Murciélago', svg: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v4a2 2 0 0 1-2 2h-2.4a2 2 0 0 0-1.2.4L12 20l-2.4-2.6a2 2 0 0 0-1.2-.4H6a2 2 0 0 1-2-2v-4z"/><path d="M6 4v1.3a2 2 0 0 0 2 1.7h8a2 2 0 0 0 2-1.7V4"/><path d="M9 10v2"/><path d="M15 10v2"/></svg>` },
+                { name: 'Limo', svg: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>` },
+                { name: 'Orco', svg: `<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 1 5 5v2a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/><path d="M12 11a2 2 0 0 1-2-2V7h4v2a2 2 0 0 1-2 2z"/><path d="M12 22c-3.3 0-6-2.7-6-6v-4h12v4c0 3.3-2.7 6-6 6z"/><path d="M9 16v2"/><path d="M15 16v2"/></svg>` },
+            ];
+
+            const QUOTES = [
+                "La creatividad es la inteligencia divirtiéndose. - Albert Einstein",
+                "Tu tiempo es limitado, no lo malgastes viviendo la vida de otro. - Steve Jobs",
+                "La única forma de hacer un gran trabajo es amar lo que haces. - Steve Jobs",
+                "El futuro pertenece a quienes creen en la belleza de sus sueños. - Eleanor Roosevelt",
+                "No he fracasado. He encontrado 10.000 formas que no funcionan. - Thomas Edison",
+                "Un día o día uno. Tú decides.",
+                "La mejor manera de predecir el futuro es inventarlo. - Alan Kay",
+                "Cae siete veces, levántate ocho. - Proverbio japonés",
+                "La lógica te llevará de A a B. La imaginación te llevará a todas partes. - Albert Einstein",
+            ];
+            
+            const CIRCLE_LENGTH = 2 * Math.PI * 45;
+            if(dom.progressRing) dom.progressRing.setAttribute('stroke-dasharray', CIRCLE_LENGTH);
+
+            function updateTimer() {
+                state.timeLeft--;
+                updateDisplay();
+                if (state.timeLeft <= 0) { clearInterval(timerInterval); timerInterval = null; state.isRunning = false; handleTimerEnd(); }
+            }
+            function startPauseTimer() { if (state.isRunning) { clearInterval(timerInterval); timerInterval = null; state.isRunning = false; dom.startPauseBtn.textContent = 'Continuar'; clearInterval(combatInterval); } else { if (timerInterval) return; state.isRunning = true; dom.startPauseBtn.textContent = 'Pausar'; updateUIMode(); timerInterval = setInterval(updateTimer, 1000); if (state.currentMode === 'focus') { combatInterval = setInterval(spawnNewMonster, 8000); spawnNewMonster(); dom.monsterFighting.classList.remove('animate-fadeOut'); dom.monsterFighting.style.opacity = '1'; dom.monsterFighting.classList.add('animate-fadeIn'); } } }
+            function resetTimer() { clearInterval(timerInterval); clearInterval(combatInterval); timerInterval = null; combatInterval = null; state.isRunning = false; selectMode(state.currentMode, true); dom.startPauseBtn.textContent = 'Iniciar'; }
+            function getTimeInSeconds(d, u) { if (u === 'minutes') return d * 60; if (u === 'hours') return d * 3600; return d; }
+
+            function selectMode(mode, forceReset = false) {
+                if (state.isRunning && !forceReset) return;
+                state.currentMode = mode;
+                let duration, unit;
+                switch(mode) {
+                    case 'shortBreak': duration = state.settings.shortBreakDuration; unit = state.settings.shortBreakUnit; break;
+                    case 'longBreak': duration = state.settings.longBreakDuration; unit = state.settings.longBreakUnit; break;
+                    default: duration = state.settings.focusDuration; unit = state.settings.focusUnit;
+                }
+                state.timeLeft = getTimeInSeconds(duration, unit);
+                updateDisplay(); clearInterval(timerInterval); clearInterval(combatInterval); timerInterval = null; combatInterval = null; state.isRunning = false; dom.startPauseBtn.textContent = 'Iniciar'; updateUIMode();
+            }
+            
+            function handleTimerEnd() {
+                new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"+Array(50).join("123")).play();
+                if (state.currentMode === 'focus') {
+                    defeatMonster(); 
+                    if (state.focusCount % 4 === 0) { showModal('🏆', '¡Ciclo completado!', 'Has completado 4 Pomodoros! Tómate un merecido descanso largo.', () => selectMode('longBreak')); }
+                    else { showModal('🎉', '¡Sesión completada!', '¡Buen trabajo! Ahora toma un breve descanso para recargar energías.', () => selectMode('shortBreak')); }
+                } else { showModal('💪', '¡Descanso terminado!', 'El descanso ha finalizado. ¡Es hora de volver a la acción!', () => selectMode('focus')); }
+            }
+            
+            const RANDOM_EVENTS = [{ icon: '🎁', title: 'Cofre Misterioso', message: 'Encuentras un cofre antiguo. ¿Qué haces?', choices: [{ text: 'Abrir con cuidado (+5-10 🪙)', action: () => { const c = 5 + Math.floor(Math.random() * 6); giveSingleReward('coin', c); showModal('🪙', '¡Tesoro!', `Encuentras ${c} FocusCoins.`); } }, { text: 'Forzar cerradura (50% de +15-25 🪙)', action: () => { if (Math.random() < 0.5) { const c = 15 + Math.floor(Math.random() * 11); giveSingleReward('coin', c); showModal('🪙', '¡Gran Tesoro!', `Obtienes ${c} FocusCoins.`); } else { showModal('💨', '¡Vacío!', 'El cofre estaba vacío.'); } } }] }, { icon: '🧙‍♂️', title: 'Viajero Cansado', message: 'Un anciano te pide 10 monedas para continuar su viaje.', choices: [{ text: 'Ayudar (-10 🪙, +20 EXP)', action: () => { if (state.stats.coins >= 10) { state.stats.coins -= 10; giveSingleReward('exp', 20); showModal('💖', '¡Buena acción!', `Ganas 20 EXP por tu generosidad.`); } else { showModal('😥', 'No es suficiente', 'No tienes monedas para compartir.'); } } }, { text: 'Ignorarlo', action: () => { showModal('😑', 'Sigues tu camino', 'Decides continuar sin detenerte.'); } }] }];
+            
+            // MODIFICADO: Se aumenta la probabilidad de los eventos aleatorios
+            function triggerRandomEvent() { 
+                if (Math.random() < 0.5) { // Probabilidad aumentada al 50%
+                    const e = RANDOM_EVENTS[Math.floor(Math.random() * RANDOM_EVENTS.length)]; 
+                    dom.eventIcon.textContent = e.icon; 
+                    dom.eventTitle.textContent = e.title; 
+                    dom.eventMessage.textContent = e.message; 
+                    dom.eventChoices.innerHTML = ''; 
+                    e.choices.forEach(c => { 
+                        const b = document.createElement('button'); 
+                        b.textContent = c.text; 
+                        b.className = 'btn-primary p-2 rounded-lg'; 
+                        b.onclick = () => { dom.eventModal.classList.add('hidden'); c.action(); updateStatsUI(); saveState(); }; 
+                        dom.eventChoices.appendChild(b); 
+                    }); 
+                    dom.eventModal.classList.remove('hidden'); 
+                } 
+            }
+            
+            function updateDisplay() {
+                const s = state.timeLeft, h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+                dom.timerDisplay.textContent = h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                let d, u, t; switch(state.currentMode) { case 'shortBreak': d = state.settings.shortBreakDuration; u = state.settings.shortBreakUnit; break; case 'longBreak': d = state.settings.longBreakDuration; u = state.settings.longBreakUnit; break; default: d = state.settings.focusDuration; u = state.settings.focusUnit; }
+                t = getTimeInSeconds(d, u);
+                const p = t > 0 ? (t - s) / t : 0;
+                if(dom.progressRing) dom.progressRing.style.strokeDashoffset = CIRCLE_LENGTH * (1 - p);
+                if(dom.cycleCounter) dom.cycleCounter.textContent = state.currentMode === 'focus' ? `Sesión ${(state.focusCount % 4) + 1}/4` : 'Descanso';
+            }
+
+            function getExpToNextLevel() { return 50 + (state.stats.level * 50); }
+            function giveSingleReward(type, amount) { state.stats[type === 'coin' ? 'coins' : type] += amount; }
+
+            function giveRewards(bonus = 1) {
+                let exp = 25, coins = 10;
+                switch(state.stats.playerClass) { case 'aventurero': exp *= 1.05; coins *= 1.05; break; case 'guerrero': exp *= 1.1; break; case 'mago': coins *= 1.1; break; case 'explorador': if (Math.random() < 0.1) { exp *= 2; coins *= 2; showModal('✨', '¡Suerte de Explorador!', '¡Recompensas dobles!'); } break; }
+                const task = getActiveTask();
+                if (task) { exp *= task.difficulty; coins *= task.difficulty; task.pomodoros++; if (task.difficulty >= 2) state.achievements.bestiaDeCarga.progress++; renderTasks(); }
+                exp = Math.round(exp * bonus); coins = Math.round(coins * bonus);
+                state.stats.exp += exp; state.stats.coins += coins; state.achievements.ojoDeDragon.progress = state.stats.coins;
+                animateReward('exp', exp, dom.avatar); animateReward('coin', coins, dom.avatar);
+                setTimeout(() => { if (state.stats.exp >= getExpToNextLevel()) levelUp(); updateStatsUI(); }, 800);
+            }
+
+            function levelUp() { state.stats.exp -= getExpToNextLevel(); state.stats.level++; state.achievements.eruditoDeLaTorre.progress = state.stats.level; dom.avatar.classList.add('animate-levelUp'); setTimeout(() => dom.avatar.classList.remove('animate-levelUp'), 1000); showModal('✨', `¡Subiste de Nivel!`, `¡Has alcanzado el nivel ${state.stats.level}!`); }
+            
+            const ALL_ACHIEVEMENTS = { amanecerDelHeroe: { title: 'El Amanecer del Héroe', desc: 'Completa tu primer Pomodoro.', icon: '🌅', goal: 1 }, maestroDelTomate: { title: 'Maestro del Tomate', desc: 'Completa 25 Pomodoros.', icon: '🍅', goal: 25 }, forjadorDeHabitos: { title: 'Forjador de Hábitos', desc: 'Mantén una racha de 5 días.', icon: '🔗', goal: 5 }, bestiaDeCarga: { title: 'Bestia de Carga', desc: 'Completa una misión Épica.', icon: '🏋️', goal: 1 }, ojoDeDragon: { title: 'Ojo de Dragón', desc: 'Acumula 500 FocusCoins.', icon: '🐲', goal: 500 }, eruditoDeLaTorre: { title: 'Erudito de la Torre', desc: 'Alcanza el nivel 10.', icon: '🎓', goal: 10 } };
+            function checkAchievements() {
+                const today = new Date().toLocaleDateString();
+                if (state.lastStreakDate) {
+                    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+                    if (state.lastStreakDate !== today && state.lastStreakDate !== yesterday.toLocaleDateString()) { state.achievements.forjadorDeHabitos.progress = 0; }
+                }
+                if (state.lastStreakDate !== today) {
+                    if (state.achievements.forjadorDeHabitos.progress === 0) state.achievements.forjadorDeHabitos.progress = 1;
+                    else { const y = new Date(); y.setDate(y.getDate() - 1); if(state.lastStreakDate === y.toLocaleDateString()) state.achievements.forjadorDeHabitos.progress++; }
+                    state.lastStreakDate = today;
+                }
+                for (const k in state.achievements) { const a = state.achievements[k], i = ALL_ACHIEVEMENTS[k]; if (!a.unlocked && a.progress >= i.goal) { a.unlocked = true; showModal(i.icon, '¡Logro Desbloqueado!', `Conseguido: "${i.title}"`); } }
+                saveState();
+            }
+            function renderAchievements() { dom.achievementsList.innerHTML = ''; for (const k in ALL_ACHIEVEMENTS) { const i = ALL_ACHIEVEMENTS[k], s = state.achievements[k], el = document.createElement('div'); el.className = `flex items-start gap-4 p-3 rounded-lg border-2 transition-all ${s.unlocked ? 'achievement-unlocked' : 'achievement-locked'}`; el.innerHTML = `<span class="text-4xl mt-1">${i.icon}</span><div class="w-full"><p class="font-bold">${i.title}</p><p class="text-sm" style="color: var(--color-text-secondary);">${i.desc}</p>${!s.unlocked ? `<div class="w-full bg-gray-300 rounded-full h-2.5 mt-1"><div class="bg-[--color-primary] h-2.5 rounded-full" style="width: ${(s.progress / i.goal) * 100}%"></div></div><p class="text-xs text-right" style="color: var(--color-text-secondary);">${s.progress} / ${i.goal}</p>` : ''}</div>`; dom.achievementsList.appendChild(el); } }
+            
+            function spawnNewMonster() {
+                const monsterEl = dom.monsterFighting;
+                if(!monsterEl) return;
+                const m = MONSTERS[Math.floor(Math.random() * MONSTERS.length)];
+                monsterEl.innerHTML = m.svg;
+            }
+
+            function updateUIMode() {
+                [dom.heroFighting, dom.monsterFighting, dom.heroResting, dom.heroSleeping, dom.campfire].forEach(el => {
+                    if (el) el.classList.add('hidden');
+                });
+                if (dom.inspirationContainer) dom.inspirationContainer.classList.add('hidden');
+
+                const themeName = state.settings.theme.replace('theme-', '');
+                if (dom.heroAnimationDisplay) dom.heroAnimationDisplay.className = `hero-animation-container rounded-lg relative w-full h-40 hero-bg-${themeName}`;
+
+                if (state.currentMode === 'focus') {
+                    if (state.isRunning) {
+                        if (dom.heroFighting) dom.heroFighting.classList.remove('hidden');
+                        if (dom.monsterFighting) dom.monsterFighting.classList.remove('hidden');
+                    }
+                } else if (state.currentMode === 'shortBreak' || state.currentMode === 'longBreak') {
+                    if (dom.inspirationContainer) dom.inspirationContainer.classList.remove('hidden');
+                    if (state.currentMode === 'shortBreak') {
+                        if (dom.heroResting) dom.heroResting.classList.remove('hidden');
+                    } else {
+                        if (dom.heroSleeping) dom.heroSleeping.classList.remove('hidden');
+                    }
+                    if (dom.campfire) dom.campfire.classList.remove('hidden');
+                    triggerRandomEvent();
+                } else {
+                     if (dom.heroResting) dom.heroResting.classList.remove('hidden');
+                     if (dom.campfire) dom.campfire.classList.remove('hidden');
+                }
+                if (dom.progressRing) dom.progressRing.style.stroke = state.currentMode === 'focus' ? 'var(--color-primary)' : 'var(--color-accent)';
+            }
+            function defeatMonster() {
+                clearInterval(combatInterval); combatInterval = null;
+                const monsterEl = dom.monsterFighting;
+                if (monsterEl) {
+                    monsterEl.classList.remove('animate-fadeIn');
+                    monsterEl.classList.add('animate-fadeOut');
+                }
+                
+                state.focusCount++; state.achievements.amanecerDelHeroe.progress++; state.achievements.maestroDelTomate.progress++; const t = new Date().toLocaleDateString(); if(state.stats.lastSessionDate !== t) state.stats.pomodorosToday = 0; state.stats.pomodorosToday++; state.stats.lastSessionDate = t; 
+                setTimeout(() => {
+                    giveRewards(1.2); checkAchievements(); 
+                }, 300);
+            }
+            function campAction() {
+                const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+                if (dom.campQuote) dom.campQuote.textContent = `"${quote}"`;
+            }
+            function animateReward(type, amount, element) {
+                const endRect = (type === 'exp' ? dom.expBar : dom.coinsEl).getBoundingClientRect();
+                const startRect = element.getBoundingClientRect();
+                
+                const p = document.createElement('div');
+                p.className = 'flying-reward p-1 font-bold text-lg';
+                p.textContent = type === 'exp' ? '✨' : '🪙';
+                p.style.left = `${startRect.left + startRect.width / 2}px`;
+                p.style.top = `${startRect.top + startRect.height / 2}px`;
+                p.style.setProperty('--tx', `${endRect.left - startRect.left}px`);
+                p.style.setProperty('--ty', `${endRect.top - startRect.top}px`);
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 800);
+            }
+            function getActiveTask() { const a = document.querySelector('input[name="task"]:checked'); return a ? state.tasks.find(t => t.id === parseInt(a.value)) : null; }
+            function addTask() { const n = dom.newTaskInput.value.trim(); if (!n) return; state.tasks.push({ id: Date.now(), name: n, pomodoros: 0, difficulty: parseFloat(dom.taskDifficulty.value) }); dom.newTaskInput.value = ''; renderTasks(); saveState(); }
+            function claimTaskRewards(taskId) {
+                const task = state.tasks.find(t => t.id === taskId); if (!task) return;
+                const exp = task.pomodoros * 10 * task.difficulty, coins = task.pomodoros * 5 * task.difficulty;
+                const button = document.querySelector(`.claim-task-btn[data-id='${taskId}']`);
+                animateReward('exp', exp, button);
+                animateReward('coin', coins, button);
+                setTimeout(() => { giveSingleReward('exp', exp); giveSingleReward('coin', coins); updateStatsUI(); }, 800);
+                showModal('🎁', '¡Misión Completada!', `Has reclamado ${exp} EXP y ${coins} FocusCoins.`);
+                state.tasks = state.tasks.filter(t => t.id !== taskId); state.stats.completedTasks++;
+                renderTasks(); saveState(); checkAchievements();
+            }
+            function renderTasks() { 
+                dom.taskList.innerHTML = ''; 
+                if (state.tasks.length === 0) { 
+                    dom.taskList.innerHTML = `<p class="text-center" style="color: var(--color-text-secondary);">Añade una misión para empezar.</p>`; 
+                    return; 
+                } 
+                const dM = { '1': 'Fácil', '1.25': 'Normal', '1.5': 'Difícil', '2': 'Épica' };
+                const dS = { '1': 'var(--color-difficulty-easy)', '1.25': 'var(--color-difficulty-normal)', '1.5': 'var(--color-difficulty-hard)', '2': 'var(--color-difficulty-epic)' };
+                state.tasks.forEach(t => { 
+                    const el = document.createElement('div'); 
+                    el.className = 'flex items-center justify-between p-3 rounded-lg border';
+                    el.style.borderColor = `color-mix(in srgb, var(--color-text-secondary) 25%, transparent)`;
+                    el.innerHTML = `<div class="flex items-center gap-3"><input type="radio" name="task" value="${t.id}" id="task-${t.id}" class="h-5 w-5 accent-[--color-primary]"><div><label for="task-${t.id}" class="cursor-pointer">${t.name}</label><p class="text-xs font-bold" style="color: ${dS[t.difficulty]}">${dM[t.difficulty]}</p></div></div><div class="flex items-center gap-3"><span class="font-bold text-sm" style="color: var(--color-accent);">${t.pomodoros} 🍅</span><button data-id="${t.id}" class="claim-task-btn text-yellow-500 hover:text-yellow-600 text-2xl" title="Completa sesiones de trabajo (🍅) con esta misión seleccionada para poder reclamar las recompensas.">🎁</button></div>`; 
+                    dom.taskList.appendChild(el); 
+                }); 
+                document.querySelectorAll('.claim-task-btn').forEach(b => b.addEventListener('click', () => claimTaskRewards(parseInt(b.dataset.id)))); 
+            }
+            
+            function buyItem(e) {
+                const itemEl = e.currentTarget, id = itemEl.dataset.id, item = STORE_ITEMS[id];
+                if (state.stats.coins < item.cost) { showModal('😥', 'Fondos Insuficientes', 'Necesitas más FocusCoins.'); return; }
+                state.stats.coins -= item.cost;
+                if(item.type === 'class') {
+                    state.stats.ownedClasses.push(item.value);
+                } else {
+                    state.stats.ownedItems.push(id);
+                }
+                if (item.type === 'icon') state.stats.avatarIcon = item.value; 
+                else if (item.type === 'border') {
+                    if (item.value === 'gold') state.stats.avatarBorder = '#f59e0b';
+                    else if (item.value === 'cyan') state.stats.avatarBorder = '#22d3ee';
+                    else if (item.value === 'forest') state.stats.avatarBorder = '#283618';
+                    else if (item.value === 'dungeon') state.stats.avatarBorder = '#8a2be2';
+                }
+                dom.avatar.classList.add('animate-levelUp'); setTimeout(() => dom.avatar.classList.remove('animate-levelUp'), 1000);
+                
+                renderStore(); 
+                updateClassUI(); 
+                updateStatsUI(); 
+                saveState(); 
+                showModal('🛍️', '¡Compra Exitosa!', `Has desbloqueado: ${item.name}.`);
+            }
+            
+            function renderStore() {
+                Object.values(dom.store).forEach(el => { if(el && el.id !== 'store-grid') el.innerHTML = '' });
+                
+                Object.entries(STORE_ITEMS).forEach(([id, item]) => {
+                    const button = document.createElement('button');
+                    button.dataset.id = id;
+                    const content = item.isHtml ? item.content : `<span class="text-3xl">${item.icon}</span>`;
+                    
+                    const isOwned = item.type === 'class' 
+                        ? state.stats.ownedClasses.includes(item.value) 
+                        : state.stats.ownedItems.includes(id);
+
+                    if (isOwned) {
+                        button.className = 'store-item p-3 rounded-lg border-2 text-center';
+                        button.disabled = true;
+                        button.innerHTML = `${content}<p class="text-xs">Adquirido</p>`;
+                        button.title = `${item.name} (Ya adquirido)`;
+                    } else {
+                        button.className = 'store-item p-3 rounded-lg border-2 text-center hover:border-[--color-accent] transition-colors';
+                        button.innerHTML = `${content}<p class="text-xs">${item.cost} 🪙</p>`;
+                        button.title = `${item.name} - ${item.cost} monedas`;
+                        button.addEventListener('click', buyItem);
+                    }
+                    
+                    const category = item.type === 'class' ? 'classes' : `${item.type}s`;
+                    if (dom.store[category]) {
+                        dom.store[category].appendChild(button);
+                    }
+                });
+            }
+
+            function selectClass(c, fromClick = false) { 
+                const btn = document.querySelector(`.class-btn[data-class='${c}']`);
+                if (!state.stats.ownedClasses.includes(c)) { 
+                    if(fromClick) {
+                        const secondaryAction = {
+                            text: 'Ir a la tienda',
+                            action: () => {
+                                const storeEl = dom.storeSection;
+                                if (storeEl) {
+                                    storeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    storeEl.classList.add('animate-highlight');
+                                    setTimeout(() => {
+                                        storeEl.classList.remove('animate-highlight');
+                                    }, 1500);
+                                }
+                            }
+                        };
+                        showModal('🔒', 'Clase Bloqueada', 'Debes comprar esta clase en la tienda para poder usarla.', null, secondaryAction);
+                    }
+                    return; 
+                } 
+                state.stats.playerClass = c; 
+                dom.classBtns.forEach(b => b.classList.toggle('active', b.dataset.class === c));
+                if(fromClick && btn) { btn.classList.add('animate-flash'); setTimeout(() => btn.classList.remove('animate-flash'), 500); }
+                if(dom.classDescription) dom.classDescription.textContent = { aventurero: 'Bonus equilibrado a EXP y monedas.', guerrero: '+10% EXP en todas las misiones.', mago: '+10% FocusCoins en todas las misiones.', explorador: '10% prob. de recompensas dobles.' }[c]; 
+                saveState(); 
+            }
+            
+            function updateClassUI() { 
+                dom.classBtns.forEach(btn => { 
+                    const c = btn.dataset.class; 
+                    if (!state.stats.ownedClasses.includes(c)) { 
+                        btn.classList.add("locked"); 
+                        btn.title = "Bloqueado - Cómpralo en la tienda"; 
+                    } else { 
+                        btn.classList.remove("locked"); 
+                        btn.title = { guerrero: "+10% EXP en todas las misiones", mago: "+10% FocusCoins en todas las misiones", explorador: "10% de probabilidad de obtener recompensas dobles"}[c] || "Rol equilibrado con un pequeño bonus a todo"; 
+                    } 
+                }); 
+            }
+            function updateStatsUI() { dom.levelEl.textContent = state.stats.level; dom.expEl.textContent = state.stats.exp; const expN = getExpToNextLevel(); dom.expToNextLevelEl.textContent = expN; dom.expBar.style.width = `${(state.stats.exp / expN) * 100}%`; dom.coinsEl.textContent = state.stats.coins; dom.avatarIcon.textContent = state.stats.avatarIcon; dom.avatar.style.borderColor = state.stats.avatarBorder; }
+            function applyTheme(t) {
+                dom.body.className = `${t} min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500`;
+                const themeData = { 'theme-fantasy': { title: 'FocusQuest', icon: '🏰' }, 'theme-space': { title: 'FocusOdyssey', icon: '🚀' }, 'theme-forest': { title: 'ForestQuest', icon: '🌲' }, 'theme-pirate': { title: 'FocusTide', icon: '🏴‍☠️' }, 'theme-dungeon': { title: 'DungeonFocus', icon: '🦇' } };
+                dom.mainTitle.textContent = themeData[t]?.title || 'FocusQuest';
+                dom.themeIcon.textContent = themeData[t]?.icon || '🎨';
+                updateUIMode();
+            }
+            function handleSettingsChange() { state.settings.focusDuration = parseInt(dom.focusDurationInput.value); state.settings.focusUnit = dom.focusUnitSelect.value; state.settings.shortBreakDuration = parseInt(dom.shortBreakDurationInput.value); state.settings.shortBreakUnit = dom.shortBreakUnitSelect.value; state.settings.longBreakDuration = parseInt(dom.longBreakDurationInput.value); state.settings.longBreakUnit = dom.longBreakUnitSelect.value; resetTimer(); saveState(); }
+            function showModal(i, t, m, onC, secondaryAction = null) {
+                dom.modalIcon.textContent = i;
+                dom.modalTitle.textContent = t;
+                dom.modalMessage.textContent = m;
+                dom.modal.classList.remove('hidden');
+                dom.modalButtons.innerHTML = '';
+
+                const closeHandler = () => {
+                    dom.modal.classList.add('hidden');
+                    if (onC) onC();
+                };
+
+                if (secondaryAction) {
+                    const secondaryBtn = document.createElement('button');
+                    secondaryBtn.className = 'btn-primary px-6 py-2 rounded-lg';
+                    secondaryBtn.textContent = secondaryAction.text;
+                    secondaryBtn.onclick = () => {
+                        closeHandler();
+                        secondaryAction.action();
+                    };
+                    dom.modalButtons.appendChild(secondaryBtn);
+                }
+
+                const primaryBtn = document.createElement('button');
+                primaryBtn.className = 'btn-accent px-6 py-2 rounded-lg';
+                primaryBtn.textContent = secondaryAction ? 'Cerrar' : '¡Entendido!';
+                primaryBtn.onclick = closeHandler;
+                dom.modalButtons.appendChild(primaryBtn);
+            }
+            function saveState() { localStorage.setItem('focusQuestState', JSON.stringify(state)); }
+            function loadState() { const s = localStorage.getItem('focusQuestState'); state = s ? deepMerge(defaultState, JSON.parse(s)) : { ...defaultState }; }
+            const isObject = (i) => (i && typeof i === 'object' && !Array.isArray(i)); function deepMerge(t, s) { const o = { ...t }; if (isObject(t) && isObject(s)) { Object.keys(s).forEach(k => { if (isObject(s[k])) { if (!(k in t)) Object.assign(o, { [k]: s[k] }); else o[k] = deepMerge(t[k], s[k]); } else { Object.assign(o, { [k]: s[k] }); } }); } return o; }
+            
+            function init() {
+                loadState();
+                if(dom.themeSwitcher) dom.themeSwitcher.value = state.settings.theme; applyTheme(state.settings.theme);
+                if(dom.focusDurationInput) dom.focusDurationInput.value = state.settings.focusDuration; 
+                if(dom.focusUnitSelect) dom.focusUnitSelect.value = state.settings.focusUnit;
+                if(dom.shortBreakDurationInput) dom.shortBreakDurationInput.value = state.settings.shortBreakDuration; 
+                if(dom.shortBreakUnitSelect) dom.shortBreakUnitSelect.value = state.settings.shortBreakUnit;
+                if(dom.longBreakDurationInput) dom.longBreakDurationInput.value = state.settings.longBreakDuration; 
+                if(dom.longBreakUnitSelect) dom.longBreakUnitSelect.value = state.settings.longBreakUnit;
+                
+                selectClass(state.stats.playerClass); 
+                updateStatsUI(); 
+                renderTasks(); 
+                renderStore(); 
+                updateClassUI(); 
+                selectMode('focus', true);
+                
+                if(dom.themeSwitcher) dom.themeSwitcher.addEventListener('change', (e) => { state.settings.theme = e.target.value; applyTheme(state.settings.theme); saveState(); });
+                if(dom.startPauseBtn) dom.startPauseBtn.addEventListener('click', startPauseTimer);
+                if(dom.resetBtn) dom.resetBtn.addEventListener('click', resetTimer);
+                if(dom.modeButtons) dom.modeButtons.forEach(b => b.addEventListener('click', () => selectMode(b.dataset.mode)));
+                [dom.focusDurationInput, dom.focusUnitSelect, dom.shortBreakDurationInput, dom.shortBreakUnitSelect, dom.longBreakDurationInput, dom.longBreakUnitSelect].forEach(i => { if(i) i.addEventListener('change', handleSettingsChange) });
+                if(dom.addTaskBtn) dom.addTaskBtn.addEventListener('click', addTask);
+                if(dom.newTaskInput) dom.newTaskInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') addTask(); });
+                if(dom.classBtns) dom.classBtns.forEach(b => b.addEventListener('click', (e) => selectClass(b.dataset.class, true)));
+                if(dom.achievementsBtn) dom.achievementsBtn.addEventListener('click', () => { renderAchievements(); dom.achievementsModal.classList.remove('hidden'); });
+                if(dom.achievementsCloseBtn) dom.achievementsCloseBtn.addEventListener('click', () => dom.achievementsModal.classList.add('hidden'));
+                if(dom.campActionBtn) dom.campActionBtn.addEventListener('click', campAction);
+            }
+            init();
+        });
+    </script>
+</body>
+</html>
+
 
