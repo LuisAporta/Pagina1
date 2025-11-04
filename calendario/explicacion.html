@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación del Proyecto: Calendario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+        }
+        .timeline-item {
+            border-left: 3px solid #60a5fa; /* Borde azul */
+        }
+        .timeline-item:last-child {
+            border-left: 3px solid transparent;
+        }
+        .timeline-dot {
+            left: -14px;
+            top: 1rem;
+        }
+        .user-bg { background-color: #e0f2fe; } /* Fondo azul claro para el usuario */
+        .gemini-bg { background-color: #ffffff; } /* Fondo blanco para Gemini */
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+
+    <div class="container mx-auto max-w-3xl p-4 md:p-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-700">Historial del Proyecto: Calendario Interactivo</h1>
+        
+        <div class="relative">
+            
+            <!-- 1. Creación Inicial -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Crear una app web de calendario para añadir eventos (nombre, descripción, duración) con efectos de sonido.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se crea la v1 con Tailwind, <strong>Tone.js</strong> (para generar sonidos sin archivos) y un panel lateral para ver eventos.</p>
+                </div>
+            </div>
+
+            <!-- 2. Mejoras (España y TTS) -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>La semana debe empezar en lunes (para España), mejorar el tema (es "soso") y añadir lectura de eventos en voz alta (TTS).</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se ajusta el calendario a lunes, se mejora el tema con azules más vibrantes y se integra la <strong>API de TTS</strong> del navegador.</p>
+                </div>
+            </div>
+
+            <!-- 3. Temas -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Añadir más "vida" con más temas (Halloween, Navidad, San Valentín, Primavera, Verano).</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se añade un selector de temas que cambia los colores de la app usando variables CSS.</p>
+                </div>
+            </div>
+
+            <!-- 4. Mejoras de Temas y Fondos -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>"Currárselo más" con los temas y añadir imágenes de fondo de internet para que no sea plano.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se mejoran los temas (fuentes de Google Fonts, sombras) y se añaden <strong>imágenes de fondo de Unsplash</strong> con un <strong>overlay</strong> para legibilidad.</p>
+                </div>
+            </div>
+
+            <!-- 5. Cambios de Funcionalidad -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Cambiar la "Duración" por un <strong>intervalo de horas</strong> (inicio y fin) y que los eventos del día salgan en un <strong>popup</strong> (modal) en lugar del panel lateral.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se implementan ambos cambios: se usan `input type="time"` y se reemplaza el panel por un modal.</p>
+                </div>
+            </div>
+            
+            <!-- 6. Debugging de Estilos -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-red-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Reporte de errores visuales: los fondos no se ven y los botones de navegación son invisibles en algunos temas.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se realizan varias correcciones: se reduce la opacidad del `overlay`, se cambian imágenes y, finalmente, se reemplazan los <strong>gradientes de los botones</strong> (que fallaban) por <strong>colores sólidos</strong> para asegurar la visibilidad.</p>
+                </div>
+            </div>
+            
+            <!-- 7. Navegación -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-blue-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>La navegación entre meses y años es "ortopédica".</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se añaden dos <strong>menús desplegables (`<select>`)</strong> para elegir el mes y el año directamente.</p>
+                </div>
+            </div>
+
+            <!-- 8. Integración de Sonido Local (NUEVO) -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Usar un sonido local (`sonido1.m4a`) en lugar de Tone.js, basado en la estructura de carpetas (`sonidos/sonido1.m4a`).</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se modifica `playSuccess` para usar `new Audio()` con la ruta local `sonidos/sonido1.m4a`.</p>
+                </div>
+            </div>
+
+            <!-- 9. Botón de Prueba de Sonido (NUEVO) -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Añadir un botón para probar el `successSound` local.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se añade un botón "Probar Sonido Éxito" al HTML que llama a `playSuccess()`.</p>
+                </div>
+            </div>
+
+            <!-- 10. Selector de Sonidos (NUEVO) -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Añadir `sonido2.m4a` y un selector para elegir qué sonido de notificación usar.</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se añade un `<select>` para los sonidos. La función `playSuccess` se actualiza para usar el sonido seleccionado en el desplegable.</p>
+                </div>
+            </div>
+            
+            <!-- 11. Corrección de Errores (Antes 9) -->
+            <div class="timeline-item pl-8 pb-8 relative">
+                <div class="timeline-dot absolute w-6 h-6 bg-red-500 rounded-full border-4 border-white"></div>
+                <div class="user-bg p-4 rounded-lg shadow">
+                    <p class="font-semibold text-blue-900">Petición:</p>
+                    <p>Reporte de error de sintaxis (`Unexpected token '}'`).</p>
+                </div>
+                <div class="gemini-bg p-4 rounded-lg shadow mt-2">
+                    <p class="font-semibold text-gray-700">Respuesta:</p>
+                    <p>Se corrige el error en el JS, eliminando un bloque de código duplicado y una llave (`}`) extra.</p>
+                </div>
+            </div>
+
+            <!-- El bloque 12 (sobre esta documentación) ha sido eliminado -->
+
+        </div>
+    </div>
+
+</body>
+</html>
+
 
