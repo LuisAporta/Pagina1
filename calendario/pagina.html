@@ -1,1 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Interactivo</title>
+    <!-- 1. Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Tone.js CDN (para efectos de sonido) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- 3. Google Fonts para Temas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Creepster&family=Mountains+of+Christmas:wght@700&family=Dancing+Script:wght@700&family=Indie+Flower&family=Lobster&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Definición de Temas Mejorados --- */
+        :root, [data-theme="default"] {
+            --font-header: 'Roboto', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #f9fafb;
+            --bg-secondary: #ffffff;
+            --bg-accent: #f3f4f6;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-header: #1e3a8a;
+            --btn-bg: #3b82f6; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #22c55e; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff;
+            --today-bg: #6366f1;
+            --today-text: #ffffff;
+            --selected-bg: #dbeafe;
+            --indicator-color: #4f46e5;
+            --shadow-strong: 0 10px 20px -5px rgba(67, 83, 255, 0.2);
+            --border-radius: 0.5rem; /* 8px */
+            --bg-image: url('https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?q=80&w=1920&auto-format&fit=crop');
+            --bg-overlay: rgba(249, 250, 251, 0.5); /* Reducida de 0.7 */
+        }
+        [data-theme="halloween"] {
+            --font-header: 'Creepster', cursive;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-accent: #000000;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-header: #f97316;
+            --btn-bg: #f97316; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #a855f7; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff;
+            --today-bg: #7e22ce;
+            --today-text: #ffffff;
+            --selected-bg: #3730a3;
+            --indicator-color: #f97316;
+            --shadow-strong: 0 0 20px 5px rgba(249, 115, 22, 0.5);
+            --border-radius: 0.25rem; /* 4px */
+            --bg-image: url('https://images.unsplash.com/photo-1572019135081-8010186c8f9f?q=80&w=1920&auto-format&fit=crop');
+            --bg-overlay: rgba(17, 24, 39, 0.4); /* Reducida de 0.6 a 0.4 */
+        }
+        [data-theme="christmas"] {
+            --font-header: 'Mountains of Christmas', cursive;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #fef2f2;
+            --bg-secondary: #ffffff;
+            --bg-accent: #f0fdf4;
+            --text-primary: #18181b;
+            --text-secondary: #3f3f46;
+            --text-header: #dc2626;
+            --btn-bg: #ef4444; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #22c55e; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff;
+            --today-bg: #16a34a;
+            --today-text: #ffffff;
+            --selected-bg: #fecaca;
+            --indicator-color: #dc2626;
+            --shadow-strong: 0 8px 16px rgba(220, 38, 38, 0.15);
+            --border-radius: 0.75rem; /* 12px */
+            --bg-image: url('https://images.unsplash.com/photo-1576398037328-10959a43ddc2?q=80&w=1920&auto-format&fit=crop'); /* CAMBIADA: Imagen más clara */
+            --bg-overlay: rgba(254, 242, 242, 0.4); /* Reducida de 0.5 a 0.4 */
+        }
+        [data-theme="valentine"] {
+            --font-header: 'Dancing Script', cursive;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #fff1f2;
+            --bg-secondary: #ffffff;
+            --bg-accent: #fdf2f8;
+            --text-primary: #831843;
+            --text-secondary: #9d174d;
+            --text-header: #ec4899;
+            --btn-bg: #f472b6; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #f87171; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff;
+            --today-bg: #ef4444;
+            --today-text: #ffffff;
+            --selected-bg: #fbcfe8;
+            --indicator-color: #ec4899;
+            --shadow-strong: 0 0 25px 3px rgba(236, 72, 153, 0.3);
+            --border-radius: 1.5rem; /* 24px */
+            --bg-image: url('https://images.unsplash.com/photo-1615027560910-7b2c700353c7?q=80&w=1920&auto-format&fit=crop'); /* CAMBIADA: Imagen más clara */
+            --bg-overlay: rgba(255, 241, 242, 0.4); /* Reducida de 0.5 a 0.4 */
+        }
+        [data-theme="spring"] {
+            --font-header: 'Indie Flower', cursive;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #f7fee7;
+            --bg-secondary: #ffffff;
+            --bg-accent: #f0fdfa;
+            --text-primary: #134e4a;
+            --text-secondary: #0f766e;
+            --text-header: #65a30d;
+            --btn-bg: #3f6212; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #facc15; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff; /* CAMBIADO: Texto blanco */
+            --today-bg: #eab308;
+            --today-text: #ffffff; /* CAMBIADO: Texto blanco */
+            --selected-bg: #dcfce7;
+            --indicator-color: #22c55e;
+            --shadow-strong: 0 8px 16px rgba(132, 204, 22, 0.2);
+            --border-radius: 0.75rem; /* 12px */
+            --bg-image: url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=1920&auto-format&fit=crop');
+            --bg-overlay: rgba(247, 254, 231, 0.4); /* Reducida de 0.65 */
+        }
+        [data-theme="summer"] {
+            --font-header: 'Lobster', cursive;
+            --font-body: 'Roboto', sans-serif;
+            --bg-primary: #fef3c7;
+            --bg-secondary: #ffffff;
+            --bg-accent: #e0f2fe;
+            --text-primary: #0c4a6e;
+            --text-secondary: #0369a1;
+            --text-header: #0ea5e9;
+            --btn-bg: #075985; /* CAMBIADO: de --btn-gradient a --btn-bg */
+            --btn-add-bg: #facc15; /* CAMBIADO: de --btn-add-gradient a --btn-add-bg */
+            --btn-text: #ffffff; /* CAMBIADO: Texto blanco */
+            --today-bg: #f59e0b;
+            --today-text: #ffffff; /* CAMBIADO: Texto blanco */
+            --selected-bg: #bae6fd;
+            --indicator-color: #f59e0b;
+            --shadow-strong: 0 10px 20px -5px rgba(14, 165, 233, 0.25);
+            --border-radius: 0.5rem; /* 8px */
+            --bg-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto-format&fit=crop');
+            --bg-overlay: rgba(254, 243, 199, 0.5); /* Reducida de 0.65 */
+        }
+
+        /* Aplicación de fuentes temáticas */
+        body {
+            font-family: var(--font-body), sans-serif;
+            /* Estilos para la imagen de fondo */
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            z-index: 1;
+            /* ERROR CORREGIDO: 
+               Se elimina la siguiente línea que causaba el bug. 
+               La transición en 'background-image' no es fiable en los navegadores.
+            */
+            /* transition: background-image 0.5s ease-in-out; */
+        }
+        
+        /* Pseudo-elemento para el overlay */
+        body::before {
+            content: "";
+            position: fixed; /* Fijo para que cubra todo con attachment fixed */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-overlay);
+            z-index: -1; /* Detrás del contenido */
+            transition: background-color 0.3s ease;
+        }
+        
+        .font-header-themed {
+            font-family: var(--font-header), sans-serif;
+        }
+        
+        /* Botones con Gradiente y Efecto Hover */
+        .btn-gradient {
+            color: var(--btn-text);
+            /* background-image: var(--bg-gradient); - ELIMINADO: Era el origen del bug */
+            background-color: var(--btn-bg); /* AÑADIDO: Solución robusta */
+            /* background-size: 200% auto; - ELIMINADO */
+            transition: opacity 0.3s ease, box-shadow 0.3s ease; /* SIMPLIFICADO */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .btn-gradient:hover {
+            /* background-position: right center; - ELIMINADO */
+            opacity: 0.9; /* AÑADIDO: Efecto hover simple */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        .btn-add-gradient {
+            color: var(--btn-text);
+            /* background-image: var(--btn-add-gradient); - ELIMINADO */
+            background-color: var(--btn-add-bg); /* AÑADIDO: Solución robusta */
+            /* background-size: 200% auto; - ELIMINADO */
+            transition: opacity 0.3s ease, box-shadow 0.3s ease; /* SIMPLIFICADO */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+        .btn-add-gradient:hover {
+            /* background-position: right center; - ELIMINADO */
+            opacity: 0.9; /* AÑADIDO: Efecto hover simple */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        /* Sombras y Bordes Temáticos */
+        .container-shadow {
+            box-shadow: var(--shadow-strong);
+            border-radius: var(--border-radius);
+            transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+        }
+        .modal-shadow {
+            box-shadow: var(--shadow-strong);
+            border-radius: var(--border-radius);
+            transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+        }
+
+        /* Estilo para el día de hoy */
+        .today {
+            background-color: var(--today-bg);
+            color: var(--today-text);
+            font-weight: bold;
+        }
+        /* Pequeña animación para el modal */
+        .modal-enter {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body id="themeContainer" data-theme="default" class="font-sans leading-normal tracking-normal p-4 md:p-8 transition-colors duration-300" style="font-family: var(--font-body), sans-serif;">
+
+    <div class="max-w-6xl mx-auto bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-2xl rounded-lg overflow-hidden transition-colors duration-300 container-shadow">
+        
+        <!-- Contenedor Principal del Calendario -->
+        <!-- NOTA: Se ha eliminado el panel lateral, el calendario ahora ocupa todo el ancho -->
+        <div class="w-full p-4 md:p-6">
+            <!-- Encabezado del Calendario (Mes y Navegación) -->
+            <div class="flex justify-between items-center mb-4">
+                <button id="prevMonthBtn" class="px-4 py-2 rounded-lg hover:opacity-90 transition-all btn-gradient">&lt; Anterior</button>
+                
+                <!-- CAMBIO: Selectores de Mes y Año para navegación rápida -->
+                <div class="flex justify-center items-center space-x-2">
+                    <select id="monthSelector" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors duration-300 font-semibold font-header-themed"></select>
+                    <select id="yearSelector" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors duration-300 font-semibold font-header-themed"></select>
+                </div>
+                
+                <button id="nextMonthBtn" class="px-4 py-2 rounded-lg hover:opacity-90 transition-all btn-gradient">Siguiente &gt;</button>
+            </div>
+            
+            <!-- Selector de Tema (Movido aquí desde el panel lateral) -->
+            <div class="mb-4 flex justify-end">
+                <div class="w-full max-w-xs">
+                    <label for="themeSelector" class="block text-sm font-medium text-[var(--text-secondary)] mb-1 transition-colors duration-300">Tema</label>
+                    <select id="themeSelector" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-colors duration-300">
+                        <option value="default">Clásico (Azul)</option>
+                        <option value="halloween">Halloween</option>
+                        <option value="christmas">Navidad</option>
+                        <option value="valentine">San Valentín</option>
+                        <option value="spring">Primavera</option>
+                        <option value="summer">Verano</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BOTÓN DE PRUEBA DE SONIDO (AÑADIDO) -->
+            <div class="mb-4 flex justify-start">
+                <button id="testSoundBtn" class="px-4 py-2 rounded-lg hover:opacity-90 transition-all btn-gradient">Probar Sonido Éxito</button>
+            </div>
+
+            <!-- Rejilla del Calendario -->
+            <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                <!-- Los días de la semana se agregarán aquí (Dom, Lun, Mar...) -->
+                <!-- Los días del mes se generarán con JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Vista de Eventos del Día (NUEVO POPUP) -->
+    <div id="dayViewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-lg shadow-2xl p-6 w-full max-w-lg modal-enter transition-colors duration-300 modal-shadow">
+            <!-- Título del Modal (Nombre del día) -->
+            <h3 id="dayViewModalTitle" class="text-2xl font-bold mb-4 text-[var(--text-header)] font-header-themed">Eventos del día</h3>
+            
+            <!-- Botón para añadir evento -->
+            <button id="dayViewAddEventBtn" class="w-full mb-4 px-4 py-2 rounded-lg hover:opacity-90 transition-colors shadow btn-add-gradient">
+                Añadir Nuevo Evento
+            </button>
+            
+            <!-- Lista de Eventos -->
+            <div id="dayViewEventList" class="space-y-3 h-64 overflow-y-auto mb-4">
+                <!-- Los eventos del día seleccionado se listarán aquí -->
+                <p id="dayViewNoEvents" class="text-gray-500">No hay eventos para este día.</p>
+            </div>
+            
+            <!-- Botón de Cerrar -->
+            <div class="flex justify-end">
+                <button type="button" id="dayViewCloseBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal para Añadir/Editar Evento (Oculto por defecto) -->
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-lg shadow-2xl p-6 w-full max-w-md modal-enter transition-colors duration-300 modal-shadow">
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4 text-[var(--text-header)] font-header-themed">Añadir Evento</h3>
+            <form id="eventForm">
+                <!-- Campo oculto para la fecha -->
+                <input type="hidden" id="eventDateInput" name="eventDate">
+                
+                <div class="mb-4">
+                    <label for="eventName" class="block text-sm font-medium text-[var(--text-secondary)] mb-1">Nombre del Evento</label>
+                    <input type="text" id="eventName" name="eventName" class="w-full px-3 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300" required>
+                </div>
+                
+                <!-- CAMBIO: Campos de Hora de Inicio y Fin -->
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="eventStartTime" class="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hora de inicio</label> <!-- CORREGIDO: Cierre de etiqueta </DURlabel> -->
+                        <input type="time" id="eventStartTime" name="eventStartTime" class="w-full px-3 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+                    </div>
+                    <div>
+                        <label for="eventEndTime" class="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hora de fin</label>
+                        <input type="time" id="eventEndTime" name="eventEndTime" class="w-full px-3 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300">
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="eventDescription" class="block text-sm font-medium text-[var(--text-secondary)] mb-1">Descripción</label>
+                    <textarea id="eventDescription" name="eventDescription" rows="3" class="w-full px-3 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--btn-bg)] bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300"></textarea>
+                </div>
+
+                <!-- Mensaje de error -->
+                <p id="modalError" class="text-red-500 text-sm mb-4 hidden">Por favor, completa el nombre del evento.</p>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors">Cerrar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg hover:opacity-90 transition-colors btn-add-gradient">Guardar</button>
+                </div>
+            </form>
+            
+            <!-- CORRECCIÓN DE HTML: Los scripts se mueven FUERA del div del modal -->
+        </div>
+    </div>
+
+    <!-- CORRECCIÓN DE HTML: Los scripts deben ir al final del BODY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        // CORRECCIÓN DE JS: Envolver todo en DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- CONFIGURACIÓN DE SONIDOS (Tone.js y Local) ---
+            let audioInitialized = false;
+
+            // Sintetizadores de Tone.js para la mayoría de los sonidos
+            const clickSound = new Tone.MembraneSynth({
+                octaves: 4,
+                pitchDecay: 0.1
+            }).toDestination();
+            
+            // Usamos tu sonido local en su lugar
+            const successSound = new Audio('sonidos/sonido1.m4a'); // <-- Esta es la ruta a tu archivo
+
+            const errorSound = new Tone.FMSynth({
+                harmonicity: 8,
+                modulationIndex: 2,
+                oscillator: { type: "square" },
+                envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 }
+            }).toDestination();
+            
+            const deleteSound = new Tone.Synth({
+                oscillator: { type: "pulse", width: 0.2 },
+                envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 }
+            }).toDestination();
+
+            // Función para inicializar el audio (necesario para Tone.js)
+            async function initializeAudio() {
+                if (audioInitialized) return;
+                // Todavía necesitamos iniciar Tone.js para los otros sonidos
+                try {
+                    await Tone.start(); 
+                    console.log("Audio inicializado.");
+                } catch (e) {
+                    console.error("Error al iniciar Tone.js", e);
+                }
+                audioInitialized = true;
+            }
+
+            // Funciones para reproducir los sonidos
+            function playClick() {
+                if (!audioInitialized) return;
+                clickSound.triggerAttackRelease("C2", "8n");
+            }
+            
+            function playSuccess() {
+                if (!audioInitialized) return;
+                successSound.currentTime = 0; // Reinicia el sonido por si se pulsa rápido
+                successSound.play().catch(e => console.error("Error al reproducir sonido local", e)); // Reproduce tu archivo local
+            }
+
+            function playError() {
+                if (!audioInitialized) return;
+                errorSound.triggerAttackRelease("G2", "0.2");
+            }
+            
+            function playDelete() {
+                if (!audioInitialized) return;
+                deleteSound.triggerAttackRelease("A3", "16n");
+            }
+            
+            // --- LÓGICA DE VOZ (TTS) ---
+            let spanishVoice = null; // CORRECCIÓN: Definir la variable
+            const synth = window.speechSynthesis;
+            
+            // CORRECCIÓN: Eliminar la '}' extra que causaba el SyntaxError
+            
+            function loadSpanishVoice() {
+                const voices = synth.getVoices();
+                spanishVoice = voices.find(v => v.lang.startsWith('es-ES') || v.lang.startsWith('es_ES')) || 
+                               voices.find(v => v.lang.startsWith('es')) || 
+                               null;
+                if (!spanishVoice && voices.length > 0) {
+                    spanishVoice = voices[0]; // Fallback
+                }
+            }
+            
+            // Cargar voces
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = loadSpanishVoice;
+            }
+            loadSpanishVoice(); // Carga inicial
+
+            function speak(text) {
+                if (!audioInitialized || !synth) return; // No hablar si el audio no está iniciado
+                if (synth.speaking) {
+                    synth.cancel(); // Cancelar si ya está hablando
+                }
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.voice = spanishVoice;
+                utterance.lang = spanishVoice ? spanishVoice.lang : 'es-ES';
+                utterance.pitch = 1;
+                utterance.rate = 1;
+                synth.speak(utterance);
+            }
+
+            // --- LÓGICA DEL CALENDARIO ---
+            
+            // Variables globales
+            const calendarGrid = document.getElementById('calendarGrid');
+            const prevMonthBtn = document.getElementById('prevMonthBtn');
+            const nextMonthBtn = document.getElementById('nextMonthBtn');
+            const monthSelector = document.getElementById('monthSelector');
+            const yearSelector = document.getElementById('yearSelector');
+            
+            const eventModal = document.getElementById('eventModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const eventForm = document.getElementById('eventForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const eventNameInput = document.getElementById('eventName');
+            const eventDateInput = document.getElementById('eventDateInput');
+            const eventStartTimeInput = document.getElementById('eventStartTime');
+            const eventEndTimeInput = document.getElementById('eventEndTime');
+            const eventDescriptionInput = document.getElementById('eventDescription');
+            const modalError = document.getElementById('modalError');
+
+            const dayViewModal = document.getElementById('dayViewModal');
+            const dayViewModalTitle = document.getElementById('dayViewModalTitle');
+            const dayViewAddEventBtn = document.getElementById('dayViewAddEventBtn');
+            const dayViewEventList = document.getElementById('dayViewEventList');
+            const dayViewNoEvents = document.getElementById('dayViewNoEvents');
+            const dayViewCloseBtn = document.getElementById('dayViewCloseBtn');
+
+            const themeSelector = document.getElementById('themeSelector');
+            const themeContainer = document.getElementById('themeContainer');
+            const testSoundBtn = document.getElementById('testSoundBtn'); // (AÑADIDO)
+
+            let currentDate = new Date();
+            let selectedDateStr = null;
+            let events = {}; // Almacén de eventos (ej: {'2023-11-20': [...]})
+
+            function renderCalendar() {
+                calendarGrid.innerHTML = '';
+                
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                // 1. Llenar selectores de mes y año
+                // Llenar meses (siempre los 12, pero solo una vez)
+                if (monthSelector.options.length === 0) { 
+                    const months = Array.from({ length: 12 }, (e, i) => {
+                        return new Date(0, i).toLocaleString('es-ES', { month: 'long' });
+                    });
+                    months.forEach((month, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = month.charAt(0).toUpperCase() + month.slice(1);
+                        monthSelector.appendChild(option);
+                    });
+                }
+                monthSelector.value = month; // Actualizar valor seleccionado
+
+                // Llenar años (rango dinámico)
+                const currentYearInSelector = Array.from(yearSelector.options).find(opt => opt.value == year);
+                if (!currentYearInSelector) {
+                    yearSelector.innerHTML = ''; // Limpiar si el año no está
+                    for (let y = year - 10; y <= year + 10; y++) {
+                        const option = document.createElement('option');
+                        option.value = y;
+                        option.textContent = y;
+                        yearSelector.appendChild(option);
+                    }
+                }
+                yearSelector.value = year; // Actualizar valor seleccionado
+                
+                // 2. Añadir días de la semana
+                const weekdays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']; // Semana empieza en Lunes
+                weekdays.forEach(day => {
+                    const dayEl = document.createElement('div');
+                    dayEl.className = 'text-center font-semibold text-gray-600 text-sm p-2';
+                    dayEl.textContent = day;
+                    calendarGrid.appendChild(dayEl);
+                });
+
+                // 3. Calcular días (inicio del mes, total de días)
+                const dayOfWeek = new Date(year, month, 1).getDay(); // 0 (Dom) - 6 (Sáb)
+                const firstDayOfMonth = (dayOfWeek + 6) % 7; // 0=Lun, 1=Mar, ..., 6=Dom
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                const todayStr = formatDate(today);
+
+                // 4. Rellenar días vacíos al inicio
+                for (let i = 0; i < firstDayOfMonth; i++) {
+                    const emptyEl = document.createElement('div');
+                    emptyEl.className = 'border border-gray-200 bg-[var(--bg-primary)] transition-colors duration-300';
+                    calendarGrid.appendChild(emptyEl);
+                }
+
+                // 5. Rellenar los días del mes
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayEl = document.createElement('div');
+                    const date = new Date(year, month, day);
+                    const dateStr = formatDate(date);
+
+                    dayEl.className = 'relative border border-gray-200 p-2 h-20 md:h-24 cursor-pointer hover:bg-[var(--selected-bg)] hover:opacity-50 transition-colors duration-300';
+                    
+                    // Número del día
+                    const dayNumber = document.createElement('span');
+                    dayNumber.textContent = day;
+                    dayNumber.className = 'text-sm';
+                    dayEl.appendChild(dayNumber);
+
+                    // Marcar el día de hoy
+                    if (dateStr === todayStr) {
+                        dayEl.classList.add('today');
+                        // dayNumber.classList.add('text-white'); // El estilo .today ya se encarga
+                    }
+
+                    // Marcar día seleccionado
+                    if (dateStr === selectedDateStr) {
+                        dayEl.classList.add('bg-[var(--selected-bg)]', 'border-[var(--btn-bg)]');
+                    }
+
+                    // Indicador de evento
+                    if (events[dateStr] && events[dateStr].length > 0) {
+                        const eventIndicator = document.createElement('div');
+                        eventIndicator.className = 'absolute bottom-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--indicator-color)] rounded-full transition-colors duration-300';
+                        dayEl.appendChild(eventIndicator);
+                    }
+
+                    // Evento Click
+                    dayEl.addEventListener('click', () => {
+                        playClick();
+                        selectDay(date);
+                    });
+                    
+                    calendarGrid.appendChild(dayEl);
+                }
+            }
+
+            function selectDay(date) {
+                selectedDateStr = formatDate(date);
+                openDayViewModal(date);
+                renderCalendar(); // Re-renderizar calendario para mostrar la selección
+            }
+
+            // --- NUEVA FUNCIÓN: Abrir el modal de Vista de Día ---
+            function openDayViewModal(date) {
+                const dayName = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+                dayViewModalTitle.textContent = dayName;
+                
+                renderEventList(); 
+                
+                dayViewModal.classList.remove('hidden');
+
+                // --- Leer el día seleccionado (TTS) ---
+                const eventCount = (events[selectedDateStr] && events[selectedDateStr].length) || 0;
+                let speakText = `${dayName}. `;
+                if (eventCount === 0) {
+                    speakText += "No hay eventos programados.";
+                } else if (eventCount === 1) {
+                    speakText += "Tienes 1 evento programado.";
+                } else {
+                    speakText += `Tienes ${eventCount} eventos programados.`;
+                }
+                speak(speakText);
+            }
+
+            // --- NUEVA FUNCIÓN: Cerrar el modal de Vista de Día ---
+            function closeDayViewModal() {
+                dayViewModal.classList.add('hidden');
+            }
+
+
+            function renderEventList() {
+                dayViewEventList.innerHTML = ''; // Limpiar lista
+                
+                if (events[selectedDateStr] && events[selectedDateStr].length > 0) {
+                    dayViewNoEvents.classList.add('hidden');
+                    
+                    events[selectedDateStr].forEach((event, index) => {
+                        const eventEl = document.createElement('div');
+                        eventEl.className = 'p-3 bg-[var(--bg-secondary)] border border-gray200 rounded-lg shadow-sm transition-colors duration-300';
+                        
+                        let html = `<h4 class="font-semibold text-[var(--text-primary)]">${event.name}</h4>`;
+                        
+                        if (event.startTime && event.endTime) {
+                            html += `<p class="text-sm text-gray-600">Horario: ${event.startTime} - ${event.endTime}</p>`;
+                        } else if (event.startTime) {
+                            html += `<p class="text-sm text-gray-600">Horario: A partir de las ${event.startTime}</p>`;
+                        }
+
+                        if (event.description) {
+                            html += `<p class="text-sm text-gray-500 mt-1">${event.description}</p>`;
+                        }
+                        
+                        // Botones de acción (Leer y Eliminar)
+                        const buttonWrapper = document.createElement('div');
+                        buttonWrapper.className = 'flex justify-between items-center mt-3';
+
+                        // Botón de Leer en Voz Alta (TTS)
+                        const speakBtn = document.createElement('button');
+                        speakBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                            </svg>
+                        `; // Icono de Play
+                        speakBtn.className = 'text-[var(--btn-bg)] hover:opacity-70 p-1 rounded-full transition-colors';
+                        speakBtn.title = 'Leer evento en voz alta';
+                        speakBtn.type = 'button';
+                        speakBtn.onclick = (e) => {
+                            e.stopPropagation(); // Evitar que el clic se propague
+                            initializeAudio(); // Asegurarse de que el audio esté listo
+                            let textToSpeak = `Evento: ${event.name}. `;
+                            if (event.startTime && event.endTime) {
+                                textToSpeak += `De ${event.startTime} a ${event.endTime}. `;
+                            } else if (event.startTime) {
+                                textToSpeak += `A las ${event.startTime}. `;
+                            }
+                            if (event.description) textToSpeak += `Descripción: ${event.description}.`;
+                            speak(textToSpeak);
+                        };
+
+                        // Botón de eliminar
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Eliminar';
+                        deleteBtn.className = 'text-xs text-red-500 hover:text-red-700 font-medium';
+                        deleteBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            initializeAudio();
+                            playDelete();
+                            deleteEvent(selectedDateStr, index);
+                        };
+                        
+                        eventEl.innerHTML = html;
+                        // Adjuntar botones
+                        buttonWrapper.appendChild(speakBtn);
+                        buttonWrapper.appendChild(deleteBtn);
+                        eventEl.appendChild(buttonWrapper);
+                        dayViewEventList.appendChild(eventEl);
+                    });
+                } else {
+                    dayViewNoEvents.classList.remove('hidden');
+                }
+            }
+
+            // --- LÓGICA DE EVENTOS (Añadir, Eliminar) ---
+
+            function saveEvent(e) {
+                e.preventDefault();
+                modalError.classList.add('hidden');
+
+                const name = eventNameInput.value.trim();
+                const date = eventDateInput.value;
+                const startTime = eventStartTimeInput.value;
+                const endTime = eventEndTimeInput.value;
+                const description = eventDescriptionInput.value.trim();
+
+                if (!name) {
+                    playError();
+                    modalError.classList.remove('hidden');
+                    return;
+                }
+
+                const newEvent = { name, startTime, endTime, description };
+
+                if (!events[date]) {
+                    events[date] = [];
+                }
+                events[date].push(newEvent);
+                
+                playSuccess();
+                closeModal();
+                renderEventList(); // Actualizar la lista en el modal de día (que está debajo)
+                renderCalendar(); // Actualizar indicadores
+            }
+
+            function deleteEvent(dateStr, index) {
+                if (events[dateStr] && events[dateStr][index]) {
+                    events[dateStr].splice(index, 1);
+                    
+                    if (events[dateStr].length === 0) {
+                        delete events[dateStr];
+                    }
+                    
+                    renderEventList();
+                    renderCalendar();
+                }
+            }
+
+            // --- LÓGICA DEL MODAL ---
+            
+            function openModal(dateStr) {
+                eventModal.classList.remove('hidden');
+                modalTitle.textContent = 'Añadir Evento';
+                eventForm.reset();
+                modalError.classList.add('hidden');
+                eventDateInput.value = dateStr;
+                eventNameInput.focus();
+            }
+
+            function closeModal() {
+                eventModal.classList.add('hidden');
+            }
+
+            // --- HELPERS ---
+            function formatDate(date) {
+                // Formato YYYY-MM-DD (clave para el objeto de eventos)
+                return date.toISOString().split('T')[0];
+            }
+
+            // --- EVENT LISTENERS INICIALES ---
+            
+            // Navegación de meses
+            prevMonthBtn.addEventListener('click', () => {
+                initializeAudio(); // Iniciar audio en el primer clic
+                playClick();
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+            
+            nextMonthBtn.addEventListener('click', () => {
+                initializeAudio(); 
+                playClick();
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+
+            // --- NUEVOS Listeners para Selectores ---
+            monthSelector.addEventListener('change', () => {
+                initializeAudio();
+                playClick();
+                const newMonth = parseInt(monthSelector.value, 10);
+                currentDate.setMonth(newMonth);
+                renderCalendar();
+            });
+
+            yearSelector.addEventListener('change', () => {
+                initializeAudio();
+                playClick();
+                const newYear = parseInt(yearSelector.value, 10);
+                const currentDay = currentDate.getDate();
+                currentDate.setFullYear(newYear, parseInt(monthSelector.value, 10), 1);
+                
+                const daysInNewMonth = new Date(newYear, parseInt(monthSelector.value, 10) + 1, 0).getDate();
+                currentDate.setDate(Math.min(currentDay, daysInNewMonth));
+                
+                renderCalendar();
+            });
+
+
+            // --- Listeners de Modales ---
+
+            // ABRIR MODAL DE AÑADIR (desde el modal de vista de día)
+            dayViewAddEventBtn.addEventListener('click', () => {
+                initializeAudio();
+                if (selectedDateStr) {
+                    openModal(selectedDateStr);
+                }
+            });
+
+            // CERRAR MODAL DE VISTA DE DÍA
+            dayViewCloseBtn.addEventListener('click', () => {
+                playClick();
+                closeDayViewModal();
+            });
+
+            // Clic fuera del modal de VISTA DE DÍA para cerrar
+            dayViewModal.addEventListener('click', (e) => {
+                if (e.target === dayViewModal) {
+                    playClick();
+                    closeDayViewModal();
+                }
+            });
+
+            // CERRAR MODAL DE AÑADIR
+            closeModalBtn.addEventListener('click', () => {
+                playClick();
+                closeModal();
+            });
+
+            // Guardar evento
+            eventForm.addEventListener('submit', (e) => {
+                initializeAudio();
+                saveEvent(e);
+            });
+            
+            // Clic fuera del modal para cerrar
+            eventModal.addEventListener('click', (e) => {
+                if (e.target === eventModal) {
+                    playClick();
+                    closeModal();
+                }
+            });
+
+            // Selector de Tema
+            themeSelector.addEventListener('change', (e) => {
+                initializeAudio();
+                playClick();
+                const newTheme = e.target.value;
+                themeContainer.dataset.theme = newTheme;
+            });
+
+            // (AÑADIDO) Botón de prueba de sonido
+            testSoundBtn.addEventListener('click', () => {
+                initializeAudio();
+                playSuccess();
+            });
+
+            // --- INICIALIZACIÓN ---
+            renderCalendar();
+        });
+    </script>
+
+</body>
+</html>
+
 
