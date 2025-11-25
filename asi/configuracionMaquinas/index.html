@@ -17,7 +17,7 @@
         
         /* Glassmorphism */
         .glass {
-            background: rgba(17, 24, 39, 0.7);
+            background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -37,27 +37,12 @@
             overflow: hidden;
             border-radius: 0.75rem;
             border: 1px solid #374151;
-            background-color: #000;
+            background-color: #0f172a;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
-        .image-container:hover { border-color: #60a5fa; transform: translateY(-2px); }
+        .image-container:hover { border-color: #3b82f6; transform: translateY(-2px); }
         
-        .step-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            border-radius: 9999px;
-            font-weight: bold;
-            font-size: 0.875rem;
-            position: absolute;
-            left: -2.55rem; /* Ajuste para alinear con la línea */
-            top: 0;
-            z-index: 10;
-        }
-
         /* Placeholders */
         .placeholder-box {
             display: flex;
@@ -79,10 +64,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-tr from-blue-600 to-purple-600 p-2 rounded-lg">
+                    <div class="bg-gradient-to-tr from-blue-600 to-purple-600 p-2 rounded-lg shadow-lg shadow-blue-900/20">
                         <i class="fa-solid fa-microchip text-white text-lg"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight text-white">WikiHardware <span class="text-blue-500">Lab</span></span>
+                    <span class="font-bold text-xl tracking-tight text-white">WikiHardware <span class="text-blue-400">Lab</span></span>
                 </div>
                 <div class="hidden md:flex space-x-2">
                     <button onclick="switchTab('rpi')" id="btn-rpi" class="px-4 py-2 rounded-lg text-sm font-medium transition-all border border-transparent">
@@ -91,16 +76,13 @@
                     <button onclick="switchTab('jetson')" id="btn-jetson" class="px-4 py-2 rounded-lg text-sm font-medium transition-all border border-transparent">
                         <i class="fa-solid fa-robot mr-2"></i>Jetson Orin Nano
                     </button>
-                    <a href="https://github.com/LuisAporta/Pagina1" target="_blank" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-all">
-                        <i class="fa-brands fa-github"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="pt-24 pb-20 px-4 max-w-7xl mx-auto min-h-screen">
+    <!-- Contenido Principal -->
+    <main class="pt-28 pb-20 px-4 max-w-7xl mx-auto min-h-screen">
 
         <!-- Header -->
         <div class="text-center mb-16 fade-in-up">
@@ -112,11 +94,13 @@
             </p>
         </div>
 
+        <!-- ========================================= -->
         <!-- SECCIÓN RASPBERRY PI 500 -->
-        <section id="section-rpi" class="space-y-12">
+        <!-- ========================================= -->
+        <section id="section-rpi" class="space-y-16 fade-in-up">
             
             <!-- Intro RPi -->
-            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden fade-in-up">
+            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
                     <i class="fa-brands fa-raspberry-pi text-9xl text-pink-600"></i>
                 </div>
@@ -137,27 +121,27 @@
             <div class="relative ml-4 md:ml-8 space-y-16 border-l-2 border-gray-800 pl-8 py-4">
                 
                 <!-- FASE 1: BOOT -->
-                <div class="absolute -left-[21px] top-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-pink-500 text-pink-500 font-bold z-20">
+                <div class="absolute -left-[21px] top-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-pink-500 text-pink-500 font-bold z-20 shadow-[0_0_15px_rgba(236,72,153,0.5)]">
                     1
                 </div>
-                <div class="mb-12">
-                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <div class="mb-16">
+                    <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                         <span class="text-pink-500">Fase 1:</span> Configuración Inicial (First Boot)
                     </h3>
-                    <div id="rpi-phase1-container" class="space-y-12">
+                    <div id="rpi-phase1-container" class="space-y-16">
                         <!-- JS Injects Phase 1 Steps Here -->
                     </div>
                 </div>
 
                 <!-- FASE 2: ADVANCED -->
-                <div class="absolute -left-[21px] flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-purple-500 text-purple-500 font-bold z-20 mt-8">
+                <div class="absolute -left-[21px] flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-purple-500 text-purple-500 font-bold z-20 mt-2 shadow-[0_0_15px_rgba(168,85,247,0.5)]">
                     2
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 mt-16">
+                    <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3 mt-8">
                         <span class="text-purple-500">Fase 2:</span> Entorno Avanzado & Ubuntu
                     </h3>
-                    <div id="rpi-phase2-container" class="space-y-12">
+                    <div id="rpi-phase2-container" class="space-y-16">
                         <!-- JS Injects Phase 2 Steps Here -->
                     </div>
                 </div>
@@ -165,16 +149,18 @@
             </div>
         </section>
 
+        <!-- ========================================= -->
         <!-- SECCIÓN JETSON ORIN NANO -->
-        <section id="section-jetson" class="hidden space-y-12">
+        <!-- ========================================= -->
+        <section id="section-jetson" class="hidden space-y-16 fade-in-up">
             
             <!-- Intro Jetson -->
-            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden fade-in-up">
+            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
                     <i class="fa-solid fa-microchip text-9xl text-green-500"></i>
                 </div>
                 <div class="relative z-10 flex items-start gap-6">
-                    <div class="bg-black p-3 rounded-lg border border-green-900/50">
+                    <div class="bg-black p-3 rounded-lg border border-green-900/50 shadow-lg shadow-green-900/20">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg" class="h-10 w-auto" alt="NVIDIA Logo">
                     </div>
                     <div>
@@ -188,71 +174,68 @@
                 </div>
             </div>
 
-            <!-- Tabs Internos Jetson -->
-            <div class="flex border-b border-gray-800 mb-8">
-                <button class="px-6 py-3 text-sm font-medium text-green-400 border-b-2 border-green-500 focus:outline-none">
-                    1. Hardware & Unboxing
-                </button>
-                <span class="px-6 py-3 text-sm font-medium text-gray-500">
-                    ▼ Desliza para ver Configuración de Software
-                </span>
-            </div>
-
-            <!-- Galería Hardware Jetson -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 fade-in-up">
-                
-                <!-- Columna Izquierda: Caja y General -->
-                <div class="space-y-8">
-                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-box-open text-green-500"></i> Unboxing</h4>
-                        <div class="image-container h-64 mb-4">
-                            <img id="img-jetson-box" src="" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-gray-400 text-sm">Presentación oficial del Developer Kit. Incluye la placa base, el módulo SOM preinstalado y fuente de alimentación.</p>
-                    </div>
-
-                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-microchip text-green-500"></i> El Corazón: Módulo SOM</h4>
-                        <div class="image-container h-64 mb-4">
-                            <img id="img-jetson-som" src="" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-gray-400 text-sm">El módulo Orin Nano se encuentra bajo este disipador pasivo de gran tamaño (negro). Aquí reside la CPU ARM Cortex-A78AE y la GPU Ampere.</p>
-                    </div>
+            <!-- Parte A: Hardware -->
+            <div>
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-800 pb-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-blue-400 font-bold">1</div>
+                    <h3 class="text-2xl font-bold text-white">Hardware & Unboxing</h3>
                 </div>
-
-                <!-- Columna Derecha: Detalles -->
-                <div class="space-y-8">
-                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-network-wired text-green-500"></i> Conectividad I/O</h4>
-                        <div class="image-container h-64 mb-4">
-                            <img id="img-jetson-ports" src="" class="w-full h-full object-cover">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Columna Izquierda -->
+                    <div class="space-y-8">
+                        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/30 transition-colors">
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-box-open text-green-500"></i> Unboxing</h4>
+                            <div class="image-container h-64 mb-4 group">
+                                <img id="img-jetson-box" src="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">Presentación oficial del Developer Kit. La caja incluye la placa base con el módulo SOM preinstalado, fuente de alimentación DC y guía de inicio rápido.</p>
                         </div>
-                        <ul class="text-gray-400 text-sm list-disc list-inside space-y-1">
-                            <li>4x USB 3.2 Gen 2 (10Gbps)</li>
-                            <li>1x Gigabit Ethernet (RJ45)</li>
-                            <li>1x DisplayPort 1.2</li>
-                            <li>1x USB-C (para Device Mode)</li>
-                        </ul>
+
+                        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/30 transition-colors">
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-microchip text-green-500"></i> El Corazón: Módulo SOM</h4>
+                            <div class="image-container h-64 mb-4 group">
+                                <img id="img-jetson-som" src="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">El módulo Orin Nano se encuentra bajo este disipador pasivo de gran tamaño (negro). Aquí reside la CPU ARM Cortex-A78AE de 6 núcleos y la GPU Ampere con 1024 núcleos CUDA.</p>
+                        </div>
                     </div>
 
-                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-sd-card text-green-500"></i> Almacenamiento NVMe</h4>
-                        <div class="image-container h-64 mb-4">
-                            <img id="img-jetson-bottom" src="" class="w-full h-full object-cover">
+                    <!-- Columna Derecha -->
+                    <div class="space-y-8">
+                        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/30 transition-colors">
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-network-wired text-green-500"></i> Conectividad I/O</h4>
+                            <div class="image-container h-64 mb-4 group">
+                                <img id="img-jetson-ports" src="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <ul class="text-gray-400 text-sm list-disc list-inside space-y-2 marker:text-green-500">
+                                <li>4x USB 3.2 Gen 2 (10Gbps) para periféricos de alta velocidad.</li>
+                                <li>1x Gigabit Ethernet (RJ45) para conexión de red robusta.</li>
+                                <li>1x DisplayPort 1.2 para salida de video 4K.</li>
+                                <li>1x USB-C para modo dispositivo y depuración.</li>
+                            </ul>
                         </div>
-                        <p class="text-gray-400 text-sm">En la parte inferior encontramos dos slots M.2 Key M para SSDs NVMe. El sistema operativo arranca desde uno de estos discos o desde el adaptador microSD (según configuración).</p>
+
+                        <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-blue-500/30 transition-colors">
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-sd-card text-green-500"></i> Almacenamiento y M.2</h4>
+                            <div class="image-container h-64 mb-4 group">
+                                <img id="img-jetson-bottom" src="" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">Vista inferior de la placa portadora. Se aprecian los dos slots M.2 Key M para SSDs NVMe (2280) y el módulo inalámbrico M.2 Key E. El sistema operativo arranca desde la microSD (vía adaptador) o directamente desde un NVMe.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Separador -->
-            <div class="border-t border-gray-800 my-12 pt-8">
-                <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                    <span class="bg-green-600 text-black w-8 h-8 rounded flex items-center justify-center text-sm">2</span>
-                    Configuración del Sistema (Ubuntu)
-                </h3>
+            <!-- Parte B: Configuración de Software -->
+            <div class="pt-8">
+                <div class="flex items-center gap-4 mb-12 border-b border-gray-800 pb-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-green-400 font-bold">2</div>
+                    <h3 class="text-2xl font-bold text-white">Configuración del Sistema (Ubuntu + IA)</h3>
+                </div>
                 
-                <div class="relative ml-4 md:ml-8 space-y-12 border-l-2 border-green-900/50 pl-8 py-4" id="jetson-config-timeline">
+                <div class="relative ml-4 md:ml-8 space-y-16 border-l-2 border-green-900 pl-8 py-4" id="jetson-config-timeline">
                     <!-- JS Injects Software Steps Here -->
                 </div>
             </div>
@@ -266,7 +249,7 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <div class="text-gray-500 text-sm mb-4 text-center">
                 <p class="font-semibold text-gray-400">Documentación de Laboratorio</p>
-                <p class="mt-2">Generado para despliegue en GitHub Pages</p>
+                <p class="mt-2">Generado para uso local</p>
             </div>
             <div class="bg-gray-900 rounded-lg px-4 py-2 border border-gray-800 flex items-center gap-3">
                 <span class="text-xs text-gray-500 font-mono">Recursos:</span>
@@ -316,16 +299,16 @@
                 som: "WhatsApp Image 2025-11-25 at 13.28.59 (1).jpeg"
             },
             software: [
-                { file: "WhatsApp Image 2025-11-25 at 13.29.13.jpeg", title: "Cuentas en Línea", desc: "Integración opcional con servicios en la nube (Google, Microsoft, Nextcloud) para sincronizar calendario y correo." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (1).jpeg", title: "Ubuntu Pro", desc: "Servicio de suscripción de Canonical para parches de seguridad extendidos. Podemos omitirlo ('Skip for now') en entornos educativos." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (2).jpeg", title: "Privacidad y Telemetría", desc: "Decidimos si queremos enviar datos técnicos anónimos a Canonical para ayudar a mejorar Ubuntu." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.14.jpeg", title: "Servicios de Ubicación", desc: "Control de privacidad: permite a las aplicaciones conocer nuestra ubicación geográfica aproximada." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (1).jpeg", title: "Actualizador de Software", desc: "Una vez en el escritorio, el sistema detecta actualizaciones críticas. Es recomendable instalarlas ('Install Now')." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (2).jpeg", title: "Escritorio GNOME", desc: "Vista del escritorio Ubuntu funcionando. Navegando en internet con Chromium para verificar conectividad." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (2).jpeg", title: "Recursos del Sistema", desc: "Verificamos en 'System Monitor' o 'Mission Control' que los 16GB de RAM y la GPU están siendo detectados correctamente." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.15.jpeg", title: "LM Studio (IA Local)", desc: "Ejecutando LM Studio para probar la capacidad de IA. Descargamos un modelo GGUF (ej. OpenAI GPT-OSS) optimizado." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (1).jpeg", title: "Configuración de Modelo", desc: "Ajustes avanzados del modelo antes de cargarlo: Context Length y Offload a GPU para aprovechar la aceleración de NVIDIA." },
-                { file: "WhatsApp Image 2025-11-25 at 13.29.16.jpeg", title: "Inferencia de IA Exitosa", desc: "¡Éxito! El modelo Qwen (o similar) responde al chat ('Hello!') ejecutándose localmente en la Jetson Orin Nano." }
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13.jpeg", title: "Cuentas en Línea", desc: "Pantalla de 'Online Accounts'. Permite conectar cuentas de Google, Microsoft, etc., para sincronizar calendario, contactos y documentos." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (1).jpeg", title: "Ubuntu Pro", desc: "Configuración de 'Ubuntu Pro'. Es un servicio de suscripción para parches de seguridad extendidos. En este caso, seleccionamos 'Skip for now'." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (2).jpeg", title: "Ayuda a Mejorar Ubuntu", desc: "Pantalla de privacidad. Canonical solicita el envío de información técnica anónima. Seleccionamos 'No, don't send system info' para mayor privacidad." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14.jpeg", title: "Servicios de Ubicación", desc: "Permite a las aplicaciones determinar la ubicación geográfica. Por defecto viene desactivado, lo mantenemos así a menos que sea necesario." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (1).jpeg", title: "Actualizador de Software", desc: "¡Importante! Una vez en el escritorio, aparece el 'Software Updater'. Indica que hay actualizaciones desde el lanzamiento. Recomendable 'Install Now'." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (2).jpeg", title: "Escritorio Listo", desc: "Vista del escritorio GNOME con el navegador Chromium abierto en Google. Confirma que tenemos conexión a internet y el sistema gráfico funciona." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (2).jpeg", title: "Monitor de Recursos", desc: "Verificación de hardware en 'Mission Control'. Confirmamos que detecta los 16.00 GB de RAM y la VRAM disponible para la GPU." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15.jpeg", title: "LM Studio - Modelos IA", desc: "Ejecución de LM Studio. Buscamos y descargamos un modelo de lenguaje (LLM) en formato GGUF, como 'openai/gpt-oss-20b', optimizado para ejecución local." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (1).jpeg", title: "Carga del Modelo", desc: "Configuración avanzada antes de cargar el modelo. Ajustamos el 'Context Length' y nos aseguramos de que use la GPU ('GPU Offload') para acelerar la inferencia." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.16.jpeg", title: "IA Funcionando", desc: "Prueba final de éxito. El modelo 'Qwen' responde al saludo 'Hello!'. Esto confirma que la Jetson está ejecutando Inteligencia Artificial localmente." }
             ]
         };
 
@@ -357,33 +340,34 @@
         function createStepHTML(step, num, color) {
             const safeUrl = rutaBase + encodeURIComponent(step.file).replace(/%20/g, " ");
             const colors = {
-                pink: { text: 'text-pink-400', border: 'border-pink-500', dot: 'bg-pink-500' },
-                purple: { text: 'text-purple-400', border: 'border-purple-500', dot: 'bg-purple-500' },
-                green: { text: 'text-green-400', border: 'border-green-500', dot: 'bg-green-500' }
+                pink: { text: 'text-pink-400', border: 'border-pink-500', dot: 'bg-pink-500', shadow: 'shadow-[0_0_15px_rgba(236,72,153,0.5)]' },
+                purple: { text: 'text-purple-400', border: 'border-purple-500', dot: 'bg-purple-500', shadow: 'shadow-[0_0_15px_rgba(168,85,247,0.5)]' },
+                green: { text: 'text-green-400', border: 'border-green-500', dot: 'bg-green-500', shadow: 'shadow-[0_0_15px_rgba(74,222,128,0.5)]' }
             };
             const theme = colors[color];
 
             return `
                 <div class="relative group">
                     <!-- Dot -->
-                    <div class="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-gray-900 border-2 ${theme.border} z-10 group-hover:${theme.dot} transition-colors duration-300"></div>
+                    <div class="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-gray-900 border-2 ${theme.border} z-10 group-hover:${theme.dot} transition-all duration-300 group-hover:${theme.shadow}"></div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                         <!-- Texto -->
-                        <div class="lg:col-span-5">
-                            <h4 class="text-xl font-bold ${theme.text} mb-3 flex items-center gap-2">
-                                <span class="bg-gray-800 text-white text-xs px-2 py-1 rounded">Paso ${num}</span>
+                        <div class="lg:col-span-5 pt-1">
+                            <h4 class="text-xl font-bold ${theme.text} mb-3 flex items-center gap-3">
+                                <span class="bg-gray-800 text-white text-xs px-2 py-1 rounded font-mono">PASO ${num}</span>
                                 ${step.title}
                             </h4>
-                            <p class="text-gray-400 leading-relaxed text-sm">${step.desc}</p>
+                            <p class="text-gray-400 leading-relaxed text-sm border-l-2 border-gray-800 pl-4">${step.desc}</p>
                         </div>
                         
                         <!-- Imagen -->
                         <div class="lg:col-span-7">
-                            <div class="image-container aspect-video bg-gray-800">
+                            <div class="image-container aspect-video bg-gray-800/50">
                                 <img src="${safeUrl}" 
                                      class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-500"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'placeholder-box\\'><i class=\\'fa-solid fa-image text-2xl mb-2\\'></i><span>Imagen no encontrada</span><code class=\\'text-xs mt-2\\'>${step.file}</code></div>'">
+                                     alt="${step.title}"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'placeholder-box\\'><i class=\\'fa-solid fa-image text-2xl mb-2\\'></i><span>Imagen no encontrada</span><code class=\\'text-xs mt-2 text-gray-500 block break-all\\'>${step.file}</code></div>'">
                             </div>
                         </div>
                     </div>
@@ -396,7 +380,7 @@
             if(img) {
                 img.src = rutaBase + encodeURIComponent(filename).replace(/%20/g, " ");
                 img.onerror = function() {
-                    this.parentElement.innerHTML = `<div class='placeholder-box text-xs'><span>No img</span><br><code>${filename}</code></div>`;
+                    this.parentElement.innerHTML = `<div class='placeholder-box text-xs'><span>No img</span><br><code class='break-all'>${filename}</code></div>`;
                 }
             }
         }
@@ -410,12 +394,12 @@
             if(tab === 'rpi') {
                 rpi.classList.remove('hidden');
                 jetson.classList.add('hidden');
-                btnRpi.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-pink-600 text-white shadow-lg shadow-pink-900/50";
+                btnRpi.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-pink-600 text-white shadow-lg shadow-pink-900/50 transform scale-105";
                 btnJetson.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-gray-800";
             } else {
                 rpi.classList.add('hidden');
                 jetson.classList.remove('hidden');
-                btnJetson.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-green-600 text-white shadow-lg shadow-green-900/50";
+                btnJetson.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-green-600 text-white shadow-lg shadow-green-900/50 transform scale-105";
                 btnRpi.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-gray-800";
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
