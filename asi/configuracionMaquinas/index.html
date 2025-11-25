@@ -1,1 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Técnica: RPi 500 & Jetson Orin Nano</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
 
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        /* Animaciones */
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid #374151;
+            background-color: #000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        .image-container:hover { border-color: #60a5fa; transform: translateY(-2px); }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            position: absolute;
+            left: -2.55rem; /* Ajuste para alinear con la línea */
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Placeholders */
+        .placeholder-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #1f2937;
+            color: #9ca3af;
+            text-align: center;
+            min-height: 250px;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-200 antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-blue-600 to-purple-600 p-2 rounded-lg">
+                        <i class="fa-solid fa-microchip text-white text-lg"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">WikiHardware <span class="text-blue-500">Lab</span></span>
+                </div>
+                <div class="hidden md:flex space-x-2">
+                    <button onclick="switchTab('rpi')" id="btn-rpi" class="px-4 py-2 rounded-lg text-sm font-medium transition-all border border-transparent">
+                        <i class="fa-brands fa-raspberry-pi mr-2"></i>Raspberry Pi 500
+                    </button>
+                    <button onclick="switchTab('jetson')" id="btn-jetson" class="px-4 py-2 rounded-lg text-sm font-medium transition-all border border-transparent">
+                        <i class="fa-solid fa-robot mr-2"></i>Jetson Orin Nano
+                    </button>
+                    <a href="https://github.com/LuisAporta/Pagina1" target="_blank" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-all">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-20 px-4 max-w-7xl mx-auto min-h-screen">
+
+        <!-- Header -->
+        <div class="text-center mb-16 fade-in-up">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-6">
+                Bitácora de Ingeniería
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                Documentación técnica detallada sobre el despliegue, configuración y análisis de hardware para sistemas embebidos y computación en el borde (Edge AI).
+            </p>
+        </div>
+
+        <!-- SECCIÓN RASPBERRY PI 500 -->
+        <section id="section-rpi" class="space-y-12">
+            
+            <!-- Intro RPi -->
+            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden fade-in-up">
+                <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                    <i class="fa-brands fa-raspberry-pi text-9xl text-pink-600"></i>
+                </div>
+                <div class="relative z-10 flex items-start gap-6">
+                    <img src="https://assets.raspberrypi.com/static/raspberry-pi-logo-text-254890925293550696c7359433237933.svg" class="h-16 w-auto filter invert opacity-90" alt="RPi Logo">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Raspberry Pi 500</h2>
+                        <p class="text-gray-400">Computadora todo-en-uno integrada en un teclado. Guía completa de puesta en marcha.</p>
+                        <div class="flex gap-3 mt-4">
+                            <span class="px-3 py-1 rounded-full bg-pink-900/30 text-pink-400 text-xs border border-pink-800">ARM Cortex-A76</span>
+                            <span class="px-3 py-1 rounded-full bg-green-900/30 text-green-400 text-xs border border-green-800">Raspberry Pi OS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline RPi -->
+            <div class="relative ml-4 md:ml-8 space-y-16 border-l-2 border-gray-800 pl-8 py-4">
+                
+                <!-- FASE 1: BOOT -->
+                <div class="absolute -left-[21px] top-0 flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-pink-500 text-pink-500 font-bold z-20">
+                    1
+                </div>
+                <div class="mb-12">
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <span class="text-pink-500">Fase 1:</span> Configuración Inicial (First Boot)
+                    </h3>
+                    <div id="rpi-phase1-container" class="space-y-12">
+                        <!-- JS Injects Phase 1 Steps Here -->
+                    </div>
+                </div>
+
+                <!-- FASE 2: ADVANCED -->
+                <div class="absolute -left-[21px] flex items-center justify-center w-10 h-10 rounded-full bg-gray-900 border-2 border-purple-500 text-purple-500 font-bold z-20 mt-8">
+                    2
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3 mt-16">
+                        <span class="text-purple-500">Fase 2:</span> Entorno Avanzado & Ubuntu
+                    </h3>
+                    <div id="rpi-phase2-container" class="space-y-12">
+                        <!-- JS Injects Phase 2 Steps Here -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN JETSON ORIN NANO -->
+        <section id="section-jetson" class="hidden space-y-12">
+            
+            <!-- Intro Jetson -->
+            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 relative overflow-hidden fade-in-up">
+                <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                    <i class="fa-solid fa-microchip text-9xl text-green-500"></i>
+                </div>
+                <div class="relative z-10 flex items-start gap-6">
+                    <div class="bg-black p-3 rounded-lg border border-green-900/50">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg" class="h-10 w-auto" alt="NVIDIA Logo">
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">NVIDIA Jetson Orin Nano</h2>
+                        <p class="text-gray-400">Kit de desarrollo para IA en el borde. Unboxing, hardware y configuración de software.</p>
+                        <div class="flex gap-3 mt-4">
+                            <span class="px-3 py-1 rounded-full bg-green-900/30 text-green-400 text-xs border border-green-800">NVIDIA Ampere GPU</span>
+                            <span class="px-3 py-1 rounded-full bg-orange-900/30 text-orange-400 text-xs border border-orange-800">Ubuntu 20.04/22.04</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Internos Jetson -->
+            <div class="flex border-b border-gray-800 mb-8">
+                <button class="px-6 py-3 text-sm font-medium text-green-400 border-b-2 border-green-500 focus:outline-none">
+                    1. Hardware & Unboxing
+                </button>
+                <span class="px-6 py-3 text-sm font-medium text-gray-500">
+                    ▼ Desliza para ver Configuración de Software
+                </span>
+            </div>
+
+            <!-- Galería Hardware Jetson -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 fade-in-up">
+                
+                <!-- Columna Izquierda: Caja y General -->
+                <div class="space-y-8">
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-box-open text-green-500"></i> Unboxing</h4>
+                        <div class="image-container h-64 mb-4">
+                            <img id="img-jetson-box" src="" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-gray-400 text-sm">Presentación oficial del Developer Kit. Incluye la placa base, el módulo SOM preinstalado y fuente de alimentación.</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-microchip text-green-500"></i> El Corazón: Módulo SOM</h4>
+                        <div class="image-container h-64 mb-4">
+                            <img id="img-jetson-som" src="" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-gray-400 text-sm">El módulo Orin Nano se encuentra bajo este disipador pasivo de gran tamaño (negro). Aquí reside la CPU ARM Cortex-A78AE y la GPU Ampere.</p>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Detalles -->
+                <div class="space-y-8">
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-network-wired text-green-500"></i> Conectividad I/O</h4>
+                        <div class="image-container h-64 mb-4">
+                            <img id="img-jetson-ports" src="" class="w-full h-full object-cover">
+                        </div>
+                        <ul class="text-gray-400 text-sm list-disc list-inside space-y-1">
+                            <li>4x USB 3.2 Gen 2 (10Gbps)</li>
+                            <li>1x Gigabit Ethernet (RJ45)</li>
+                            <li>1x DisplayPort 1.2</li>
+                            <li>1x USB-C (para Device Mode)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-sd-card text-green-500"></i> Almacenamiento NVMe</h4>
+                        <div class="image-container h-64 mb-4">
+                            <img id="img-jetson-bottom" src="" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-gray-400 text-sm">En la parte inferior encontramos dos slots M.2 Key M para SSDs NVMe. El sistema operativo arranca desde uno de estos discos o desde el adaptador microSD (según configuración).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separador -->
+            <div class="border-t border-gray-800 my-12 pt-8">
+                <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                    <span class="bg-green-600 text-black w-8 h-8 rounded flex items-center justify-center text-sm">2</span>
+                    Configuración del Sistema (Ubuntu)
+                </h3>
+                
+                <div class="relative ml-4 md:ml-8 space-y-12 border-l-2 border-green-900/50 pl-8 py-4" id="jetson-config-timeline">
+                    <!-- JS Injects Software Steps Here -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <div class="text-gray-500 text-sm mb-4 text-center">
+                <p class="font-semibold text-gray-400">Documentación de Laboratorio</p>
+                <p class="mt-2">Generado para despliegue en GitHub Pages</p>
+            </div>
+            <div class="bg-gray-900 rounded-lg px-4 py-2 border border-gray-800 flex items-center gap-3">
+                <span class="text-xs text-gray-500 font-mono">Recursos:</span>
+                <code class="text-xs text-blue-400 font-mono">/recursos/imagenes/</code>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LÓGICA -->
+    <script>
+        const rutaBase = "recursos/imagenes/";
+
+        // ================= DATA SOURCE =================
+
+        // 1. RASPBERRY PI 500
+        const dataRPi = {
+            phase1: [
+                { file: "WhatsApp Image 2025-11-25 at 13.29.01 (1).jpeg", title: "Bienvenida al Asistente", desc: "Pantalla inicial de 'Welcome to the Raspberry Pi Desktop'. Este asistente nos guiará en la configuración básica antes de usar el sistema." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.02.jpeg", title: "Configuración Regional", desc: "Seleccionamos 'Spain' como país, 'European Spanish' como idioma y 'Madrid' como zona horaria. Esto ajusta formatos de fecha y hora." },
+                { file: "WhatsApp Image 2025-11-24 at 18.39.50.jpeg", title: "Creación de Usuario", desc: "Raspberry Pi ya no usa el usuario 'pi' por defecto por seguridad. Creamos el usuario administrador <code>aulaateca26</code> y su contraseña." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.03.jpeg", title: "Selección de Red", desc: "El sistema escanea las redes WiFi disponibles. Seleccionamos nuestra red (ej. 'Wifi_AULA_ATECA') para descargar actualizaciones." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.03 (1).jpeg", title: "Credenciales WiFi", desc: "Introducimos la contraseña de la red. Es importante tener conexión para el siguiente paso de actualización de software." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.04 (1).jpeg", title: "Actualizar Software", desc: "El asistente busca en los repositorios oficiales las últimas versiones del SO y aplicaciones instaladas." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.05.jpeg", title: "Descargando Paquetes", desc: "Barra de progreso de la descarga e instalación. Puede tardar varios minutos dependiendo de la velocidad de la red." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.05 (1).jpeg", title: "Configuración Completada", desc: "¡Sistema listo! El asistente confirma que la RPi está configurada. Se requiere un reinicio para aplicar todos los cambios." }
+            ],
+            phase2: [
+                { file: "WhatsApp Image 2025-11-25 at 13.29.09 (1).jpeg", title: "Licencias de Software", desc: "En entornos avanzados o al instalar Ubuntu, debemos aceptar los términos de licencia (EULA), especialmente para drivers privativos." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.09 (2).jpeg", title: "Idioma del Sistema (Ubuntu)", desc: "Selección de idioma en el instalador de Ubuntu. Elegimos 'Español' para traducir toda la interfaz gráfica." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.11.jpeg", title: "Disposición de Teclado", desc: "Seleccionamos 'Spanish' (o Spanish - Windows) para asegurar que la tecla 'Ñ' y los acentos funcionen correctamente." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.11 (1).jpeg", title: "Reconexión a Red", desc: "Si cambiamos de entorno, es posible que debamos autenticarnos nuevamente en la red WiFi para descargar paquetes de idioma." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.11 (2).jpeg", title: "Ubicación Geográfica", desc: "Confirmamos nuestra ubicación en el mapa mundial para la sincronización horaria automática (NTP)." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.11 (3).jpeg", title: "Perfil de Usuario del Sistema", desc: "Definimos el nombre completo, nombre del equipo (hostname) y credenciales de acceso para el entorno Ubuntu." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.12.jpeg", title: "Gestión de Particiones", desc: "Aviso sobre el tamaño de la partición de aplicaciones (APP). Generalmente aceptamos el tamaño máximo sugerido por defecto." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.12 (1).jpeg", title: "Instalación de Paquetes", desc: "El instalador de paquetes (Snap) descarga componentes esenciales como el navegador Chromium y sus dependencias." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.12 (2).jpeg", title: "Aplicando Configuración", desc: "Fase final: el sistema configura los locales, genera los archivos de usuario y limpia los archivos temporales de instalación." }
+            ]
+        };
+
+        // 2. JETSON ORIN NANO
+        const dataJetson = {
+            hardware: {
+                box: "WhatsApp Image 2025-11-25 at 13.29.06.jpeg",
+                open: "WhatsApp Image 2025-11-25 at 13.29.06 (1).jpeg",
+                ports: "WhatsApp Image 2025-11-25 at 13.29.07 (2).jpeg",
+                bottom: "WhatsApp Image 2025-11-25 at 13.29.07.jpeg",
+                som: "WhatsApp Image 2025-11-25 at 13.28.59 (1).jpeg"
+            },
+            software: [
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13.jpeg", title: "Cuentas en Línea", desc: "Integración opcional con servicios en la nube (Google, Microsoft, Nextcloud) para sincronizar calendario y correo." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (1).jpeg", title: "Ubuntu Pro", desc: "Servicio de suscripción de Canonical para parches de seguridad extendidos. Podemos omitirlo ('Skip for now') en entornos educativos." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.13 (2).jpeg", title: "Privacidad y Telemetría", desc: "Decidimos si queremos enviar datos técnicos anónimos a Canonical para ayudar a mejorar Ubuntu." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14.jpeg", title: "Servicios de Ubicación", desc: "Control de privacidad: permite a las aplicaciones conocer nuestra ubicación geográfica aproximada." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (1).jpeg", title: "Actualizador de Software", desc: "Una vez en el escritorio, el sistema detecta actualizaciones críticas. Es recomendable instalarlas ('Install Now')." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.14 (2).jpeg", title: "Escritorio GNOME", desc: "Vista del escritorio Ubuntu funcionando. Navegando en internet con Chromium para verificar conectividad." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (2).jpeg", title: "Recursos del Sistema", desc: "Verificamos en 'System Monitor' o 'Mission Control' que los 16GB de RAM y la GPU están siendo detectados correctamente." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15.jpeg", title: "LM Studio (IA Local)", desc: "Ejecutando LM Studio para probar la capacidad de IA. Descargamos un modelo GGUF (ej. OpenAI GPT-OSS) optimizado." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.15 (1).jpeg", title: "Configuración de Modelo", desc: "Ajustes avanzados del modelo antes de cargarlo: Context Length y Offload a GPU para aprovechar la aceleración de NVIDIA." },
+                { file: "WhatsApp Image 2025-11-25 at 13.29.16.jpeg", title: "Inferencia de IA Exitosa", desc: "¡Éxito! El modelo Qwen (o similar) responde al chat ('Hello!') ejecutándose localmente en la Jetson Orin Nano." }
+            ]
+        };
+
+        // ================= LOGIC =================
+
+        function renderRPi() {
+            const c1 = document.getElementById('rpi-phase1-container');
+            const c2 = document.getElementById('rpi-phase2-container');
+            
+            // Render Phase 1
+            c1.innerHTML = dataRPi.phase1.map((step, i) => createStepHTML(step, i + 1, 'pink')).join('');
+            
+            // Render Phase 2
+            c2.innerHTML = dataRPi.phase2.map((step, i) => createStepHTML(step, i + 1, 'purple')).join('');
+        }
+
+        function renderJetson() {
+            // Hardware images
+            setImg('img-jetson-box', dataJetson.hardware.box);
+            setImg('img-jetson-som', dataJetson.hardware.som);
+            setImg('img-jetson-ports', dataJetson.hardware.ports);
+            setImg('img-jetson-bottom', dataJetson.hardware.bottom);
+
+            // Config timeline
+            const container = document.getElementById('jetson-config-timeline');
+            container.innerHTML = dataJetson.software.map((step, i) => createStepHTML(step, i + 1, 'green')).join('');
+        }
+
+        function createStepHTML(step, num, color) {
+            const safeUrl = rutaBase + encodeURIComponent(step.file).replace(/%20/g, " ");
+            const colors = {
+                pink: { text: 'text-pink-400', border: 'border-pink-500', dot: 'bg-pink-500' },
+                purple: { text: 'text-purple-400', border: 'border-purple-500', dot: 'bg-purple-500' },
+                green: { text: 'text-green-400', border: 'border-green-500', dot: 'bg-green-500' }
+            };
+            const theme = colors[color];
+
+            return `
+                <div class="relative group">
+                    <!-- Dot -->
+                    <div class="absolute -left-[41px] top-0 w-6 h-6 rounded-full bg-gray-900 border-2 ${theme.border} z-10 group-hover:${theme.dot} transition-colors duration-300"></div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <!-- Texto -->
+                        <div class="lg:col-span-5">
+                            <h4 class="text-xl font-bold ${theme.text} mb-3 flex items-center gap-2">
+                                <span class="bg-gray-800 text-white text-xs px-2 py-1 rounded">Paso ${num}</span>
+                                ${step.title}
+                            </h4>
+                            <p class="text-gray-400 leading-relaxed text-sm">${step.desc}</p>
+                        </div>
+                        
+                        <!-- Imagen -->
+                        <div class="lg:col-span-7">
+                            <div class="image-container aspect-video bg-gray-800">
+                                <img src="${safeUrl}" 
+                                     class="w-full h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-500"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'placeholder-box\\'><i class=\\'fa-solid fa-image text-2xl mb-2\\'></i><span>Imagen no encontrada</span><code class=\\'text-xs mt-2\\'>${step.file}</code></div>'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setImg(id, filename) {
+            const img = document.getElementById(id);
+            if(img) {
+                img.src = rutaBase + encodeURIComponent(filename).replace(/%20/g, " ");
+                img.onerror = function() {
+                    this.parentElement.innerHTML = `<div class='placeholder-box text-xs'><span>No img</span><br><code>${filename}</code></div>`;
+                }
+            }
+        }
+
+        function switchTab(tab) {
+            const rpi = document.getElementById('section-rpi');
+            const jetson = document.getElementById('section-jetson');
+            const btnRpi = document.getElementById('btn-rpi');
+            const btnJetson = document.getElementById('btn-jetson');
+
+            if(tab === 'rpi') {
+                rpi.classList.remove('hidden');
+                jetson.classList.add('hidden');
+                btnRpi.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-pink-600 text-white shadow-lg shadow-pink-900/50";
+                btnJetson.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-gray-800";
+            } else {
+                rpi.classList.add('hidden');
+                jetson.classList.remove('hidden');
+                btnJetson.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all bg-green-600 text-white shadow-lg shadow-green-900/50";
+                btnRpi.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-gray-800";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRPi();
+            renderJetson();
+            switchTab('rpi'); // Default tab
+        });
+    </script>
+</body>
+</html>
