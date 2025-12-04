@@ -1,1 +1,827 @@
 
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>Grand Line Chess - Fixed Layout</title>
+    
+    <!-- Scripts Core -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Ajedrez Core -->
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <!-- Fuentes & Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    
+    <script>
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "md-sys-color-primary": "#EDC242",
+                "md-sys-color-on-primary": "#3E2E00",
+                "md-sys-color-primary-container": "#584400",
+                "md-sys-color-on-primary-container": "#FADE60",
+                "md-sys-color-secondary": "#D3C5A0",
+                "md-sys-color-on-secondary": "#382F15",
+                "md-sys-color-secondary-container": "#4F452A",
+                "md-sys-color-on-secondary-container": "#F0E1BB",
+                "md-sys-color-tertiary": "#AACFA6",
+                "md-sys-color-on-tertiary": "#16361B",
+                "md-sys-color-tertiary-container": "#2D4D30",
+                "md-sys-color-on-tertiary-container": "#C6EBC1",
+                "md-sys-color-error": "#FFB4AB",
+                "md-sys-color-on-error": "#690005",
+                "md-sys-color-error-container": "#93000A",
+                "md-sys-color-on-error-container": "#FFDAD6",
+                "md-sys-color-background": "#15130B",
+                "md-sys-color-on-background": "#E8E2D9",
+                "md-sys-color-surface": "#15130B",
+                "md-sys-color-on-surface": "#E8E2D9",
+                "md-sys-color-surface-1": "#201E15",
+                "md-sys-color-surface-2": "#252319",
+                "md-sys-color-surface-3": "#2A281E",
+                "md-sys-color-surface-4": "#2C2A1F",
+                "md-sys-color-surface-5": "#302E23",
+                "md-sys-color-outline": "#979080",
+                "md-sys-color-outline-variant": "#4B4639",
+              },
+              fontFamily: {
+                "display": ["'IM Fell English SC'", "serif"],
+                "body": ["Roboto", "sans-serif"]
+              },
+              boxShadow: {
+                'elevation-1': '0px 1px 2px 0px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15)',
+                'elevation-2': '0px 1px 2px 0px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15)',
+                'elevation-3': '0px 1px 3px 0px rgba(0,0,0,0.3), 0px 4px 8px 3px rgba(0,0,0,0.15)',
+              }
+            },
+          },
+        }
+    </script>
+
+    <style>
+        /* Aseguramos que el body no haga scroll nunca */
+        body { background-color: #15130B; color: #E8E2D9; font-family: 'Roboto', sans-serif; overflow: hidden; height: 100dvh; width: 100vw; margin: 0; padding: 0; }
+        
+        .display-large { font-family: 'IM Fell English SC', serif; font-size: 57px; line-height: 64px; letter-spacing: -0.25px; }
+        .display-medium { font-family: 'IM Fell English SC', serif; font-size: 45px; line-height: 52px; }
+        .headline-medium { font-family: 'Roboto', sans-serif; font-size: 28px; line-height: 36px; font-weight: 400; }
+        .title-large { font-family: 'Roboto', sans-serif; font-size: 22px; line-height: 28px; font-weight: 400; }
+        .label-large { font-family: 'Roboto', sans-serif; font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: 0.1px; }
+        .body-medium { font-family: 'Roboto', sans-serif; font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: 0.25px; }
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        /* Tablero */
+        .board-container { 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: var(--elevation-3);
+            border: 4px solid #2A281E;
+        }
+        
+        .hidden-force { display: none !important; }
+        .flex-force { display: flex !important; }
+        .grid-force { display: grid !important; }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #4B4639; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #979080; }
+
+        .eval-bar-container { width: 8px; height: 100%; background: #252319; border-radius: 4px; overflow: hidden; position: relative; }
+        .eval-fill { background: #E8E2D9; width: 100%; height: 50%; transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .highlight-move { background-image: radial-gradient(circle, rgba(237, 194, 66, 0.7) 18%, transparent 20%); }
+        .highlight-capture { background-image: radial-gradient(circle, transparent 55%, rgba(255, 180, 171, 0.7) 56%, rgba(255, 180, 171, 0.7) 65%, transparent 66%); }
+        .highlight-hint { background-image: radial-gradient(circle, rgba(170, 207, 166, 0.7) 18%, transparent 20%); box-shadow: inset 0 0 20px rgba(170, 207, 166, 0.3); }
+        .highlight-check { background-color: rgba(147, 0, 10, 0.4) !important; box-shadow: inset 0 0 15px rgba(255, 180, 171, 0.6); }
+
+        #check-toast {
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
+            background: #93000A; color: #FFDAD6;
+            padding: 12px 24px; border-radius: 28px;
+            font-family: 'Roboto', sans-serif; font-weight: 500;
+            pointer-events: none; opacity: 0; transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+            z-index: 60; box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15);
+            display: flex; align-items: center; gap: 8px;
+        }
+        #check-toast.show { opacity: 1; top: 120px; }
+
+        button, .card-container { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        button:active { transform: scale(0.96); }
+    </style>
+</head>
+<body class="flex flex-col h-full bg-md-sys-color-background selection:bg-md-sys-color-primary-container selection:text-md-sys-color-on-primary-container">
+
+    <!-- NAVIGATION RAIL -->
+    <nav class="fixed left-0 top-0 h-full w-20 bg-md-sys-color-surface-1 flex flex-col items-center py-8 gap-8 z-50 shadow-elevation-1 border-r border-md-sys-color-outline-variant hidden md:flex">
+        <div class="text-md-sys-color-primary cursor-pointer" onclick="returnToMenu()">
+            <span class="material-symbols-rounded text-4xl">sailing</span>
+        </div>
+        
+        <div class="flex flex-col gap-4 w-full items-center mt-4">
+            <button onclick="returnToMenu()" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Menú">
+                <span class="material-symbols-rounded group-hover:fill-1">home</span>
+            </button>
+            <button onclick="startGame()" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Reiniciar">
+                <span class="material-symbols-rounded group-hover:fill-1">refresh</span>
+            </button>
+            <button onclick="selectMode('settings')" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Ajustes">
+                <span class="material-symbols-rounded">settings</span>
+            </button>
+        </div>
+
+        <div class="mt-auto">
+            <div class="w-10 h-10 rounded-full bg-cover bg-center border border-md-sys-color-outline" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAfc2njxWSV0Fq_WMj-z-eG29m4ajhM8kP-t1Ua-ZLJSz7KnZPAWYketezdLMfA4y8ClT8cnFcqKmT5LiwZguGPwTyA4ZtdNBM2BDuIcYJw4zisfzuUdYKaPIRFiCh-O5ZyPrB7MVB-QpJgeOYS77CwMLzzNDMLFQBVjrzBi1C8CfF1hYL1E3LAmo3M1rbtTDwlkvcUCH_SqpxGrgaONzA6B4gLMpLxYKcf-UYQBqTjxyMCm6HDM_uL88L7xShWKA-2R-oA-aFmvM");'></div>
+        </div>
+    </nav>
+
+    <!-- MENÚ PRINCIPAL -->
+    <div id="main-menu" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-md-sys-color-background bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] overflow-y-auto">
+        <div class="text-center mb-12 animate-fade-in mt-10 md:mt-0">
+            <span class="material-symbols-rounded text-md-sys-color-primary text-8xl mb-4">crown</span>
+            <h1 class="display-large text-md-sys-color-on-background">Grand Line</h1>
+            <p class="title-large text-md-sys-color-secondary mt-2">Material Design Edition</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl px-6 pb-10 animate-fade-in" style="animation-delay: 0.1s;">
+            <!-- CARD 1 -->
+            <div class="bg-md-sys-color-surface-2 p-6 rounded-[24px] border border-md-sys-color-outline-variant flex flex-col gap-4 shadow-elevation-1">
+                <h3 class="headline-medium text-md-sys-color-on-surface">Modo</h3>
+                <div class="flex flex-col gap-2">
+                    <button onclick="selectMode('ai')" id="btn-mode-ai" class="h-14 px-6 rounded-full border border-md-sys-color-outline flex items-center gap-3 text-md-sys-color-on-surface hover:bg-md-sys-color-surface-4 transition-all">
+                        <span class="material-symbols-rounded">smart_toy</span>
+                        <span class="label-large">CONTRA IA</span>
+                    </button>
+                    <button onclick="selectMode('human')" id="btn-mode-human" class="h-14 px-6 rounded-full border border-md-sys-color-outline flex items-center gap-3 text-md-sys-color-on-surface hover:bg-md-sys-color-surface-4 transition-all">
+                        <span class="material-symbols-rounded">group</span>
+                        <span class="label-large">2 JUGADORES</span>
+                    </button>
+                </div>
+            </div>
+            <!-- CARD 2 -->
+            <div class="bg-md-sys-color-surface-2 p-6 rounded-[24px] border border-md-sys-color-outline-variant flex flex-col gap-4 shadow-elevation-1">
+                <h3 class="headline-medium text-md-sys-color-on-surface">Tiempo</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="selectTime(0)" id="btn-time-0" class="h-10 px-4 rounded-lg border border-md-sys-color-outline text-md-sys-color-on-surface text-sm font-medium hover:bg-md-sys-color-surface-4">∞ Ilm</button>
+                    <button onclick="selectTime(10)" id="btn-time-10" class="h-10 px-4 rounded-lg border border-md-sys-color-outline text-md-sys-color-on-surface text-sm font-medium hover:bg-md-sys-color-surface-4">10 m</button>
+                    <button onclick="selectTime(5)" id="btn-time-5" class="h-10 px-4 rounded-lg border border-md-sys-color-outline text-md-sys-color-on-surface text-sm font-medium hover:bg-md-sys-color-surface-4">5 m</button>
+                    <button onclick="selectTime(1)" id="btn-time-1" class="h-10 px-4 rounded-lg border border-md-sys-color-outline text-md-sys-color-on-surface text-sm font-medium hover:bg-md-sys-color-surface-4">1 m</button>
+                </div>
+            </div>
+            <!-- CARD 3 -->
+            <div class="bg-md-sys-color-surface-2 p-6 rounded-[24px] border border-md-sys-color-outline-variant flex flex-col gap-4 shadow-elevation-1">
+                <h3 class="headline-medium text-md-sys-color-on-surface">Bando</h3>
+                <div class="flex gap-2">
+                    <button onclick="selectColor('w')" id="btn-color-w" class="flex-1 h-20 rounded-2xl border border-md-sys-color-outline flex flex-col items-center justify-center hover:bg-md-sys-color-surface-4">
+                        <span class="material-symbols-rounded text-md-sys-color-on-surface">chess_pawn</span>
+                        <span class="text-xs mt-1 text-md-sys-color-on-surface-variant">Blancas</span>
+                    </button>
+                    <button onclick="selectColor('random')" id="btn-color-r" class="flex-1 h-20 rounded-2xl border border-md-sys-color-outline flex flex-col items-center justify-center hover:bg-md-sys-color-surface-4">
+                        <span class="material-symbols-rounded text-md-sys-color-primary">shuffle</span>
+                    </button>
+                    <button onclick="selectColor('b')" id="btn-color-b" class="flex-1 h-20 rounded-2xl border border-md-sys-color-outline flex flex-col items-center justify-center hover:bg-md-sys-color-surface-4">
+                        <span class="material-symbols-rounded text-black bg-white rounded px-1">chess_pawn</span>
+                        <span class="text-xs mt-1 text-md-sys-color-on-surface-variant">Negras</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="startGame()" class="mb-12 h-14 pl-6 pr-8 bg-md-sys-color-primary-container text-md-sys-color-on-primary-container rounded-[16px] shadow-elevation-3 hover:shadow-elevation-2 flex items-center gap-3 transition-all hover:scale-105 active:scale-95">
+            <span class="material-symbols-rounded">sailing</span>
+            <span class="label-large text-lg">JUGAR</span>
+        </button>
+    </div>
+
+    <!-- VISTA DE JUEGO (GAME VIEW) -->
+    <!-- FIX CRITICO: h-full y overflow-hidden en el contenedor principal del juego -->
+    <!-- Esto asegura que el grid NUNCA sea más alto que la pantalla -->
+    <main id="game-view" class="hidden-force flex-1 md:pl-20 w-full p-4 lg:p-6 grid grid-cols-1 xl:grid-cols-[360px_1fr_360px] gap-6 max-w-[1920px] mx-auto h-full overflow-hidden">
+        
+        <div id="check-toast" class="shadow-elevation-3">
+            <span class="material-symbols-rounded">warning</span>
+            <span>¡JAQUE AL REY!</span>
+        </div>
+
+        <!-- COLUMNA IZQUIERDA: HISTORIAL -->
+        <!-- FIX CRITICO: h-full y flex-col para que ocupe la altura de la fila del grid -->
+        <aside class="flex flex-col bg-md-sys-color-surface-1 rounded-[24px] p-6 shadow-elevation-1 h-full max-h-full overflow-hidden order-2 xl:order-1 border border-md-sys-color-outline-variant">
+            <!-- Header Fijo (shrink-0) -->
+            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-4 flex-shrink-0">
+                <span class="material-symbols-rounded text-md-sys-color-primary text-3xl">menu_book</span>
+                <h3 class="headline-medium text-md-sys-color-on-surface">Diario</h3>
+            </div>
+            
+            <!-- CONTENEDOR DE SCROLL: flex-1 + min-h-0 -->
+            <!-- Aquí es donde ocurre la magia. min-h-0 permite al flexbox encogerse y activar el scroll -->
+            <div class="flex-1 flex flex-col min-h-0 mt-4 bg-md-sys-color-surface-2 rounded-[16px] p-2">
+                 <div class="overflow-y-auto h-full pr-2 custom-scrollbar" id="pgn-container">
+                    <div class="text-center text-md-sys-color-outline mt-10 body-medium">Esperando movimientos...</div>
+                 </div>
+            </div>
+            
+            <!-- Footer Fijo (shrink-0) -->
+            <div class="grid grid-cols-2 gap-3 mt-4 flex-shrink-0">
+                <button onclick="showHint()" class="col-span-2 h-12 rounded-full bg-md-sys-color-tertiary-container text-md-sys-color-on-tertiary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
+                    <span class="material-symbols-rounded">lightbulb</span> Pedir Pista
+                </button>
+                <button onclick="undoMove()" class="h-10 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
+                    <span class="material-symbols-rounded text-sm">undo</span> Deshacer
+                </button>
+                <button onclick="resetGame()" class="h-10 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
+                    <span class="material-symbols-rounded text-sm">refresh</span> Reiniciar
+                </button>
+                <button onclick="generateReport()" class="col-span-2 h-10 rounded-full bg-md-sys-color-secondary-container text-md-sys-color-on-secondary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
+                    <span class="material-symbols-rounded text-sm">analytics</span> Informe Final
+                </button>
+            </div>
+        </aside>
+
+        <!-- COLUMNA CENTRAL: TABLERO -->
+        <!-- FIX CRITICO: justify-center para centrar verticalmente, overflow-y-auto solo para moviles pequeños -->
+        <div class="flex flex-col justify-center items-center w-full order-1 xl:order-2 h-full overflow-y-auto xl:overflow-visible py-2">
+            
+            <!-- TARJETA RIVAL -->
+            <div id="top-panel" class="w-full max-w-[550px] flex justify-between items-center p-3 md:p-4 bg-md-sys-color-surface-1 rounded-[20px] transition-all duration-300 border-2 border-transparent mb-4 flex-shrink-0">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div id="top-avatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-md-sys-color-error-container flex items-center justify-center text-md-sys-color-on-error-container">
+                        <span class="material-symbols-rounded text-xl md:text-2xl">robot_2</span>
+                    </div>
+                    <div>
+                        <p id="top-name" class="title-large text-md-sys-color-on-surface text-base md:text-xl">Rival</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                            <p id="engine-status" class="body-medium text-md-sys-color-outline text-xs md:text-sm">Conectado</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div id="top-clock" class="display-medium text-2xl md:text-3xl font-mono text-md-sys-color-on-surface-variant hidden">10:00</div>
+                    <div class="label-large text-md-sys-color-outline mt-1 text-xs md:text-sm">Eval: <span id="top-eval" class="text-md-sys-color-on-surface">0.0</span></div>
+                </div>
+            </div>
+
+            <!-- AREA DE JUEGO (Tablero + Barra) -->
+            <div class="flex gap-2 md:gap-4 items-stretch justify-center w-full flex-shrink-0">
+                <!-- Barra de Evaluación -->
+                <div class="eval-bar-container shadow-elevation-1 flex-shrink-0 hidden sm:block">
+                    <div id="eval-bar-fill" class="eval-fill"></div>
+                </div>
+                
+                <!-- Tablero Fluido -->
+                <div class="w-full max-w-[550px] aspect-square relative">
+                    <div id="myBoard" class="w-full h-full board-container bg-[#252319]"></div>
+                </div>
+            </div>
+
+            <!-- TARJETA JUGADOR -->
+            <div id="bottom-panel" class="w-full max-w-[550px] flex justify-between items-center p-3 md:p-4 bg-md-sys-color-surface-1 rounded-[20px] transition-all duration-300 border-2 border-transparent mt-4 flex-shrink-0">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div id="bottom-avatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-md-sys-color-tertiary-container flex items-center justify-center text-md-sys-color-on-tertiary-container">
+                        <span class="material-symbols-rounded text-xl md:text-2xl">person</span>
+                    </div>
+                    <div>
+                        <p id="bottom-name" class="title-large text-md-sys-color-on-surface text-base md:text-xl">Tú</p>
+                        <p class="label-large text-md-sys-color-primary opacity-0 transition-opacity text-xs md:text-sm" id="turn-indicator">Tu Turno</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div id="bottom-clock" class="display-medium text-2xl md:text-3xl font-mono text-md-sys-color-on-surface hidden">10:00</div>
+                    <div class="label-large text-md-sys-color-outline mt-1 text-xs md:text-sm">Eval: <span id="bottom-eval" class="text-md-sys-color-on-surface">0.0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: NAVIGATOR -->
+        <!-- FIX CRITICO: Igual que la izquierda, estructura flex estricta -->
+        <aside class="flex flex-col bg-md-sys-color-surface-1 rounded-[24px] p-6 shadow-elevation-1 h-full max-h-full overflow-hidden order-3 border border-md-sys-color-outline-variant">
+            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-4 flex-shrink-0">
+                <span class="material-symbols-rounded text-md-sys-color-primary text-3xl">psychology</span>
+                <h3 class="headline-medium text-md-sys-color-on-surface">Navigator</h3>
+            </div>
+            
+            <!-- CONTENEDOR DE SCROLL: flex-1 + min-h-0 -->
+            <div class="flex-1 flex flex-col min-h-0 mt-4">
+                <div id="analysis-container" class="overflow-y-auto h-full pr-2 custom-scrollbar space-y-3">
+                    <div class="bg-md-sys-color-surface-2 rounded-[16px] p-6 text-center border border-md-sys-color-outline-variant border-dashed">
+                        <span class="material-symbols-rounded text-4xl text-md-sys-color-outline mb-2">visibility</span>
+                        <p class="body-medium text-md-sys-color-on-surface-variant">Realiza tu primer movimiento para activar el análisis táctico.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- MODAL DE INFORME -->
+    <div id="analysis-modal" class="hidden-force fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-md-sys-color-surface-3 p-8 rounded-[28px] w-full max-w-3xl shadow-elevation-3 relative flex flex-col gap-6 max-h-[90vh] overflow-y-auto border border-md-sys-color-outline-variant">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-rounded text-md-sys-color-primary text-4xl">history_edu</span>
+                    <h2 class="display-medium text-3xl text-md-sys-color-on-surface" id="report-title">Informe Final</h2>
+                </div>
+                <button onclick="closeAnalysis()" class="w-10 h-10 rounded-full bg-md-sys-color-surface-1 flex items-center justify-center hover:bg-md-sys-color-surface-4 transition-colors">
+                    <span class="material-symbols-rounded text-md-sys-color-on-surface">close</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-md-sys-color-surface-1 p-6 rounded-[20px] flex flex-col items-center justify-center border border-md-sys-color-outline-variant">
+                    <span class="label-large text-md-sys-color-outline">PRECISIÓN</span>
+                    <span id="report-accuracy" class="display-large text-md-sys-color-tertiary">--%</span>
+                </div>
+                <div class="bg-md-sys-color-surface-1 p-6 rounded-[20px] col-span-2 border border-md-sys-color-outline-variant">
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div class="p-2 rounded-xl bg-[#96BC4B]/10 text-[#96BC4B]">
+                            <span class="block font-bold text-xl" id="cnt-brilliant">0</span>
+                            <span class="text-xs">Brillantes</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-md-sys-color-primary/10 text-md-sys-color-primary">
+                            <span class="block font-bold text-xl" id="cnt-best">0</span>
+                            <span class="text-xs">Mejores</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-md-sys-color-tertiary/10 text-md-sys-color-tertiary">
+                            <span class="block font-bold text-xl" id="cnt-good">0</span>
+                            <span class="text-xs">Buenas</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-yellow-500/10 text-yellow-500">
+                            <span class="block font-bold text-xl" id="cnt-inaccuracy">0</span>
+                            <span class="text-xs">Imprecisas</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-orange-500/10 text-orange-500">
+                            <span class="block font-bold text-xl" id="cnt-mistake">0</span>
+                            <span class="text-xs">Malas</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-md-sys-color-error/10 text-md-sys-color-error">
+                            <span class="block font-bold text-xl" id="cnt-blunder">0</span>
+                            <span class="text-xs">Graves</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-md-sys-color-surface-1 p-6 rounded-[20px] border border-md-sys-color-outline-variant">
+                <p class="label-large text-md-sys-color-on-surface-variant mb-3 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-md-sys-color-primary">auto_awesome</span>
+                    Prompt de IA para análisis profundo:
+                </p>
+                <textarea id="ai-prompt-area" class="w-full bg-md-sys-color-surface-2 text-md-sys-color-on-surface font-mono text-xs p-4 rounded-xl h-32 focus:outline-none focus:ring-2 focus:ring-md-sys-color-primary resize-none border-none" readonly></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeAnalysis()" class="h-10 px-6 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface label-large hover:bg-md-sys-color-surface-4 transition-colors">Volver</button>
+                <button onclick="copyPrompt()" class="h-10 px-6 rounded-full bg-md-sys-color-primary text-md-sys-color-on-primary label-large hover:shadow-elevation-1 transition-all flex items-center gap-2">
+                    <span class="material-symbols-rounded text-sm">content_copy</span> Copiar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGICA JS -->
+    <script>
+        let game = null;
+        let board = null;
+        let stockfish = null;
+        let gameState = { mode: 'ai', playerColor: 'w', timeControl: 0, depth: 12, ready: false, hinting: false };
+        let historyLog = []; 
+        let currentEval = 0; 
+        let currentBestMove = null; 
+        let clocks = { w: 0, b: 0 };
+        let timerInterval = null;
+
+        const MOVE_TYPES = {
+            BRILLIANT: { label: "¡Maravilloso!", color: "text-[#1FB9C3]", bg: "bg-[#1FB9C3]/10", icon: "verified" },
+            BEST:      { label: "Excelente", color: "text-[#96BC4B]", bg: "bg-[#96BC4B]/10", icon: "star" },
+            GOOD:      { label: "Bueno", color: "text-[#96BC4B]", bg: "bg-[#96BC4B]/10", icon: "thumb_up" },
+            INACCURACY:{ label: "Impreciso", color: "text-yellow-500", bg: "bg-yellow-500/10", icon: "help" },
+            MISTAKE:   { label: "Malo", color: "text-orange-500", bg: "bg-orange-500/10", icon: "error" },
+            BLUNDER:   { label: "Nefasto", color: "text-md-sys-color-error", bg: "bg-md-sys-color-error/10", icon: "cancel" }
+        };
+
+        function selectMode(mode) {
+            if(mode === 'settings') { alert("Ajustes próximamente."); return; }
+            gameState.mode = mode;
+            updateBtnState('btn-mode-', mode);
+            const randBtn = document.getElementById('btn-color-r');
+            if(mode === 'human') { randBtn.disabled = true; randBtn.classList.add('opacity-50'); } 
+            else { randBtn.disabled = false; randBtn.classList.remove('opacity-50'); }
+        }
+
+        function selectColor(color) {
+            gameState.playerColor = color;
+            updateBtnState('btn-color-', color);
+        }
+
+        function selectTime(minutes) {
+            gameState.timeControl = minutes;
+            updateBtnState('btn-time-', minutes.toString());
+        }
+
+        function updateBtnState(prefix, selected) {
+            const ids = document.querySelectorAll(`[id^="${prefix}"]`);
+            ids.forEach(el => {
+                const id = el.id.replace(prefix, '');
+                if(id === selected) {
+                    el.classList.remove('border-md-sys-color-outline', 'text-md-sys-color-on-surface');
+                    el.classList.add('bg-md-sys-color-secondary-container', 'text-md-sys-color-on-secondary-container', 'border-transparent');
+                } else {
+                    el.classList.add('border-md-sys-color-outline', 'text-md-sys-color-on-surface');
+                    el.classList.remove('bg-md-sys-color-secondary-container', 'text-md-sys-color-on-secondary-container', 'border-transparent');
+                }
+            });
+        }
+
+        function startGame() {
+            document.getElementById('main-menu').classList.add('hidden-force');
+            let gameView = document.getElementById('game-view');
+            gameView.classList.remove('hidden-force');
+            gameView.classList.add('grid-force');
+
+            game = new Chess();
+            historyLog = [];
+            currentEval = 0;
+            currentBestMove = null;
+            document.getElementById('pgn-container').innerHTML = '';
+            document.getElementById('analysis-container').innerHTML = '';
+
+            let orientation = 'white';
+            if (gameState.mode === 'ai' && gameState.playerColor === 'b') orientation = 'black';
+            else if (gameState.mode === 'ai' && gameState.playerColor === 'random') orientation = Math.random() < 0.5 ? 'white' : 'black';
+
+            if (board) board.destroy();
+            
+            board = Chessboard('myBoard', {
+                draggable: true,
+                position: 'start',
+                orientation: orientation,
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd,
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+            });
+            
+            window.addEventListener('resize', () => { board.resize(); });
+            window.setTimeout(() => { board.resize(); }, 100);
+
+            initClocks();
+
+            if(gameState.mode === 'ai') {
+                document.getElementById('top-name').innerText = "Stockfish 10";
+                initStockfish(() => {
+                    analyzePosition(); 
+                    if(orientation === 'black') { makeEngineMove(); startClock('w'); } 
+                    else { startClock('w'); }
+                });
+            } else {
+                document.getElementById('top-name').innerText = "Jugador 2";
+                startClock('w');
+                initStockfish(() => analyzePosition());
+            }
+            updateTurnUI();
+        }
+
+        function returnToMenu() {
+            stopClock();
+            document.getElementById('game-view').classList.add('hidden-force');
+            document.getElementById('game-view').classList.remove('grid-force');
+            document.getElementById('main-menu').classList.remove('hidden-force');
+            document.getElementById('analysis-modal').classList.add('hidden-force');
+        }
+
+        function initClocks() {
+            if(gameState.timeControl > 0) {
+                clocks.w = gameState.timeControl * 60;
+                clocks.b = gameState.timeControl * 60;
+                document.getElementById('top-clock').innerText = formatTime(clocks.b);
+                document.getElementById('bottom-clock').innerText = formatTime(clocks.w);
+                document.getElementById('top-clock').classList.remove('hidden');
+                document.getElementById('bottom-clock').classList.remove('hidden');
+            } else {
+                document.getElementById('top-clock').classList.add('hidden');
+                document.getElementById('bottom-clock').classList.add('hidden');
+            }
+        }
+
+        function startClock(turn) {
+            if(gameState.timeControl === 0) return;
+            stopClock();
+            timerInterval = setInterval(() => {
+                clocks[turn]--;
+                updateClockDisplay(turn);
+                if(clocks[turn] <= 0) {
+                    stopClock();
+                    let winner = turn === 'w' ? 'Negras' : 'Blancas';
+                    generateReport(`Tiempo Agotado - Ganan ${winner}`);
+                }
+            }, 1000);
+        }
+
+        function stopClock() { if(timerInterval) clearInterval(timerInterval); }
+
+        function updateClockDisplay(turn) {
+            let orient = board.orientation().charAt(0);
+            let timeStr = formatTime(clocks[turn]);
+            if(turn === orient) {
+                document.getElementById('bottom-clock').innerText = timeStr;
+                if(clocks[turn] < 30) document.getElementById('bottom-clock').classList.add('text-md-sys-color-error');
+            } else {
+                document.getElementById('top-clock').innerText = timeStr;
+                if(clocks[turn] < 30) document.getElementById('top-clock').classList.add('text-md-sys-color-error');
+            }
+        }
+
+        function formatTime(s) { let m=Math.floor(s/60); let sec=s%60; return `${m}:${sec<10?'0':''}${sec}`; }
+
+        function updateTurnUI() {
+            let turn = game.turn();
+            let orient = board.orientation().charAt(0);
+            let bottomActive = (turn === orient);
+            
+            const activeClass = "border-md-sys-color-primary";
+            const inactiveClass = "border-transparent";
+            
+            if(bottomActive) {
+                document.getElementById('bottom-panel').classList.add(activeClass);
+                document.getElementById('bottom-panel').classList.remove(inactiveClass);
+                document.getElementById('turn-indicator').classList.remove('opacity-0');
+                
+                document.getElementById('top-panel').classList.remove(activeClass);
+                document.getElementById('top-panel').classList.add(inactiveClass);
+            } else {
+                document.getElementById('top-panel').classList.add(activeClass);
+                document.getElementById('top-panel').classList.remove(inactiveClass);
+                
+                document.getElementById('bottom-panel').classList.remove(activeClass);
+                document.getElementById('bottom-panel').classList.add(inactiveClass);
+                document.getElementById('turn-indicator').classList.add('opacity-0');
+            }
+        }
+
+        function checkGameOver() {
+            if (game.game_over()) {
+                stopClock();
+                let msg = '';
+                if (game.in_checkmate()) msg = `Jaque Mate - Ganan ${game.turn()==='w'?'Negras':'Blancas'}`;
+                else if (game.in_draw()) msg = 'Tablas';
+                else msg = 'Fin de la partida';
+                setTimeout(() => generateReport(msg), 500);
+            }
+        }
+
+        function highlightCheck() {
+            $('.square-55d63').removeClass('highlight-check');
+            if (game.in_check()) {
+                let turn = game.turn(); 
+                let boardArr = game.board();
+                for(let i=0; i<8; i++) {
+                    for(let j=0; j<8; j++) {
+                        let p = boardArr[i][j];
+                        if(p && p.type === 'k' && p.color === turn) {
+                            let file = String.fromCharCode(97 + j);
+                            let rank = 8 - i;
+                            $(`#myBoard .square-${file+rank}`).addClass('highlight-check');
+                            let toast = document.getElementById('check-toast');
+                            toast.classList.add('show');
+                            setTimeout(() => toast.classList.remove('show'), 2500);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        function onDragStart(source, piece) {
+            if (game.game_over()) return false;
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
+            if (gameState.mode === 'ai') {
+                let playerSide = board.orientation().charAt(0);
+                if (game.turn() !== playerSide) return false;
+            }
+            showMoveHints(source);
+        }
+
+        function onDrop(source, target) {
+            removeHighlights();
+            let moveCfg = { from: source, to: target, promotion: 'q' };
+            const piece = game.get(source);
+            
+            if (piece && piece.type === 'k') {
+               if (source === 'e1' && target === 'h1') moveCfg.to = 'g1';
+               if (source === 'e1' && target === 'a1') moveCfg.to = 'c1';
+               if (source === 'e8' && target === 'h8') moveCfg.to = 'g8';
+               if (source === 'e8' && target === 'a8') moveCfg.to = 'c8';
+            }
+
+            let move = game.move(moveCfg);
+            if (move === null) return 'snapback';
+
+            if (piece && piece.type === 'k' && Math.abs(source.charCodeAt(0) - target.charCodeAt(0)) > 1) {
+                window.setTimeout(() => board.position(game.fen()), 50);
+            }
+
+            let evalBefore = currentEval;
+            historyLog.push({ san: move.san, turn: game.turn()==='w'?'b':'w', evalBefore: evalBefore, type: 'PENDING' });
+            
+            addToPgn(move);
+            startClock(game.turn());
+            updateTurnUI();
+            highlightCheck();
+            checkGameOver();
+
+            currentBestMove = null;
+            gameState.hinting = false;
+
+            if (gameState.mode === 'ai') makeEngineMove();
+            else analyzePosition();
+        }
+
+        function onSnapEnd() { board.position(game.fen()); }
+
+        async function initStockfish(cb) {
+            if(stockfish) { if(cb) cb(); return; }
+            try {
+                const res = await fetch('https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js');
+                const blob = await res.blob();
+                stockfish = new Worker(URL.createObjectURL(blob));
+                stockfish.onmessage = (e) => {
+                    let line = e.data;
+                    if(line === 'uciok') { gameState.ready = true; if(cb) cb(); }
+                    else if(line.startsWith('bestmove')) onBestMove(line);
+                    else if(line.startsWith('info') && (line.includes('score cp') || line.includes('score mate'))) onEval(line);
+                };
+                stockfish.postMessage('uci');
+            } catch(e) { console.error(e); }
+        }
+
+        function makeEngineMove() { stockfish.postMessage(`position fen ${game.fen()}`); stockfish.postMessage(`go depth ${gameState.depth}`); }
+        function analyzePosition() { stockfish.postMessage(`position fen ${game.fen()}`); stockfish.postMessage(`go depth ${gameState.depth}`); }
+
+        function onBestMove(line) {
+            let parts = line.split(' ');
+            let best = parts[1];
+            currentBestMove = best;
+            if(gameState.hinting) { visualizeHint(best); gameState.hinting = false; }
+
+            let aiColor = board.orientation() === 'white' ? 'b' : 'w';
+            if (gameState.mode === 'ai' && game.turn() === aiColor && !game.game_over()) {
+                let move = game.move({ from: best.substring(0, 2), to: best.substring(2, 4), promotion: 'q' });
+                board.position(game.fen());
+                historyLog.push({ san: move.san, turn: aiColor, evalBefore: currentEval, type: 'PENDING' });
+                addToPgn(move);
+                startClock(game.turn());
+                updateTurnUI();
+                highlightCheck();
+                analyzePosition();
+                checkGameOver();
+            }
+        }
+
+        function onEval(line) {
+            let parts = line.split(' ');
+            let idxCp = parts.indexOf('cp');
+            let idxMate = parts.indexOf('mate');
+            let rawCp = 0;
+            if(idxCp > -1) rawCp = parseInt(parts[idxCp+1]);
+            else if(idxMate > -1) rawCp = parseInt(parts[idxMate+1]) > 0 ? 20000 : -20000;
+
+            let absScore = (game.turn() === 'w') ? rawCp : -rawCp;
+            let bottomColor = board.orientation().charAt(0);
+            let bottomScore = (bottomColor === 'w') ? absScore : -absScore;
+            
+            currentEval = rawCp;
+            updateEvalBar(bottomScore);
+            
+            let txt = Math.abs(rawCp) > 10000 ? "MATE" : (bottomScore/100).toFixed(1);
+            document.getElementById('bottom-eval').innerText = txt;
+            document.getElementById('top-eval').innerText = txt === "MATE" ? "MATE" : (-parseFloat(txt)).toFixed(1);
+
+            if(historyLog.length > 0) {
+                let last = historyLog[historyLog.length - 1];
+                if(last.type === 'PENDING') {
+                    let delta = last.evalBefore - (-rawCp);
+                    classifyAndShowMove(last, delta, rawCp);
+                }
+            }
+        }
+
+        function classifyAndShowMove(moveData, delta, raw) {
+            let type = MOVE_TYPES.GOOD;
+            if (Math.abs(raw) > 10000) { type = raw < -10000 ? MOVE_TYPES.BRILLIANT : MOVE_TYPES.BLUNDER; }
+            else {
+                if (delta <= 15) type = MOVE_TYPES.BEST;
+                else if (delta <= 40) type = MOVE_TYPES.GOOD;
+                else if (delta <= 90) type = MOVE_TYPES.INACCURACY;
+                else if (delta <= 200) type = MOVE_TYPES.MISTAKE;
+                else type = MOVE_TYPES.BLUNDER;
+            }
+            if (moveData.san.includes('#')) type = MOVE_TYPES.BRILLIANT;
+            moveData.type = type;
+            
+            let html = `
+                <div class="bg-md-sys-color-surface-2 p-4 rounded-[16px] animate-fade-in mb-3 border border-md-sys-color-outline-variant flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full ${type.bg} flex items-center justify-center ${type.color}">
+                        <span class="material-symbols-rounded">${type.icon}</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="title-medium text-md-sys-color-on-surface font-mono">${moveData.san}</span>
+                            <span class="label-medium ${type.color}">${type.label}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            let c = document.getElementById('analysis-container');
+            if(c.innerHTML.includes("visibility")) c.innerHTML = "";
+            c.insertAdjacentHTML('afterbegin', html);
+        }
+
+        function updateEvalBar(score) {
+            let pct = 50 + (score / 15);
+            pct = Math.max(5, Math.min(95, pct));
+            document.querySelector('.eval-fill').style.height = pct + '%';
+        }
+
+        function showMoveHints(source) {
+            var moves = game.moves({ square: source, verbose: true });
+            if (moves.length === 0) return;
+            for (var i = 0; i < moves.length; i++) highlightSquare(moves[i].to, moves[i].captured);
+        }
+
+        function highlightSquare(sq, capture) {
+            var $sq = $('#myBoard .square-' + sq);
+            if(capture) $sq.addClass('highlight-capture'); else $sq.addClass('highlight-move');
+        }
+
+        function removeHighlights() { $('#myBoard .square-55d63').removeClass('highlight-move highlight-capture highlight-hint'); }
+
+        function showHint() {
+            if (gameState.mode === 'ai' && game.turn() !== board.orientation().charAt(0)) return;
+            removeHighlights();
+            if (currentBestMove) visualizeHint(currentBestMove);
+            else { gameState.hinting = true; analyzePosition(); }
+        }
+
+        function visualizeHint(move) {
+            let from = move.substring(0, 2); let to = move.substring(2, 4);
+            $('#myBoard .square-' + from).addClass('highlight-hint');
+            $('#myBoard .square-' + to).addClass('highlight-hint');
+            setTimeout(() => removeHighlights(), 3000);
+        }
+
+        function addToPgn(move) {
+            let turnNum = Math.ceil(game.history().length / 2);
+            let div = document.createElement('div');
+            div.className = "flex justify-between p-2 rounded hover:bg-md-sys-color-surface-4 text-xs font-mono text-md-sys-color-on-surface-variant";
+            div.innerHTML = `<span>${turnNum}.</span><span class="text-md-sys-color-on-surface font-bold">${move.san}</span>`;
+            document.getElementById('pgn-container').appendChild(div);
+            div.scrollIntoView();
+        }
+
+        function undoMove() {
+            removeHighlights(); game.undo(); historyLog.pop();
+            if(gameState.mode === 'ai') { game.undo(); historyLog.pop(); }
+            board.position(game.fen());
+            updateTurnUI(); stopClock(); if(gameState.timeControl > 0) startClock(game.turn());
+            analyzePosition();
+        }
+
+        function resetGame() { startGame(); }
+
+        function generateReport(title) {
+            document.getElementById('analysis-modal').classList.remove('hidden-force');
+            if(title) document.getElementById('report-title').innerText = title;
+            
+            let counts = { BRILLIANT:0, BEST:0, GOOD:0, INACCURACY:0, MISTAKE:0, BLUNDER:0 };
+            historyLog.forEach(l => { 
+                let k = Object.keys(MOVE_TYPES).find(key => MOVE_TYPES[key].label === l.type.label);
+                if(k) counts[k]++;
+            });
+
+            document.getElementById('cnt-brilliant').innerText = counts.BRILLIANT;
+            document.getElementById('cnt-best').innerText = counts.BEST;
+            document.getElementById('cnt-good').innerText = counts.GOOD;
+            document.getElementById('cnt-inaccuracy').innerText = counts.INACCURACY;
+            document.getElementById('cnt-mistake').innerText = counts.MISTAKE;
+            document.getElementById('cnt-blunder').innerText = counts.BLUNDER;
+
+            let total = historyLog.length;
+            let acc = total > 0 ? (100 - ((counts.BLUNDER*3 + counts.MISTAKE*2 + counts.INACCURACY)/total*20)).toFixed(1) : 100;
+            document.getElementById('report-accuracy').innerText = Math.max(0, acc) + "%";
+            document.getElementById('ai-prompt-area').value = `PGN: ${game.pgn()}\nAnalyze my game. Accuracy: ${acc}%.`;
+        }
+
+        function closeAnalysis() { document.getElementById('analysis-modal').classList.add('hidden-force'); }
+        function copyPrompt() { document.getElementById('ai-prompt-area').select(); document.execCommand('copy'); alert("Copiado"); }
+
+        selectMode('ai'); selectColor('w'); selectTime(0);
+    </script>
+</body>
+</html>
