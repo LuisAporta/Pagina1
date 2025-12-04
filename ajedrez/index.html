@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8"/>a
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-    <title>Grand Line Chess - Fixed Layout</title>
+    <title>Grand Line Chess - Material Edition</title>
     
     <!-- Scripts Core -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -68,8 +67,15 @@
     </script>
 
     <style>
-        /* Aseguramos que el body no haga scroll nunca */
-        body { background-color: #15130B; color: #E8E2D9; font-family: 'Roboto', sans-serif; overflow: hidden; height: 100dvh; width: 100vw; margin: 0; padding: 0; }
+        /* MODO APP: Sin scroll en el body, altura fija al viewport */
+        body { 
+            background-color: #15130B; 
+            color: #E8E2D9; 
+            font-family: 'Roboto', sans-serif; 
+            overflow: hidden; /* CRUCIAL: Previene que la página crezca */
+            height: 100vh; 
+            width: 100vw;
+        }
         
         .display-large { font-family: 'IM Fell English SC', serif; font-size: 57px; line-height: 64px; letter-spacing: -0.25px; }
         .display-medium { font-family: 'IM Fell English SC', serif; font-size: 45px; line-height: 52px; }
@@ -79,7 +85,6 @@
         .body-medium { font-family: 'Roboto', sans-serif; font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: 0.25px; }
         .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-        /* Tablero */
         .board-container { 
             border-radius: 12px; 
             overflow: hidden; 
@@ -91,18 +96,39 @@
         .flex-force { display: flex !important; }
         .grid-force { display: grid !important; }
         
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #4B4639; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #979080; }
+        /* Scrollbar personalizada fina */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #4B4639; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #979080; }
 
         .eval-bar-container { width: 8px; height: 100%; background: #252319; border-radius: 4px; overflow: hidden; position: relative; }
         .eval-fill { background: #E8E2D9; width: 100%; height: 50%; transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
         .highlight-move { background-image: radial-gradient(circle, rgba(237, 194, 66, 0.7) 18%, transparent 20%); }
         .highlight-capture { background-image: radial-gradient(circle, transparent 55%, rgba(255, 180, 171, 0.7) 56%, rgba(255, 180, 171, 0.7) 65%, transparent 66%); }
-        .highlight-hint { background-image: radial-gradient(circle, rgba(170, 207, 166, 0.7) 18%, transparent 20%); box-shadow: inset 0 0 20px rgba(170, 207, 166, 0.3); }
+        
+        /* Animación de Pulso para Pistas */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        .highlight-hint { 
+            position: relative;
+        }
+        .highlight-hint::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 4px solid #AACFA6;
+            border-radius: 50%;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        .highlight-hint-from { background-color: rgba(237, 194, 66, 0.5) !important; }
+        .highlight-hint-to { background-color: rgba(170, 207, 166, 0.5) !important; }
+
         .highlight-check { background-color: rgba(147, 0, 10, 0.4) !important; box-shadow: inset 0 0 15px rgba(255, 180, 171, 0.6); }
 
         #check-toast {
@@ -118,6 +144,10 @@
 
         button, .card-container { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         button:active { transform: scale(0.96); }
+        
+        /* Estilos de tabla de movimientos */
+        .move-row:nth-child(odd) { background-color: rgba(255,255,255,0.03); }
+        .move-row.active { background-color: rgba(237, 194, 66, 0.15); border-left: 3px solid #EDC242; }
     </style>
 </head>
 <body class="flex flex-col h-full bg-md-sys-color-background selection:bg-md-sys-color-primary-container selection:text-md-sys-color-on-primary-container">
@@ -204,119 +234,116 @@
     </div>
 
     <!-- VISTA DE JUEGO (GAME VIEW) -->
-    <!-- FIX CRITICO: h-full y overflow-hidden en el contenedor principal del juego -->
-    <!-- Esto asegura que el grid NUNCA sea más alto que la pantalla -->
-    <main id="game-view" class="hidden-force flex-1 md:pl-20 w-full p-4 lg:p-6 grid grid-cols-1 xl:grid-cols-[360px_1fr_360px] gap-6 max-w-[1920px] mx-auto h-full overflow-hidden">
+    <!-- Estructura Flex/Grid robusta para evitar desbordes -->
+    <main id="game-view" class="hidden-force flex-1 md:pl-20 w-full p-2 lg:p-6 grid grid-cols-1 xl:grid-cols-[360px_1fr_360px] gap-4 xl:gap-6 max-w-[1920px] mx-auto h-full max-h-screen overflow-y-auto xl:overflow-hidden">
         
         <div id="check-toast" class="shadow-elevation-3">
             <span class="material-symbols-rounded">warning</span>
             <span>¡JAQUE AL REY!</span>
         </div>
 
-        <!-- COLUMNA IZQUIERDA: HISTORIAL -->
-        <!-- FIX CRITICO: h-full y flex-col para que ocupe la altura de la fila del grid -->
-        <aside class="flex flex-col bg-md-sys-color-surface-1 rounded-[24px] p-6 shadow-elevation-1 h-full max-h-full overflow-hidden order-2 xl:order-1 border border-md-sys-color-outline-variant">
-            <!-- Header Fijo (shrink-0) -->
-            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-4 flex-shrink-0">
+        <!-- COLUMNA IZQUIERDA: HISTORIAL (Diario) -->
+        <aside class="flex flex-col gap-4 bg-md-sys-color-surface-1 rounded-[24px] p-4 xl:p-6 shadow-elevation-1 order-2 xl:order-1 h-[300px] xl:h-full overflow-hidden shrink-0">
+            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-3 shrink-0">
                 <span class="material-symbols-rounded text-md-sys-color-primary text-3xl">menu_book</span>
                 <h3 class="headline-medium text-md-sys-color-on-surface">Diario</h3>
             </div>
             
-            <!-- CONTENEDOR DE SCROLL: flex-1 + min-h-0 -->
-            <!-- Aquí es donde ocurre la magia. min-h-0 permite al flexbox encogerse y activar el scroll -->
-            <div class="flex-1 flex flex-col min-h-0 mt-4 bg-md-sys-color-surface-2 rounded-[16px] p-2">
-                 <div class="overflow-y-auto h-full pr-2 custom-scrollbar" id="pgn-container">
-                    <div class="text-center text-md-sys-color-outline mt-10 body-medium">Esperando movimientos...</div>
-                 </div>
+            <!-- TABLA DE MOVIMIENTOS -->
+            <!-- FIXED: Added id="pgn-container" for JS reference -->
+            <div id="pgn-container" class="flex-1 overflow-y-auto pr-1 custom-scroll relative bg-md-sys-color-surface-2 rounded-xl p-2 min-h-0">
+                <table class="w-full text-sm border-collapse">
+                    <thead class="text-xs text-md-sys-color-outline uppercase tracking-wider sticky top-0 bg-md-sys-color-surface-2 z-10">
+                        <tr>
+                            <th class="px-2 py-2 text-left w-10">#</th>
+                            <th class="px-2 py-2 text-left">Blancas</th>
+                            <th class="px-2 py-2 text-left">Negras</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pgn-table-body" class="text-md-sys-color-on-surface font-mono">
+                        <!-- Las filas se insertan aquí vía JS -->
+                        <tr><td colspan="3" class="text-center py-10 text-md-sys-color-outline italic">Esperando inicio...</td></tr>
+                    </tbody>
+                </table>
             </div>
-            
-            <!-- Footer Fijo (shrink-0) -->
-            <div class="grid grid-cols-2 gap-3 mt-4 flex-shrink-0">
-                <button onclick="showHint()" class="col-span-2 h-12 rounded-full bg-md-sys-color-tertiary-container text-md-sys-color-on-tertiary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
-                    <span class="material-symbols-rounded">lightbulb</span> Pedir Pista
+
+            <!-- Botones -->
+            <div class="grid grid-cols-2 gap-2 mt-auto shrink-0 pt-2">
+                <button onclick="showHint()" class="col-span-2 h-10 rounded-full bg-md-sys-color-tertiary-container text-md-sys-color-on-tertiary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
+                    <span class="material-symbols-rounded text-lg">lightbulb</span> Pista
                 </button>
-                <button onclick="undoMove()" class="h-10 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
-                    <span class="material-symbols-rounded text-sm">undo</span> Deshacer
+                <button onclick="undoMove()" class="h-9 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
+                    <span class="material-symbols-rounded text-lg">undo</span> Deshacer
                 </button>
-                <button onclick="resetGame()" class="h-10 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
-                    <span class="material-symbols-rounded text-sm">refresh</span> Reiniciar
+                <button onclick="resetGame()" class="h-9 rounded-full border border-md-sys-color-outline text-md-sys-color-on-surface flex items-center justify-center gap-2 hover:bg-md-sys-color-surface-2 label-large">
+                    <span class="material-symbols-rounded text-lg">refresh</span> Reiniciar
                 </button>
-                <button onclick="generateReport()" class="col-span-2 h-10 rounded-full bg-md-sys-color-secondary-container text-md-sys-color-on-secondary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
-                    <span class="material-symbols-rounded text-sm">analytics</span> Informe Final
+                <button onclick="generateReport()" class="col-span-2 h-9 rounded-full bg-md-sys-color-secondary-container text-md-sys-color-on-secondary-container flex items-center justify-center gap-2 label-large hover:shadow-elevation-1">
+                    <span class="material-symbols-rounded text-lg">analytics</span> Informe
                 </button>
             </div>
         </aside>
 
         <!-- COLUMNA CENTRAL: TABLERO -->
-        <!-- FIX CRITICO: justify-center para centrar verticalmente, overflow-y-auto solo para moviles pequeños -->
-        <div class="flex flex-col justify-center items-center w-full order-1 xl:order-2 h-full overflow-y-auto xl:overflow-visible py-2">
-            
-            <!-- TARJETA RIVAL -->
-            <div id="top-panel" class="w-full max-w-[550px] flex justify-between items-center p-3 md:p-4 bg-md-sys-color-surface-1 rounded-[20px] transition-all duration-300 border-2 border-transparent mb-4 flex-shrink-0">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div id="top-avatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-md-sys-color-error-container flex items-center justify-center text-md-sys-color-on-error-container">
-                        <span class="material-symbols-rounded text-xl md:text-2xl">robot_2</span>
+        <div class="flex flex-col justify-center items-center w-full h-full order-1 xl:order-2 overflow-hidden py-2 gap-2">
+            <!-- RIVAL -->
+            <div id="top-panel" class="w-full max-w-[500px] flex justify-between items-center p-2 px-4 bg-md-sys-color-surface-1 rounded-[16px] border-2 border-transparent shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-md-sys-color-error-container flex items-center justify-center text-md-sys-color-on-error-container">
+                        <span class="material-symbols-rounded text-lg">robot_2</span>
                     </div>
                     <div>
-                        <p id="top-name" class="title-large text-md-sys-color-on-surface text-base md:text-xl">Rival</p>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                            <p id="engine-status" class="body-medium text-md-sys-color-outline text-xs md:text-sm">Conectado</p>
-                        </div>
+                        <p id="top-name" class="title-large text-md-sys-color-on-surface text-sm">Rival</p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div id="top-clock" class="display-medium text-2xl md:text-3xl font-mono text-md-sys-color-on-surface-variant hidden">10:00</div>
-                    <div class="label-large text-md-sys-color-outline mt-1 text-xs md:text-sm">Eval: <span id="top-eval" class="text-md-sys-color-on-surface">0.0</span></div>
+                    <div id="top-clock" class="font-mono text-xl text-md-sys-color-on-surface-variant hidden">10:00</div>
+                    <div class="text-xs text-md-sys-color-outline">Eval: <span id="top-eval" class="text-md-sys-color-on-surface">0.0</span></div>
                 </div>
             </div>
 
-            <!-- AREA DE JUEGO (Tablero + Barra) -->
-            <div class="flex gap-2 md:gap-4 items-stretch justify-center w-full flex-shrink-0">
-                <!-- Barra de Evaluación -->
-                <div class="eval-bar-container shadow-elevation-1 flex-shrink-0 hidden sm:block">
+            <!-- TABLERO -->
+            <div class="flex gap-2 items-stretch justify-center w-full shrink min-h-0">
+                <div class="eval-bar-container shadow-elevation-1 flex-shrink-0 w-2 md:w-3 rounded-full">
                     <div id="eval-bar-fill" class="eval-fill"></div>
                 </div>
                 
-                <!-- Tablero Fluido -->
-                <div class="w-full max-w-[550px] aspect-square relative">
+                <!-- Contenedor responsive con aspect-ratio forzado -->
+                <div class="relative w-full max-w-[500px] aspect-square">
                     <div id="myBoard" class="w-full h-full board-container bg-[#252319]"></div>
                 </div>
             </div>
 
-            <!-- TARJETA JUGADOR -->
-            <div id="bottom-panel" class="w-full max-w-[550px] flex justify-between items-center p-3 md:p-4 bg-md-sys-color-surface-1 rounded-[20px] transition-all duration-300 border-2 border-transparent mt-4 flex-shrink-0">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div id="bottom-avatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-md-sys-color-tertiary-container flex items-center justify-center text-md-sys-color-on-tertiary-container">
-                        <span class="material-symbols-rounded text-xl md:text-2xl">person</span>
+            <!-- JUGADOR -->
+            <div id="bottom-panel" class="w-full max-w-[500px] flex justify-between items-center p-2 px-4 bg-md-sys-color-surface-1 rounded-[16px] border-2 border-transparent shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-md-sys-color-tertiary-container flex items-center justify-center text-md-sys-color-on-tertiary-container">
+                        <span class="material-symbols-rounded text-lg">person</span>
                     </div>
                     <div>
-                        <p id="bottom-name" class="title-large text-md-sys-color-on-surface text-base md:text-xl">Tú</p>
-                        <p class="label-large text-md-sys-color-primary opacity-0 transition-opacity text-xs md:text-sm" id="turn-indicator">Tu Turno</p>
+                        <p id="bottom-name" class="title-large text-md-sys-color-on-surface text-sm">Tú</p>
+                        <p class="text-xs text-md-sys-color-primary opacity-0 transition-opacity" id="turn-indicator">Tu Turno</p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div id="bottom-clock" class="display-medium text-2xl md:text-3xl font-mono text-md-sys-color-on-surface hidden">10:00</div>
-                    <div class="label-large text-md-sys-color-outline mt-1 text-xs md:text-sm">Eval: <span id="bottom-eval" class="text-md-sys-color-on-surface">0.0</span></div>
+                    <div id="bottom-clock" class="font-mono text-xl text-md-sys-color-on-surface hidden">10:00</div>
+                    <div class="text-xs text-md-sys-color-outline">Eval: <span id="bottom-eval" class="text-md-sys-color-on-surface">0.0</span></div>
                 </div>
             </div>
         </div>
 
         <!-- COLUMNA DERECHA: NAVIGATOR -->
-        <!-- FIX CRITICO: Igual que la izquierda, estructura flex estricta -->
-        <aside class="flex flex-col bg-md-sys-color-surface-1 rounded-[24px] p-6 shadow-elevation-1 h-full max-h-full overflow-hidden order-3 border border-md-sys-color-outline-variant">
-            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-4 flex-shrink-0">
+        <aside class="flex flex-col gap-4 bg-md-sys-color-surface-1 rounded-[24px] p-4 xl:p-6 shadow-elevation-1 h-[300px] xl:h-full order-3 overflow-hidden shrink-0">
+            <div class="flex items-center gap-3 border-b border-md-sys-color-outline-variant pb-3 shrink-0">
                 <span class="material-symbols-rounded text-md-sys-color-primary text-3xl">psychology</span>
                 <h3 class="headline-medium text-md-sys-color-on-surface">Navigator</h3>
             </div>
             
-            <!-- CONTENEDOR DE SCROLL: flex-1 + min-h-0 -->
-            <div class="flex-1 flex flex-col min-h-0 mt-4">
-                <div id="analysis-container" class="overflow-y-auto h-full pr-2 custom-scrollbar space-y-3">
-                    <div class="bg-md-sys-color-surface-2 rounded-[16px] p-6 text-center border border-md-sys-color-outline-variant border-dashed">
-                        <span class="material-symbols-rounded text-4xl text-md-sys-color-outline mb-2">visibility</span>
-                        <p class="body-medium text-md-sys-color-on-surface-variant">Realiza tu primer movimiento para activar el análisis táctico.</p>
-                    </div>
+            <!-- LISTA SCROLLEABLE -->
+            <div id="analysis-container" class="flex-1 overflow-y-auto pr-1 min-h-0 custom-scroll space-y-2">
+                <div class="bg-md-sys-color-surface-2 rounded-[16px] p-6 text-center border border-md-sys-color-outline-variant border-dashed opacity-50">
+                    <span class="material-symbols-rounded text-3xl mb-2">visibility</span>
+                    <p class="text-xs">Realiza tu primer movimiento.</p>
                 </div>
             </div>
         </aside>
@@ -324,8 +351,8 @@
     </main>
 
     <!-- MODAL DE INFORME -->
-    <div id="analysis-modal" class="hidden-force fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-md-sys-color-surface-3 p-8 rounded-[28px] w-full max-w-3xl shadow-elevation-3 relative flex flex-col gap-6 max-h-[90vh] overflow-y-auto border border-md-sys-color-outline-variant">
+    <div id="analysis-modal" class="hidden-force fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-all duration-300">
+        <div class="bg-md-sys-color-surface-3 p-8 rounded-[28px] w-full max-w-3xl shadow-elevation-3 relative flex flex-col gap-6 max-h-[90vh] overflow-y-auto m-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <span class="material-symbols-rounded text-md-sys-color-primary text-4xl">history_edu</span>
@@ -449,7 +476,7 @@
             historyLog = [];
             currentEval = 0;
             currentBestMove = null;
-            document.getElementById('pgn-container').innerHTML = '';
+            renderPgnTable(); // Limpiar tabla
             document.getElementById('analysis-container').innerHTML = '';
 
             let orientation = 'white';
@@ -468,6 +495,7 @@
                 pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
             });
             
+            // Fix: Añadir listener para resize fluido
             window.addEventListener('resize', () => { board.resize(); });
             window.setTimeout(() => { board.resize(); }, 100);
 
@@ -611,6 +639,11 @@
         function onDrop(source, target) {
             removeHighlights();
             let moveCfg = { from: source, to: target, promotion: 'q' };
+            
+            // Capture Best Move before moving
+            let bestMoveForThisTurn = currentBestMove;
+            let fenBefore = game.fen();
+
             const piece = game.get(source);
             
             if (piece && piece.type === 'k') {
@@ -628,9 +661,17 @@
             }
 
             let evalBefore = currentEval;
-            historyLog.push({ san: move.san, turn: game.turn()==='w'?'b':'w', evalBefore: evalBefore, type: 'PENDING' });
+            historyLog.push({ 
+                san: move.san, 
+                turn: game.turn()==='w'?'b':'w', 
+                evalBefore: evalBefore, 
+                type: 'PENDING',
+                bestMoveUCI: bestMoveForThisTurn,
+                fenBefore: fenBefore
+            });
             
-            addToPgn(move);
+            // Render Tabla
+            renderPgnTable();
             startClock(game.turn());
             updateTurnUI();
             highlightCheck();
@@ -675,7 +716,7 @@
                 let move = game.move({ from: best.substring(0, 2), to: best.substring(2, 4), promotion: 'q' });
                 board.position(game.fen());
                 historyLog.push({ san: move.san, turn: aiColor, evalBefore: currentEval, type: 'PENDING' });
-                addToPgn(move);
+                renderPgnTable();
                 startClock(game.turn());
                 updateTurnUI();
                 highlightCheck();
@@ -712,6 +753,16 @@
             }
         }
 
+        // Helper para convertir UCI a SAN
+        function getSan(fen, uci) {
+            if(!uci) return null;
+            let temp = new Chess(fen);
+            let from = uci.substring(0,2);
+            let to = uci.substring(2,4);
+            let move = temp.move({from, to, promotion: 'q'});
+            return move ? move.san : uci;
+        }
+
         function classifyAndShowMove(moveData, delta, raw) {
             let type = MOVE_TYPES.GOOD;
             if (Math.abs(raw) > 10000) { type = raw < -10000 ? MOVE_TYPES.BRILLIANT : MOVE_TYPES.BLUNDER; }
@@ -725,16 +776,26 @@
             if (moveData.san.includes('#')) type = MOVE_TYPES.BRILLIANT;
             moveData.type = type;
             
+            // Determinar texto "Mejor jugada"
+            let bestMoveText = "";
+            if (moveData.bestMoveUCI && moveData.fenBefore) {
+                let bestSan = getSan(moveData.fenBefore, moveData.bestMoveUCI);
+                if (bestSan && bestSan !== moveData.san) {
+                    bestMoveText = `<div class="text-xs text-md-sys-color-tertiary mt-1 flex items-center gap-1"><span class="material-symbols-rounded text-[10px]">arrow_forward</span> Mejor: ${bestSan}</div>`;
+                }
+            }
+
             let html = `
-                <div class="bg-md-sys-color-surface-2 p-4 rounded-[16px] animate-fade-in mb-3 border border-md-sys-color-outline-variant flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full ${type.bg} flex items-center justify-center ${type.color}">
-                        <span class="material-symbols-rounded">${type.icon}</span>
+                <div class="bg-md-sys-color-surface-2 p-3 rounded-[12px] animate-fade-in mb-2 border border-md-sys-color-outline-variant flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full ${type.bg} flex items-center justify-center ${type.color} shrink-0">
+                        <span class="material-symbols-rounded text-lg">${type.icon}</span>
                     </div>
-                    <div>
+                    <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2">
-                            <span class="title-medium text-md-sys-color-on-surface font-mono">${moveData.san}</span>
-                            <span class="label-medium ${type.color}">${type.label}</span>
+                            <span class="title-medium text-md-sys-color-on-surface font-mono text-sm">${moveData.san}</span>
+                            <span class="label-medium ${type.color} text-xs">${type.label}</span>
                         </div>
+                        ${bestMoveText}
                     </div>
                 </div>
             `;
@@ -760,7 +821,7 @@
             if(capture) $sq.addClass('highlight-capture'); else $sq.addClass('highlight-move');
         }
 
-        function removeHighlights() { $('#myBoard .square-55d63').removeClass('highlight-move highlight-capture highlight-hint'); }
+        function removeHighlights() { $('#myBoard .square-55d63').removeClass('highlight-move highlight-capture highlight-hint highlight-hint-from highlight-hint-to'); }
 
         function showHint() {
             if (gameState.mode === 'ai' && game.turn() !== board.orientation().charAt(0)) return;
@@ -770,25 +831,58 @@
         }
 
         function visualizeHint(move) {
+            removeHighlights(); // Limpiar anteriores
             let from = move.substring(0, 2); let to = move.substring(2, 4);
-            $('#myBoard .square-' + from).addClass('highlight-hint');
-            $('#myBoard .square-' + to).addClass('highlight-hint');
-            setTimeout(() => removeHighlights(), 3000);
+            
+            // Aplicar clases específicas con pulso
+            $('#myBoard .square-' + from).addClass('highlight-hint highlight-hint-from');
+            $('#myBoard .square-' + to).addClass('highlight-hint highlight-hint-to');
+            
+            // Toast de texto explicativo
+            let san = getSan(game.fen(), move);
+            let toast = document.getElementById('check-toast');
+            toast.innerHTML = `<span class="material-symbols-rounded">lightbulb</span><span>Sugerencia: Mueve ${from} a ${to} (${san})</span>`;
+            toast.classList.add('show');
+            
+            // Duración 5s
+            setTimeout(() => {
+                $('#myBoard .square-' + from).removeClass('highlight-hint highlight-hint-from');
+                $('#myBoard .square-' + to).removeClass('highlight-hint highlight-hint-to');
+                toast.classList.remove('show');
+            }, 5000);
         }
 
-        function addToPgn(move) {
-            let turnNum = Math.ceil(game.history().length / 2);
-            let div = document.createElement('div');
-            div.className = "flex justify-between p-2 rounded hover:bg-md-sys-color-surface-4 text-xs font-mono text-md-sys-color-on-surface-variant";
-            div.innerHTML = `<span>${turnNum}.</span><span class="text-md-sys-color-on-surface font-bold">${move.san}</span>`;
-            document.getElementById('pgn-container').appendChild(div);
-            div.scrollIntoView();
+        // NUEVA FUNCIÓN: Renderiza la tabla PGN correctamente
+        function renderPgnTable() {
+            const history = game.history({ verbose: true });
+            const tbody = document.getElementById('pgn-table-body');
+            let html = '';
+            
+            for (let i = 0; i < history.length; i += 2) {
+                const moveNum = (i / 2) + 1;
+                const whiteMove = history[i];
+                const blackMove = history[i + 1];
+                
+                html += `
+                    <tr class="move-row border-b border-md-sys-color-outline-variant/20">
+                        <td class="px-2 py-2 text-md-sys-color-primary font-bold w-10">${moveNum}.</td>
+                        <td class="px-2 py-2 font-bold cursor-pointer hover:bg-white/5 rounded transition-colors">${whiteMove.san}</td>
+                        <td class="px-2 py-2 cursor-pointer hover:bg-white/5 rounded transition-colors">${blackMove ? blackMove.san : ''}</td>
+                    </tr>
+                `;
+            }
+            tbody.innerHTML = html;
+            
+            // Auto-scroll al final
+            const container = document.getElementById('pgn-container');
+            container.scrollTop = container.scrollHeight;
         }
 
         function undoMove() {
             removeHighlights(); game.undo(); historyLog.pop();
             if(gameState.mode === 'ai') { game.undo(); historyLog.pop(); }
             board.position(game.fen());
+            renderPgnTable();
             updateTurnUI(); stopClock(); if(gameState.timeControl > 0) startClock(game.turn());
             analyzePosition();
         }
