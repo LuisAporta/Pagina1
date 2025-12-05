@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>a
+    <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <title>Grand Line Chess - Material Edition</title>
     
@@ -165,6 +165,10 @@
             <button onclick="startGame()" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Reiniciar">
                 <span class="material-symbols-rounded group-hover:fill-1">refresh</span>
             </button>
+            <!-- BOTÓN DE CARACTERÍSTICAS (ENLACE EXTERNO) -->
+            <a href="features.html" target="_blank" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Características">
+                <span class="material-symbols-rounded group-hover:fill-1">info</span>
+            </a>
             <button onclick="selectMode('settings')" class="w-14 h-8 rounded-full flex items-center justify-center hover:bg-md-sys-color-secondary-container text-md-sys-color-on-surface hover:text-md-sys-color-on-secondary-container transition-colors group" title="Ajustes">
                 <span class="material-symbols-rounded">settings</span>
             </button>
@@ -250,7 +254,6 @@
             </div>
             
             <!-- TABLA DE MOVIMIENTOS -->
-            <!-- FIXED: Added id="pgn-container" for JS reference -->
             <div id="pgn-container" class="flex-1 overflow-y-auto pr-1 custom-scroll relative bg-md-sys-color-surface-2 rounded-xl p-2 min-h-0">
                 <table class="w-full text-sm border-collapse">
                     <thead class="text-xs text-md-sys-color-outline uppercase tracking-wider sticky top-0 bg-md-sys-color-surface-2 z-10">
@@ -918,4 +921,3 @@
         selectMode('ai'); selectColor('w'); selectTime(0);
     </script>
 </body>
-</html>
