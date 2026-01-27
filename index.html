@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Proyectos - Luis</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary-neon: #00f3ff;
+            --secondary-neon: #ff00ff;
+            --text-color: #e2e8f0;
+            --hover-color: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--primary-neon);
+            text-shadow: 0 0 15px var(--primary-neon);
+            margin-bottom: 1rem;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
+        main {
+            display: grid;
+            gap: 4rem;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            color: var(--secondary-neon);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-left: 5px solid var(--secondary-neon);
+            padding-left: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            border-color: var(--primary-neon);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .card p {
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--primary-neon);
+            border: 1px solid var(--primary-neon);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: var(--primary-neon);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary-neon);
+        }
+
+        .tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            background: #333;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            color: #aaa;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Repositorio de Proyectos</h1>
+            <p class="subtitle">Explorador de Trabajos y Prácticas</p>
+        </header>
+
+        <main>
+            <!-- ASIGNATURA: DI -->
+            <section>
+                <h2>DI - Desarrollo de Interfaces</h2>
+                <div class="grid">
+                    
+                    <!-- Dashboard -->
+                    <article class="card">
+                        <span class="tag">Proyecto Final</span>
+                        <h3>Dashboard Servidores</h3>
+                        <p>Panel de control con monitoreo en tiempo real (Node.js + Vanilla JS).</p>
+                        <a href="DI/dashboard-servidores-proyecto/public/index.html" class="btn">Ver Frontend</a>
+                    </article>
+
+                    <!-- Ajedrez -->
+                    <article class="card">
+                        <h3>Ajedrez</h3>
+                        <p>Visualización o lógica de tablero de ajedrez.</p>
+                        <a href="DI/ajedrez/index.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                    <!-- Calendario -->
+                    <article class="card">
+                        <h3>Calendario</h3>
+                        <p>Aplicación de calendario interactivo.</p>
+                        <a href="DI/calendario/pagina.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                    <!-- Contador -->
+                    <article class="card">
+                        <h3>Contador</h3>
+                        <p>Ejercicio de contador simple.</p>
+                        <a href="DI/contador/ejercicio.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                    <!-- Guía de Viajes -->
+                    <article class="card">
+                        <h3>Guía de Viajes</h3>
+                        <p>Sitio web turístico "Guía de viajes de mi pueblo".</p>
+                        <a href="DI/Guía de viajes de mi pueblo/index.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                    <!-- Pomodoro -->
+                    <article class="card">
+                        <h3>Pomodoro</h3>
+                        <p>Temporizador Pomodoro para productividad.</p>
+                        <a href="DI/Pomodoro/ejercicio.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- ASIGNATURA: ASI -->
+            <section>
+                <h2>ASI - Administración de Sistemas</h2>
+                <div class="grid">
+                    
+                    <!-- Comparador IA -->
+                    <article class="card">
+                        <h3>Comparador IA</h3>
+                        <p>Herramienta o información sobre comparativa de IAs.</p>
+                        <a href="ASI/ComparadorIA/index.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                    <!-- Configuración Máquinas -->
+                    <article class="card">
+                        <h3>Config. Máquinas</h3>
+                        <p>Documentación o interfaz sobre configuración de hardware/vm.</p>
+                        <a href="ASI/configuracionMaquinas/index.html" class="btn">Ver Proyecto</a>
+                    </article>
+
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
