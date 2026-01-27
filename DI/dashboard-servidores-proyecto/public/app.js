@@ -1,69 +1,170 @@
-// Logica del Dashboard
-// Regla: Javascript Vanilla, sin logica asincrona compleja
+// JS Dashboard Logic - "Don Viejo" Rules applied where possible (No frameworks like React, just Vanilla + Chart.js lib)
 
+const btnStart = document.getElementById('btn-start');
+const btnStop = document.getElementById('btn-stop');
 const btnRam = document.getElementById('btn-ram');
 const btnCpu = document.getElementById('btn-cpu');
 const consoleOutput = document.getElementById('console-output');
-const light = document.getElementById('light');
-const statusText = document.getElementById('status-text');
+const coreCircle = document.getElementById('core-circle');
+const statusMsg = document.getElementById('status-msg');
+const statusIndicator = document.getElementById('traffic-light-text');
 
-// Funcion para actualizar estado del semaforo
-function actualizarSemaforo() {
+// --- CHART.JS CONFIG ---
+const ctx = document.getElementById('metricsChart').getContext('2d');
+const metricsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'CPU LOAD (%)',
+            borderColor: '#00f3ff',
+            backgroundColor: 'rgba(0, 243, 255, 0.1)',
+            data: [],
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'RAM USAGE (%)',
+            borderColor: '#9d00ff',
+            backgroundColor: 'rgba(157, 0, 255, 0.1)',
+            data: [],
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                grid: { color: '#333' },
+                ticks: { color: '#888' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#888' }
+            }
+        },
+        plugins: {
+            legend: { labels: { color: '#fff' } }
+        }
+    }
+});
+
+// --- FUNCIONES UTILIDAD ---
+
+function log(msg, type = 'info') {
+    const span = document.createElement('span');
+    span.classList.add('log-line');
+
+    // Timestamp
+    const date = new Date();
+    const time = date.toLocaleTimeString();
+
+    if (type === 'error') span.classList.add('log-error');
+    if (type === 'info') span.classList.add('log-info');
+
+    span.innerHTML = `[${time}] > ${msg}`;
+    consoleOutput.appendChild(span);
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+}
+
+// --- CORE FUNCTIONS ---
+
+function updateStatus() {
     fetch('/status')
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            // Limpiamos clases previas
-            light.classList.remove('green', 'red');
+        .then(res => res.json())
+        .then(data => {
+            // Limpiar clases
+            coreCircle.classList.remove('green', 'red', 'yellow');
 
             if (data.status === 'ok') {
-                light.classList.add('green');
-                statusText.innerText = data.message;
-                statusText.style.color = '#00ff00';
-            } else {
-                light.classList.add('red');
-                statusText.innerText = data.message;
-                statusText.style.color = '#ff0000';
+                coreCircle.classList.add('green');
+                statusMsg.innerText = "SYSTEM: OPTIMAL";
+                statusMsg.style.color = "#00ff41";
+                statusIndicator.innerText = "ONLINE";
+                statusIndicator.style.color = "#00ff41";
+            } else if (data.status === 'error' || data.status === 'offline') {
+                coreCircle.classList.add('red');
+                statusMsg.innerText = "SYSTEM: CRITICAL / OFFLINE";
+                statusMsg.style.color = "#ff003c";
+                statusIndicator.innerText = "OFFLINE";
+                statusIndicator.style.color = "#ff003c";
+            } else if (data.status === 'warning') {
+                coreCircle.classList.add('yellow');
+                statusMsg.innerText = "SYSTEM: PROCESSING...";
+                statusMsg.style.color = "#fcee0a";
+                statusIndicator.innerText = "BUSY";
+                statusIndicator.style.color = "#fcee0a";
             }
         })
-        .catch(function (error) {
-            console.log('Error al obtener estado: ' + error);
+        .catch(err => {
+            console.log(err);
         });
 }
 
-// Inicializar semaforo
-actualizarSemaforo();
-// Actualizar cada 5 segundos
-setInterval(actualizarSemaforo, 5000);
+function updateStats() {
+    fetch('/api/stats')
+        .then(res => res.json())
+        .then(data => {
+            // Actualizar grafico
+            metricsChart.data.labels = data.labels;
+            metricsChart.data.datasets[0].data = data.cpu;
+            metricsChart.data.datasets[1].data = data.ram;
+            metricsChart.update();
+        });
+}
 
-// Manejadores de eventos para botones
-btnRam.addEventListener('click', function () {
-    consoleOutput.innerText = 'Ejecutando verificacion de RAM...';
+function controlSystem(action) {
+    log(`INITIATING SEQUENCE: ${action.toUpperCase()}...`, 'info');
 
+    fetch(`/control/${action}`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+            log(`SERVER RESPONSE: ${data.msg}`, 'info');
+            updateStatus();
+        })
+        .catch(err => {
+            log(`COMMAND FAILED: ${err}`, 'error');
+        });
+}
+
+// --- EVENT LISTENERS ---
+
+btnStart.addEventListener('click', () => controlSystem('start'));
+btnStop.addEventListener('click', () => controlSystem('stop'));
+
+btnRam.addEventListener('click', () => {
+    log("SCANNING PHYSICAL MEMORY...", 'info');
     fetch('/api/ram')
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (texto) {
-            consoleOutput.innerText = texto;
-        })
-        .catch(function (error) {
-            consoleOutput.innerText = 'Error: ' + error;
+        .then(res => res.text())
+        .then(text => {
+            log("MEMORY SCAN RESULT:", 'info');
+            // Formatear salida un poco
+            let lines = text.split('\n');
+            lines.forEach(l => {
+                if (l.trim() !== "") log(l.trim());
+            });
         });
 });
 
-btnCpu.addEventListener('click', function () {
-    consoleOutput.innerText = 'Ejecutando verificacion de CPU...';
-
+btnCpu.addEventListener('click', () => {
+    log("ANALYZING CPU THREADS...", 'info');
     fetch('/api/cpu')
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (texto) {
-            consoleOutput.innerText = texto;
-        })
-        .catch(function (error) {
-            consoleOutput.innerText = 'Error: ' + error;
+        .then(res => res.text())
+        .then(text => {
+            log(`CPU LOAD: ${text.trim()}%`);
         });
 });
+
+// --- LOOPS DE ACTUALIZACION ---
+setInterval(updateStatus, 2000); // Check status cada 2s
+setInterval(updateStats, 5000);  // Update graficos cada 5s
+
+// Inicial
+log("DASHBOARD INITIALIZED. CONNECTING TO CORE...", 'info');
+updateStatus();
+updateStats();

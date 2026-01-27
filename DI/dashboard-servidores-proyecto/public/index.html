@@ -4,51 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Servidores - Premium</title>
+    <title>SERVER CONTROL // LU-15 SYSTEM</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>CONSOLA DE MANDO</h1>
-            <p>Monitoreo de Sistemas en Tiempo Real</p>
-            <div style="margin-top: 1rem;">
-                <a href="explicacion.html" class="neon-btn"
-                    style="font-size: 0.8rem; padding: 0.5rem 1rem; text-decoration: none; display: inline-block;">📚
-                    Ver Explicación de Código</a>
+    <div class="overlay"></div> <!-- Scanlines effect -->
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="logo">LU-15 SYS</div>
+            <nav>
+                <button class="nav-btn active">MONITOR</button>
+                <button class="nav-btn">NETWORK</button>
+                <button class="nav-btn">SECURITY</button>
+                <a href="explicacion.html" class="nav-btn special">DOCUMENTATION</a>
+            </nav>
+            <div class="server-status-box">
+                <div>ESTADO DEL SISTEMA</div>
+                <div id="traffic-light-text" class="status-indicator">OFFLINE</div>
             </div>
-        </header>
+        </aside>
 
-        <main>
-            <section class="status-panel">
-                <h2>Estado del Servidor</h2>
-                <div id="traffic-light" class="traffic-light">
-                    <div id="light" class="light"></div>
+        <div class="content">
+            <header>
+                <h1>SERVER CONTROL DASHBOARD</h1>
+                <div class="header-controls">
+                    <button id="btn-start" class="action-btn start">INICIAR SISTEMA</button>
+                    <button id="btn-stop" class="action-btn stop">DETENER SISTEMA</button>
                 </div>
-                <p id="status-text">Conectando...</p>
-            </section>
+            </header>
 
-            <section class="control-panel">
-                <h2>Comandos de Sistema</h2>
-                <div class="buttons">
-                    <button id="btn-ram" class="neon-btn">Verificar RAM</button>
-                    <button id="btn-cpu" class="neon-btn">Verificar CPU</button>
-                </div>
-            </section>
+            <!-- Grid de Paneles -->
+            <div class="dashboard-grid">
 
-            <section class="output-panel">
-                <h2>Salida de Terminal</h2>
-                <div class="terminal-window">
-                    <div class="terminal-header">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
+                <!-- Panel 1: Estado Visual -->
+                <div class="panel status-panel">
+                    <h2>CORE STATUS</h2>
+                    <div class="core-visual">
+                        <div id="core-circle" class="circle">
+                            <div class="inner-circle"></div>
+                        </div>
                     </div>
-                    <pre id="console-output">Esperando comandos...</pre>
+                    <p id="status-msg">ESPERANDOCOMANDO...</p>
                 </div>
-            </section>
-        </main>
+
+                <!-- Panel 2: Estadísticas (Gráfico) -->
+                <div class="panel stats-panel">
+                    <h2>LIVE METRICS</h2>
+                    <div class="chart-container">
+                        <canvas id="metricsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Panel 3: Acciones Rápidas -->
+                <div class="panel actions-panel">
+                    <h2>COMMAND OVERRIDE</h2>
+                    <div class="btn-grid">
+                        <button id="btn-ram" class="tech-btn">SCAN MEMORY</button>
+                        <button id="btn-cpu" class="tech-btn">CHECK CPU LOAD</button>
+                        <button class="tech-btn disabled">FLUSH DNS</button>
+                        <button class="tech-btn disabled">REBOOT CORE</button>
+                    </div>
+                </div>
+
+                <!-- Panel 4: Consola -->
+                <div class="panel console-panel">
+                    <h2>SYSTEM LOGS</h2>
+                    <div class="console-window">
+                        <div id="console-output" class="console-content">
+                            <span class="log-line">INITIALIZING INTERFACE...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
