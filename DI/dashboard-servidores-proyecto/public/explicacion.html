@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explicación del Proyecto - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .explanation-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            color: #ccc;
+        }
+
+        section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h2 {
+            color: var(--primary-neon);
+            border-bottom: 2px solid var(--secondary-neon);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            color: #fff;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            border-left: 4px solid var(--secondary-neon);
+            margin-bottom: 1.5rem;
+        }
+
+        .code-keyword {
+            color: #569cd6;
+        }
+
+        .code-string {
+            color: #ce9178;
+        }
+
+        .code-function {
+            color: #dcdcaa;
+        }
+
+        .code-comment {
+            color: #6a9955;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            background: #2d2d2d;
+            border: 2px dashed #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            border-radius: 10px;
+            color: #777;
+            font-style: italic;
+        }
+
+        .img-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-neon);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="explanation-container">
+        <a href="index.html" class="back-btn">&larr; Volver al Dashboard</a>
+
+        <header>
+            <h1 style="text-align: center; margin-bottom: 1rem; color: #fff;">Cómo funciona el Dashboard</h1>
+            <p style="text-align: center; color: #aaa;">Documentación técnica y desglose del código</p>
+        </header>
+
+        <!-- BACKEND -->
+        <section>
+            <h2>1. El Backend (Node.js)</h2>
+            <p>El cerebro de la aplicación es <code>server.js</code>. Utilizamos <strong>Express</strong> para crear el
+                servidor y <strong>child_process</strong> para ejecutar comandos reales del sistema operativo Windows.
+            </p>
+
+            <div class="image-placeholder">
+                [FOTO: Captura del editor mostrando server.js o diagrama del servidor]
+            </div>
+            <p class="img-caption">Fig 1. Estructura básica del servidor Node.js</p>
+
+            <h3>Ejecución de Comandos (Sin Relleno)</h3>
+            <p>Una parte clave es cómo obtenemos la información del sistema. No usamos librerías complejas, sino
+                comandos nativos de Windows como <code>wmic</code> para obtener datos reales.</p>
+
+            <div class="code-block">
+                <span class="code-keyword">app</span>.<span class="code-function">get</span>(<span
+                    class="code-string">'/api/ram'</span>, (<span class="code-keyword">req</span>, <span
+                    class="code-keyword">res</span>) => {
+                <span class="code-comment">// Comando directo al sistema operativo</span>
+                <span class="code-keyword">let</span> comando = <span class="code-string">'wmic OS get
+                    FreePhysicalMemory'</span>;
+
+                <span class="code-function">exec</span>(comando, (<span class="code-keyword">error</span>, <span
+                    class="code-keyword">stdout</span>) => {
+                <span class="code-keyword">res</span>.<span class="code-function">send</span>(stdout);
+                });
+                });
+            </div>
+        </section>
+
+        <!-- FRONTEND -->
+        <section>
+            <h2>2. El Frontend (Vanilla JS)</h2>
+            <p>Para la interfaz, seguimos la regla de "Don Viejo": <strong>Cero Frameworks</strong>. Usamos Javascript
+                puro para manipular el DOM y hacer las peticiones al servidor.</p>
+
+            <h3>El Semáforo en Tiempo Real</h3>
+            <p>La interfaz consulta periódicamente el estado. Si el servidor responde OK, añadimos la clase CSS
+                <code>.green</code> para el efecto neón.</p>
+
+            <div class="code-block">
+                <span class="code-keyword">function</span> <span class="code-function">actualizarSemaforo</span>() {
+                <span class="code-function">fetch</span>(<span class="code-string">'/status'</span>)
+                .then(<span class="code-keyword">data</span> => {
+                <span class="code-keyword">if</span> (data.status === <span class="code-string">'ok'</span>) {
+                light.classList.<span class="code-function">add</span>(<span class="code-string">'green'</span>); <span
+                    class="code-comment">// Efecto Neón Verde</span>
+                } <span class="code-keyword">else</span> {
+                light.classList.<span class="code-function">add</span>(<span class="code-string">'red'</span>); <span
+                    class="code-comment">// Alerta Roja</span>
+                }
+                });
+                }
+            </div>
+        </section>
+
+        <!-- DISEÑO -->
+        <section>
+            <h2>3. Diseño Premium</h2>
+            <p>El estilo visual busca un acabado profesional utilizando:</p>
+            <ul>
+                <li><strong>Glassmorphism:</strong> Fondos semitransparentes con desenfoque.</li>
+                <li><strong>Neumorphism (Luces):</strong> Sombras y brillos externos (<code>box-shadow</code>) para
+                    simular luces de neón.</li>
+            </ul>
+
+            <div class="image-placeholder">
+                [FOTO: Primer plano del botón con efecto hover brillante]
+            </div>
+            <p class="img-caption">Fig 2. Detalle de los botones interactivos</p>
+        </section>
+
+        <footer style="text-align: center; margin-top: 3rem; color: #555;">
+            <p>Proyecto desarrollado para Desarrollo de Interfaces - 2026</p>
+        </footer>
+    </div>
+</body>
+
+</html>
