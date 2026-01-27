@@ -4,190 +4,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explicación del Proyecto - Dashboard</title>
+    <title>SYSTEM DOCS // LU-15 SYSTEM</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .explanation-container {
-            max-width: 900px;
+        .doc-container {
+            max-width: 1000px;
             margin: 0 auto;
             padding: 2rem;
-            color: #ccc;
+        }
+
+        .doc-header {
+            margin-bottom: 3rem;
+            text-align: center;
+            border-bottom: 2px solid var(--neon-purple);
+            padding-bottom: 1rem;
+        }
+
+        .doc-header h1 {
+            color: var(--neon-blue);
+            font-size: 2.5rem;
+            text-shadow: 0 0 15px var(--neon-blue);
         }
 
         section {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--neon-blue);
             padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 3rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
         }
 
         h2 {
-            color: var(--primary-neon);
-            border-bottom: 2px solid var(--secondary-neon);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
         }
 
         h3 {
-            color: #fff;
+            color: var(--neon-yellow);
             margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-mono);
         }
 
         p {
-            margin-bottom: 1rem;
+            color: #ddd;
             line-height: 1.6;
+            margin-bottom: 1rem;
+            font-family: sans-serif;
+        }
+
+        .diagram-box {
+            border: 2px dashed #444;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--neon-green);
+            font-family: var(--font-mono);
         }
 
         .code-block {
-            background: #1e1e1e;
+            background: #050510;
+            border: 1px solid #333;
             padding: 1rem;
-            border-radius: 8px;
+            font-family: var(--font-mono);
+            color: #ccc;
             overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            border-left: 4px solid var(--secondary-neon);
-            margin-bottom: 1.5rem;
+            border-radius: 5px;
         }
 
-        .code-keyword {
-            color: #569cd6;
+        .keyword {
+            color: #cc7832;
         }
 
-        .code-string {
-            color: #ce9178;
+        .string {
+            color: #6a8759;
         }
 
-        .code-function {
-            color: #dcdcaa;
+        .comment {
+            color: #808080;
         }
 
-        .code-comment {
-            color: #6a9955;
-        }
-
-        .image-placeholder {
-            width: 100%;
-            height: 300px;
-            background: #2d2d2d;
-            border: 2px dashed #555;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 1rem 0;
-            border-radius: 10px;
-            color: #777;
-            font-style: italic;
-        }
-
-        .img-caption {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 2rem;
-        }
-
-        .back-btn {
+        .back-link {
             display: inline-block;
             margin-bottom: 2rem;
-            color: var(--primary-neon);
+            color: var(--neon-blue);
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.2rem;
+            border: 1px solid var(--neon-blue);
+            padding: 0.5rem 1rem;
+            transition: 0.3s;
         }
 
-        .back-btn:hover {
-            text-decoration: underline;
+        .back-link:hover {
+            background: var(--neon-blue);
+            color: #000;
         }
     </style>
 </head>
 
 <body>
-    <div class="explanation-container">
-        <a href="index.html" class="back-btn">&larr; Volver al Dashboard</a>
+    <div class="main-layout" style="display: block; overflow-y: auto;">
+        <div class="doc-container">
+            <a href="index.html" class="back-link">&lt;&lt; RETURN TO DASHBOARD</a>
 
-        <header>
-            <h1 style="text-align: center; margin-bottom: 1rem; color: #fff;">Cómo funciona el Dashboard</h1>
-            <p style="text-align: center; color: #aaa;">Documentación técnica y desglose del código</p>
-        </header>
+            <header class="doc-header">
+                <h1>SYSTEM ARCHITECTURE</h1>
+                <p style="font-family: var(--font-mono); color: var(--neon-yellow);">TECHNICAL DOCUMENTATION & LOGIC
+                    FLOW</p>
+            </header>
 
-        <!-- BACKEND -->
-        <section>
-            <h2>1. El Backend (Node.js)</h2>
-            <p>El cerebro de la aplicación es <code>server.js</code>. Utilizamos <strong>Express</strong> para crear el
-                servidor y <strong>child_process</strong> para ejecutar comandos reales del sistema operativo Windows.
-            </p>
+            <!-- 1. ARQUITECTURA -->
+            <section>
+                <h2>1. Arquitectura Cliente-Servidor</h2>
+                <p>Esta aplicación no es una página web estática simple. Utiliza una arquitectura donde el
+                    <strong>Frontend (Tu navegador)</strong> se comunica con un <strong>Backend (Servidor
+                        Node.js)</strong>.</p>
 
-            <div class="image-placeholder">
-                [FOTO: Captura del editor mostrando server.js o diagrama del servidor]
-            </div>
-            <p class="img-caption">Fig 1. Estructura básica del servidor Node.js</p>
+                <h3>¿Por qué necesitamos un Backend?</h3>
+                <p>Javascript ejecutándose en el navegador (Chrome/Edge) está "encerrado" por seguridad. No puede
+                    acceder directamente a la memoria RAM o CPU de tu ordenador. Para solucionar esto, usamos
+                    <strong>Node.js</strong> en el servidor, que sí tiene permisos de administrador para ejecutar
+                    comandos del sistema.</p>
 
-            <h3>Ejecución de Comandos (Sin Relleno)</h3>
-            <p>Una parte clave es cómo obtenemos la información del sistema. No usamos librerías complejas, sino
-                comandos nativos de Windows como <code>wmic</code> para obtener datos reales.</p>
+                <div class="diagram-box">
+                    [NAVEGADOR] <br>
+                    (Pide datos: fetch('/api/ram')) <br>
+                    ↓ <br>
+                    [SERVIDOR NODE.JS] <br>
+                    (Ejecuta comando 'wmic' en Windows) <br>
+                    ↓ <br>
+                    [SISTEMA OPERATIVO] <br>
+                    (Retorna uso real de memoria)
+                </div>
+            </section>
 
-            <div class="code-block">
-                <span class="code-keyword">app</span>.<span class="code-function">get</span>(<span
-                    class="code-string">'/api/ram'</span>, (<span class="code-keyword">req</span>, <span
-                    class="code-keyword">res</span>) => {
-                <span class="code-comment">// Comando directo al sistema operativo</span>
-                <span class="code-keyword">let</span> comando = <span class="code-string">'wmic OS get
-                    FreePhysicalMemory'</span>;
+            <!-- 2. FUNCIONAMIENTO -->
+            <section>
+                <h2>2. Flujo de Datos</h2>
 
-                <span class="code-function">exec</span>(comando, (<span class="code-keyword">error</span>, <span
-                    class="code-keyword">stdout</span>) => {
-                <span class="code-keyword">res</span>.<span class="code-function">send</span>(stdout);
-                });
-                });
-            </div>
-        </section>
+                <h3>Start / Stop System</h3>
+                <p>Al pulsar "INICIAR SISTEMA", el frontend envía una petición POST a <code>/control/start</code>. El
+                    servidor simula un retardo y cambia su variable interna de estado. Esto habilita los otros endpoints
+                    (RAM/CPU).</p>
 
-        <!-- FRONTEND -->
-        <section>
-            <h2>2. El Frontend (Vanilla JS)</h2>
-            <p>Para la interfaz, seguimos la regla de "Don Viejo": <strong>Cero Frameworks</strong>. Usamos Javascript
-                puro para manipular el DOM y hacer las peticiones al servidor.</p>
+                <h3>Gráficos en Tiempo Real</h3>
+                <p>Utilizamos la librería <strong>Chart.js</strong>. Cada 5 segundos, el frontend pide
+                    <code>/api/stats</code> al servidor, que retorna un array con el historial simulado de uso de CPU y
+                    RAM.</p>
+            </section>
 
-            <h3>El Semáforo en Tiempo Real</h3>
-            <p>La interfaz consulta periódicamente el estado. Si el servidor responde OK, añadimos la clase CSS
-                <code>.green</code> para el efecto neón.</p>
+            <!-- 3. MÁQUINAS VIRTUALES -->
+            <section>
+                <h2>3. Despliegue en Entornos Reales</h2>
+                <p>En un entorno empresarial real, este dashboard no controlaría "tu PC", sino servidores remotos.</p>
 
-            <div class="code-block">
-                <span class="code-keyword">function</span> <span class="code-function">actualizarSemaforo</span>() {
-                <span class="code-function">fetch</span>(<span class="code-string">'/status'</span>)
-                .then(<span class="code-keyword">data</span> => {
-                <span class="code-keyword">if</span> (data.status === <span class="code-string">'ok'</span>) {
-                light.classList.<span class="code-function">add</span>(<span class="code-string">'green'</span>); <span
-                    class="code-comment">// Efecto Neón Verde</span>
-                } <span class="code-keyword">else</span> {
-                light.classList.<span class="code-function">add</span>(<span class="code-string">'red'</span>); <span
-                    class="code-comment">// Alerta Roja</span>
-                }
-                });
-                }
-            </div>
-        </section>
+                <h3>Uso de Máquinas Virtuales (VM)</h3>
+                <p>Lo ideal es instalar este backend en diferentes Máquinas Virtuales (Linux/Windows Server). El
+                    Dashboard centralizaría la información de todas ellas mediante autenticación segura (SSH/Tokens).
+                </p>
+            </section>
 
-        <!-- DISEÑO -->
-        <section>
-            <h2>3. Diseño Premium</h2>
-            <p>El estilo visual busca un acabado profesional utilizando:</p>
-            <ul>
-                <li><strong>Glassmorphism:</strong> Fondos semitransparentes con desenfoque.</li>
-                <li><strong>Neumorphism (Luces):</strong> Sombras y brillos externos (<code>box-shadow</code>) para
-                    simular luces de neón.</li>
-            </ul>
-
-            <div class="image-placeholder">
-                [FOTO: Primer plano del botón con efecto hover brillante]
-            </div>
-            <p class="img-caption">Fig 2. Detalle de los botones interactivos</p>
-        </section>
-
-        <footer style="text-align: center; margin-top: 3rem; color: #555;">
-            <p>Proyecto desarrollado para Desarrollo de Interfaces - 2026</p>
-        </footer>
+            <footer style="text-align: center; margin-top: 3rem; color: #555; font-family: var(--font-mono);">
+                SYSTEM_DOCS_VER_2.0 // AUTHOR: LU-15
+            </footer>
+        </div>
     </div>
 </body>
 
