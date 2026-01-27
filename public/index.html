@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Servidores - Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CONSOLA DE MANDO</h1>
+            <p>Monitoreo de Sistemas en Tiempo Real</p>
+        </header>
+
+        <main>
+            <section class="status-panel">
+                <h2>Estado del Servidor</h2>
+                <div id="traffic-light" class="traffic-light">
+                    <div id="light" class="light"></div>
+                </div>
+                <p id="status-text">Conectando...</p>
+            </section>
+
+            <section class="control-panel">
+                <h2>Comandos de Sistema</h2>
+                <div class="buttons">
+                    <button id="btn-ram" class="neon-btn">Verificar RAM</button>
+                    <button id="btn-cpu" class="neon-btn">Verificar CPU</button>
+                </div>
+            </section>
+
+            <section class="output-panel">
+                <h2>Salida de Terminal</h2>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <pre id="console-output">Esperando comandos...</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
