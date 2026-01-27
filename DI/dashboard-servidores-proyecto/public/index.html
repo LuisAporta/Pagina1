@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVER CONTROL // LU-15 SYSTEM</title>
+    <title>SERVER CONTROL DASHBOARD</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* TOKYO NIGHT CYBERPUNK THEME - INLINE CRITICAL */
+        /* TOKYO NIGHT CYBERPUNK THEME - INLINE CRITICAL V2.2 */
         :root {
             --bg-dark: #020205;
             --panel-bg: rgba(10, 12, 16, 0.95);
@@ -504,9 +504,9 @@
         <aside class="sidebar">
             <div class="logo">LU-15 SYS</div>
             <nav>
-                <button class="nav-btn active">MONITOR</button>
-                <button class="nav-btn">NETWORK</button>
-                <button class="nav-btn">SECURITY</button>
+                <div class="nav-btn active">MONITOR</div>
+                <div class="nav-btn">NETWORK</div>
+                <div class="nav-btn">SECURITY</div>
                 <a href="explicacion.html" class="nav-btn special">DOCUMENTATION</a>
             </nav>
             <div class="server-status-box">
@@ -550,10 +550,8 @@
                 <div class="panel actions-panel">
                     <h2>COMMAND OVERRIDE</h2>
                     <div class="btn-grid">
-                        <button id="btn-ram" class="tech-btn">SCAN MEMORY</button>
-                        <button id="btn-cpu" class="tech-btn">CHECK CPU LOAD</button>
-                        <button class="tech-btn disabled">FLUSH DNS</button>
-                        <button class="tech-btn disabled">REBOOT CORE</button>
+                        <button id="btn-ram" class="tech-btn disabled">SCAN MEMORY</button>
+                        <button id="btn-cpu" class="tech-btn disabled">CHECK CPU LOAD</button>
                     </div>
                 </div>
 
@@ -562,7 +560,7 @@
                     <h2>SYSTEM LOGS</h2>
                     <div class="console-window">
                         <div id="console-output" class="console-content">
-                            <span class="log-line">INITIALIZING INTERFACE...</span>
+                            <span class="log-line log-sys">INITIALIZING INTERFACE...</span>
                         </div>
                     </div>
                 </div>

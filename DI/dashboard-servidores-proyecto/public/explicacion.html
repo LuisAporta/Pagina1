@@ -8,171 +8,395 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <style>
-        .doc-container {
-            max-width: 1000px;
+        /* TOKYO NIGHT CYBERPUNK THEME - DOCS */
+        :root {
+            --bg-dark: #020205;
+            --panel-bg: rgba(10, 12, 16, 0.95);
+            --border-color: #333;
+
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-green: #0aff0a;
+            --neon-red: #ff2a2a;
+            --neon-yellow: #fcee0a;
+
+            --font-head: 'Orbitron', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-blue) #111;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.9)),
+                url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #fff;
+            font-family: var(--font-head);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .main-layout {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
 
-        .doc-header {
-            margin-bottom: 3rem;
-            text-align: center;
-            border-bottom: 2px solid var(--neon-purple);
-            padding-bottom: 1rem;
-        }
-
-        .doc-header h1 {
-            color: var(--neon-blue);
-            font-size: 2.5rem;
-            text-shadow: 0 0 15px var(--neon-blue);
-        }
-
-        section {
-            background: rgba(10, 10, 15, 0.8);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--neon-blue);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        h2 {
-            color: #fff;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        h3 {
-            color: var(--neon-yellow);
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-family: var(--font-mono);
-        }
-
-        p {
-            color: #ddd;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-            font-family: sans-serif;
-        }
-
-        .diagram-box {
-            border: 2px dashed #444;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 2rem;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: var(--neon-green);
-            font-family: var(--font-mono);
-        }
-
-        .code-block {
-            background: #050510;
-            border: 1px solid #333;
-            padding: 1rem;
-            font-family: var(--font-mono);
-            color: #ccc;
-            overflow-x: auto;
-            border-radius: 5px;
-        }
-
-        .keyword {
-            color: #cc7832;
-        }
-
-        .string {
-            color: #6a8759;
-        }
-
-        .comment {
-            color: #808080;
-        }
-
         .back-link {
             display: inline-block;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             color: var(--neon-blue);
             text-decoration: none;
             font-weight: bold;
             border: 1px solid var(--neon-blue);
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.5rem;
             transition: 0.3s;
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .back-link:hover {
             background: var(--neon-blue);
             color: #000;
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            border-bottom: 2px solid var(--neon-purple);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 3rem;
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 1rem;
+        }
+
+        h1 span {
+            color: var(--neon-blue);
+        }
+
+        .subtitle {
+            font-family: var(--font-mono);
+            color: var(--neon-yellow);
+            letter-spacing: 2px;
+        }
+
+        section {
+            background: rgba(10, 12, 16, 0.9);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--neon-blue);
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), transparent);
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2::before {
+            content: ">>";
+            color: var(--neon-purple);
+        }
+
+        h3 {
+            color: var(--neon-yellow);
+            font-family: var(--font-mono);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        p,
+        li {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            margin-left: 2rem;
+        }
+
+        .code-block {
+            background: #080810;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            overflow-x: auto;
+            color: #d4d4d4;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .code-block::after {
+            content: "JS";
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .kwd {
+            color: #569cd6;
+        }
+
+        /* Keyword */
+        .str {
+            color: #ce9178;
+        }
+
+        /* String */
+        .fun {
+            color: #dcdcaa;
+        }
+
+        /* Function */
+        .com {
+            color: #6a9955;
+        }
+
+        /* Comment */
+
+        /* TIMELINE STYLES */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid var(--neon-purple);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .prompt-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--neon-green);
+            padding: 1rem;
+            font-style: italic;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+
+        .screenshot-placeholder {
+            width: 100%;
+            height: 250px;
+            background: #111;
+            border: 2px dashed #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-family: var(--font-mono);
+            margin-top: 1rem;
+            text-transform: uppercase;
         }
     </style>
 </head>
 
 <body>
-    <div class="main-layout" style="display: block; overflow-y: auto;">
-        <div class="doc-container">
-            <a href="index.html" class="back-link">&lt;&lt; RETURN TO DASHBOARD</a>
+    <div class="main-layout">
+        <a href="index.html" class="back-link">&lt;&lt; RETURN TO DASHBOARD</a>
 
-            <header class="doc-header">
-                <h1>SYSTEM ARCHITECTURE</h1>
-                <p style="font-family: var(--font-mono); color: var(--neon-yellow);">TECHNICAL DOCUMENTATION & LOGIC
-                    FLOW</p>
-            </header>
+        <header>
+            <h1>SYSTEM <span>ARCHITECTURE</span></h1>
+            <p class="subtitle">DOCUMENTACIÓN TÉCNICA & REGISTRO DE DESARROLLO</p>
+        </header>
 
-            <!-- 1. ARQUITECTURA -->
-            <section>
-                <h2>1. Arquitectura Cliente-Servidor</h2>
-                <p>Esta aplicación no es una página web estática simple. Utiliza una arquitectura donde el
-                    <strong>Frontend (Tu navegador)</strong> se comunica con un <strong>Backend (Servidor
-                        Node.js)</strong>.</p>
+        <!-- 1. ARQUITECTURA -->
+        <section>
+            <h2>1. Arquitectura & Flujo de Datos</h2>
+            <p>El sistema utiliza una arquitectura <strong>Cliente-Servidor</strong> desacoplada. El objetivo es
+                permitir que una interfaz web (HTML5/CSS3) controle recursos del sistema operativo, algo imposible para
+                un navegador por sí solo.</p>
 
-                <h3>¿Por qué necesitamos un Backend?</h3>
-                <p>Javascript ejecutándose en el navegador (Chrome/Edge) está "encerrado" por seguridad. No puede
-                    acceder directamente a la memoria RAM o CPU de tu ordenador. Para solucionar esto, usamos
-                    <strong>Node.js</strong> en el servidor, que sí tiene permisos de administrador para ejecutar
-                    comandos del sistema.</p>
+            <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: #000; border: 1px solid #333;">
+                <span style="color: var(--neon-green)">[ CLIENTE (Navegador) ]</span>
+                <br>
+                ⬇️ <span style="font-size: 0.8rem; color: #666;">Fetch API (JSON)</span> ⬆️
+                <br><br>
+                <span style="color: var(--neon-purple)">[ BACKEND (Node.js Express) ]</span>
+                <br>
+                ⬇️ <span style="font-size: 0.8rem; color: #666;">child_process.exec()</span> ⬆️
+                <br><br>
+                <span style="color: var(--neon-blue)">[ KERNEL (Windows OS) ]</span>
+            </div>
+        </section>
 
-                <div class="diagram-box">
-                    [NAVEGADOR] <br>
-                    (Pide datos: fetch('/api/ram')) <br>
-                    ↓ <br>
-                    [SERVIDOR NODE.JS] <br>
-                    (Ejecuta comando 'wmic' en Windows) <br>
-                    ↓ <br>
-                    [SISTEMA OPERATIVO] <br>
-                    (Retorna uso real de memoria)
+        <!-- 2. ANÁLISIS DE CÓDIGO -->
+        <section>
+            <h2>2. Análisis de Código Núcleo</h2>
+            <p>Desglose de los componentes principales que hacen funcionar la aplicación.</p>
+
+            <h3>A. Backend: Ejecución de Comandos (`server.js`)</h3>
+            <p>Este archivo actúa como puente. Define una <strong>API REST</strong> que el frontend puede consultar.</p>
+            <div class="code-block">
+                <span class="com">// Endpoint para obtener memoria RAM real</span>
+                app.<span class="fun">get</span>(<span class="str">'/api/ram'</span>, (<span class="kwd">req</span>,
+                <span class="kwd">res</span>) => {
+                <span class="com">// Validar que el sistema esté encendido</span>
+                <span class="kwd">if</span> (systemStatus !== <span class="str">'running'</span>) <span
+                    class="kwd">return</span> res.send(<span class="str">'OFFLINE'</span>);
+
+                <span class="com">// Ejecutar comando nativo de Windows (WMI)</span>
+                <span class="fun">exec</span>(<span class="str">'wmic OS get FreePhysicalMemory'</span>, (<span
+                    class="kwd">err</span>, <span class="kwd">stdout</span>) => {
+                <span class="kwd">if</span> (err) <span class="kwd">return</span> res.send(err.message);
+                res.<span class="fun">send</span>(stdout); <span class="com">// Enviar resultado crudo al cliente</span>
+                });
+                });
+            </div>
+
+            <h3>B. Frontend: Lógica de Control (`app.js`)</h3>
+            <p>Gestiona la interfaz, los gráficos y la simulación de fallos.</p>
+            <div class="code-block">
+                <span class="com">// Función de Control del Sistema</span>
+                <span class="kwd">function</span> <span class="fun">controlSystem</span>(action) {
+                <span class="com">// 1. Log en consola visual</span>
+                <span class="fun">log</span>(<span class="str">`> INITIATING ${action.toUpperCase()}...`</span>, <span
+                    class="str">'sys'</span>);
+
+                <span class="com">// 2. Enviar orden al servidor</span>
+                <span class="fun">fetch</span>(<span class="str">`/control/${action}`</span>, { method: <span
+                    class="str">'POST'</span> })
+                .then(res => res.json())
+                .then(data => {
+                <span class="com">// 3. Actualizar estado visual si éxito</span>
+                <span class="fun">updateStatus</span>();
+                });
+                }
+            </div>
+
+            <h3>C. Almacenamiento & Persistencia</h3>
+            <p>Actualmente, el sistema utiliza <strong>Memoria Volátil (RAM)</strong> para el estado (`systemStatus`).
+            </p>
+            <ul>
+                <li><strong>Backend:</strong> Variables globales en Node.js mantienen el estado mientras el servidor
+                    corre.</li>
+                <li><strong>Persistencia Futura:</strong> Para una versión v3.0, se integraría <strong>SQLite</strong> o
+                    un archivo <strong>JSON local</strong> para guardar el historial de estadísticas y logs entre
+                    reinicios.</li>
+            </ul>
+        </section>
+
+        <!-- 3. PROCESO DE RESOLUCIÓN -->
+        <section>
+            <h2>3. Proceso de Resolución del Proyecto</h2>
+            <p>Registro cronológico de la construcción de la aplicación, detallando las IAs utilizadas y las
+                instrucciones clave (Prompts).</p>
+
+            <div class="timeline">
+                <!-- FASE 1 -->
+                <div class="timeline-item">
+                    <h3>FASE 1: Estructura y Lógica Basal</h3>
+                    <p><strong>Objetivo:</strong> Crear un dashboard funcional simple cumpliendo reglas "Don Viejo"
+                        (Node.js puro, sin frameworks frontend).</p>
+                    <div class="prompt-box">
+                        "Crea una carpeta dashboard-servidores. Inicializa Node.js. REGLAS: Sin tildes en código,
+                        Javascript Vanilla, semáforo visual y ejecución de comandos reales."
+                    </div>
+                    <p>Se generó la estructura base y el servidor Express. Se implementó la comunicación básica con
+                        `child_process`.</p>
+                    <div class="screenshot-placeholder">
+                        [CAPTURA 1: CÓDIGO INICIAL EN VS CODE]
+                    </div>
                 </div>
-            </section>
 
-            <!-- 2. FUNCIONAMIENTO -->
-            <section>
-                <h2>2. Flujo de Datos</h2>
+                <!-- FASE 2 -->
+                <div class="timeline-item">
+                    <h3>FASE 2: Despliegue y Sincronización GitHub</h3>
+                    <p><strong>Objetivo:</strong> Subir el proyecto a un repositorio real y organizar la estructura de
+                        carpetas (ASI/DI).</p>
+                    <div class="prompt-box">
+                        "Inicializa un repo Git, haz commit y súbelo. Refactoriza organizando en carpetas ASI y DI. Crea
+                        un Hub central index.html."
+                    </div>
+                    <p>Se resolvieron conflictos de merge (rename de archivos) y se estableció la estructura final del
+                        repositorio.</p>
+                    <div class="screenshot-placeholder">
+                        [CAPTURA 2: ÁRBOL DE DIRECTORIOS FINAL]
+                    </div>
+                </div>
 
-                <h3>Start / Stop System</h3>
-                <p>Al pulsar "INICIAR SISTEMA", el frontend envía una petición POST a <code>/control/start</code>. El
-                    servidor simula un retardo y cambia su variable interna de estado. Esto habilita los otros endpoints
-                    (RAM/CPU).</p>
+                <!-- FASE 3 -->
+                <div class="timeline-item">
+                    <h3>FASE 3: Rediseño "Tokyo Night Cyberpunk"</h3>
+                    <p><strong>Objetivo:</strong> Transformar la estética "cutre" inicial en una experiencia visual
+                        premium.</p>
+                    <div class="prompt-box">
+                        "No me gusta, es muy simple. Haz un rediseño completo estilo Gothic Cyberpunk Neon Street
+                        Japanese. Añade Start/Stop y gráficos."
+                    </div>
+                    <p>Se reescribió todo el CSS (`style.css`) usando variables neón y efectos de cristal
+                        (Glassmorphism). Se integró <strong>Chart.js</strong> para visualización de datos.</p>
+                    <div class="screenshot-placeholder">
+                        [CAPTURA 3: DASHBOARD FINAL NEÓN]
+                    </div>
+                </div>
 
-                <h3>Gráficos en Tiempo Real</h3>
-                <p>Utilizamos la librería <strong>Chart.js</strong>. Cada 5 segundos, el frontend pide
-                    <code>/api/stats</code> al servidor, que retorna un array con el historial simulado de uso de CPU y
-                    RAM.</p>
-            </section>
+                <!-- FASE 4 -->
+                <div class="timeline-item">
+                    <h3>FASE 4: Documentación Técnica</h3>
+                    <p><strong>Objetivo:</strong> Explicar el funcionamiento interno y el proceso de creación.</p>
+                    <div class="prompt-box">
+                        "Explica A partir de esta tarea identificar códigos principales (Backend, Datos...) y el proceso
+                        de resolución con Prompts e IAs usadas."
+                    </div>
+                    <p>Generación de este documento explicativo detallado.</p>
+                </div>
+            </div>
+        </section>
 
-            <!-- 3. MÁQUINAS VIRTUALES -->
-            <section>
-                <h2>3. Despliegue en Entornos Reales</h2>
-                <p>En un entorno empresarial real, este dashboard no controlaría "tu PC", sino servidores remotos.</p>
-
-                <h3>Uso de Máquinas Virtuales (VM)</h3>
-                <p>Lo ideal es instalar este backend en diferentes Máquinas Virtuales (Linux/Windows Server). El
-                    Dashboard centralizaría la información de todas ellas mediante autenticación segura (SSH/Tokens).
-                </p>
-            </section>
-
-            <footer style="text-align: center; margin-top: 3rem; color: #555; font-family: var(--font-mono);">
-                SYSTEM_DOCS_VER_2.0 // AUTHOR: LU-15
-            </footer>
-        </div>
+        <footer
+            style="text-align: center; margin-top: 5rem; border-top: 1px solid #333; padding-top: 2rem; color: #555;">
+            SYSTEM_DOCS_VER_3.0 // END OF FILE
+        </footer>
     </div>
 </body>
 
