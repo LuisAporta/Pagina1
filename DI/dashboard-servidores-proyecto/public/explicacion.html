@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
     <style>
-        /* TOKYO NIGHT CYBERPUNK THEME - DOCS V3.1 (TEXT FOCUSED) */
+        /* TOKYO NIGHT CYBERPUNK THEME - DOCS V3.2 (MULTI-DEVICE) */
         :root {
             --bg-dark: #020205;
             --panel-bg: rgba(10, 12, 16, 0.95);
@@ -44,7 +44,6 @@
             font-family: var(--font-head);
             font-size: 16px;
             line-height: 1.8;
-            /* Mejor legibilidad */
         }
 
         .main-layout {
@@ -307,113 +306,109 @@
 
         <!-- 1. ARQUITECTURA -->
         <section>
-            <h2>1. Arquitectura & Flujo de Datos</h2>
-            <p>El sistema se fundamenta en un modelo <strong>Cliente-Servidor asíncrono</strong> diseñado para superar
-                las limitaciones de seguridad de los navegadores modernos ("Sandboxing"). Un navegador web estándar no
-                tiene permisos para leer la memoria RAM del sistema ni ejecutar procesos; por ello, delegamos esa
-                responsabilidad a un entorno de ejecución local (Node.js).</p>
+            <h2>1. Arquitectura & Flujo de Datos (Modo Multi-Dispositivo)</h2>
+            <p>El sistema ha evolucionado hacia una topología de red <strong>Hub & Spoke</strong> (Centro y Radios).
+                Ahora tenemos un servidor central que agrega datos de múltiples agentes distribuidos.</p>
 
             <div style="text-align: center; margin: 3rem 0; padding: 2rem; background: #000; border: 1px solid #333;">
-                <span style="color: var(--neon-green); font-size: 1.2rem;">[ FRONTEND (Cliente) ]</span>
+                <span style="color: var(--neon-purple); font-size: 1.2rem;">[ HUB CENTRAL (Server.js) ]</span>
                 <br>
-                <div style="font-family: monospace; color: #666; margin: 10px 0;">HTML5 / CSS3 / Vanilla JS / Chart.js
-                </div>
+                <div style="font-family: monospace; color: #666; margin: 10px 0;">Base de Datos Volátil (Memoria)</div>
                 <br>
-                ⬇️ <span style="font-size: 0.9rem; color: #aaa;">Solicitud HTTP (JSON) via Fetch API</span> ⬆️
+                ⬆️ <span style="font-size: 0.9rem; color: #aaa;">POST /api/register (JSON)</span> ⬆️
                 <br><br>
-                <span style="color: var(--neon-purple); font-size: 1.2rem;">[ BACKEND (Servidor) ]</span>
-                <br>
-                <div style="font-family: monospace; color: #666; margin: 10px 0;">Node.js / Express / Child_Process
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <span style="color: var(--neon-blue);">[ CLIENTE WEB ]</span>
+                        <br>
+                        <span style="font-size: 0.8rem; color: #666;">Dashboard</span>
+                    </div>
+                    <div>
+                        <span style="color: var(--neon-green);">[ AGENTE 1 ]</span>
+                        <br>
+                        <span style="font-size: 0.8rem; color: #666;">agent.js</span>
+                    </div>
+                    <div>
+                        <span style="color: var(--neon-green);">[ AGENTE 2 ]</span>
+                        <br>
+                        <span style="font-size: 0.8rem; color: #666;">agent.js</span>
+                    </div>
                 </div>
-                <br>
-                ⬇️ <span style="font-size: 0.9rem; color: #aaa;">Ejecución de Comandos del Sistema (Shell)</span> ⬆️
-                <br><br>
-                <span style="color: var(--neon-blue); font-size: 1.2rem;">[ KERNEL (Sistema Operativo) ]</span>
-                <br>
-                <div style="font-family: monospace; color: #666; margin: 10px 0;">Windows Management Instrumentation
-                    (WMIC)</div>
             </div>
+
+            <p><strong>¿Cómo funciona la red?</strong><br>
+                A diferencia de la versión Standalone, aquí el Dashboard <strong>no lee</strong> directamente el PC
+                donde se ejecuta. En su lugar, lee una "lista de estado" que el servidor mantiene actualizada gracias a
+                los latidos (heartbeats) constantes que envían los agentes instalados en otros PC.</p>
         </section>
 
         <!-- 2. ANÁLISIS DE CÓDIGO -->
         <section>
             <h2>2. Análisis Profundo del Código</h2>
-            <p>A continuación, desglosamos los módulos críticos que componen la lógica de negocio de la aplicación.</p>
+            <p>A continuación, desglosamos los nuevos módulos distribuidos.</p>
 
-            <h3>A. BACKEND: La API de Control (`server.js`)</h3>
-            <p>El backend utiliza el framework <strong>Express</strong> para levantar un servidor web ligero. Su función
-                principal es exponer "Endpoints" (puntos de acceso) que el frontend puede llamar.</p>
-
-            <p><strong>Punto Clave: Interacción con el Sistema</strong><br>
-                Utilizamos la librería nativa <code>child_process</code>. Esto nos permite abrir una terminal
-                "invisible" en el servidor, escribir un comando como si fuéramos un usuario (ej: <code>wmic</code> para
-                Windows o <code>free -m</code> para Linux), y capturar el texto que devuelve.</p>
-
+            <h3>A. EL AGENTE (`agent.js`)</h3>
+            <p>Este es el componente de "Software Espía". Se diseña para ser un script único sin dependencias complejas
+                para facilitar su instalación.</p>
             <div class="code-block">
-                <span class="com">// endpoint GET: /api/ram</span>
-                app.<span class="fun">get</span>(<span class="str">'/api/ram'</span>, (<span class="kwd">req</span>,
-                <span class="kwd">res</span>) => {
-                <span class="com">// 1. Verificación de Estado (Middleware simulado)</span>
-                <span class="kwd">if</span> (systemStatus !== <span class="str">'running'</span>) {
-                <span class="kwd">return</span> res.<span class="fun">send</span>(<span class="str">'ERROR: SYSTEM IS
-                    OFFLINE'</span>);
-                }
+                <span class="com">// Configuración Dinámica del Agente</span>
+                <span class="kwd">const</span> AGENT_ID = <span class="str">'NODE-'</span> + os.<span
+                    class="fun">hostname</span>().toUpperCase();
 
-                <span class="com">// 2. Ejecución de Comando Nativo</span>
-                <span class="com">// 'exec' crea un subproceso shell</span>
-                <span class="fun">exec</span>(<span class="str">'wmic OS get FreePhysicalMemory'</span>, (<span
-                    class="kwd">error</span>, <span class="kwd">stdout</span>) => {
-                <span class="kwd">if</span> (error) <span class="kwd">return</span> res.<span
-                    class="fun">send</span>(error.message);
+                <span class="com">// Heartbeat Loop (Cada 2 segundos)</span>
+                <span class="fun">setInterval</span>(() => {
+                <span class="com">// 1. Obtener métricas locales</span>
+                <span class="kwd">const</span> stats = { cpu: <span class="fun">getLoad</span>(), ram: <span
+                    class="fun">getMem</span>() };
 
-                <span class="com">// 3. Retorno de Datos Crudos</span>
-                res.<span class="fun">send</span>(stdout);
-                });
-                });
+                <span class="com">// 2. Enviar señal al Servidor Central</span>
+                <span class="kwd">const</span> req = http.<span class="fun">request</span>({
+                hostname: <span class="str">'localhost'</span>,
+                path: <span class="str">'/api/heartbeat'</span>,
+                method: <span class="str">'POST'</span>,
+                }, <span class="com">...</span>);
+                }, 2000);
             </div>
 
-            <h3>B. FRONTEND: Lógica de Visualización (`app.js`)</h3>
-            <p>El frontend se encarga de la experiencia de usuario. Sigue una lógica de <strong>"Polling"</strong>
-                (sundeo): cada X segundos, pregunta al servidor "¿Cómo estás?" y actualiza la pantalla.</p>
+            <h3>B. EL HUB CENTRAL (`server.js`)</h3>
+            <p>El servidor ahora actúa como un balanceador de carga simplificado.</p>
+            <div class="code-block">
+                <span class="com">// Almacenamiento en Memoria (RAM Database)</span>
+                <span class="kwd">let</span> connectedClients = {};
 
-            <p><strong>Punto Clave: Modo Simulación (Fallo Seguro)</strong><br>
-                Dado que GitHub Pages solo aloja archivos estáticos (HTML/CSS/JS) y no puede ejecutar Node.js,
-                implementamos una lógica de "Fallback". Si el frontend detecta que el servidor no responde (fetch
-                falla), activa automáticamente un <strong>Modo Simulación</strong> para no romper la experiencia visual.
-            </p>
+                <span class="com">// Endpoint de Registro</span>
+                app.<span class="fun">post</span>(<span class="str">'/api/heartbeat'</span>, (<span
+                    class="kwd">req</span>, <span class="kwd">res</span>) => {
+                <span class="kwd">const</span> { id, cpu, ram } = req.body;
+
+                <span class="com">// Guardar o Actualizar Cliente</span>
+                connectedClients[id] = {
+                id,
+                ram,
+                cpu,
+                lastSeen: Date.<span class="fun">now</span>()
+                };
+                });
+
+                <span class="com">// Garbage Collector: Eliminar nodos inactivos > 10s</span>
+                <span class="fun">setInterval</span>(<span class="fun">cleanupNodes</span>, 5000);
+            </div>
+
+            <h3>C. FRONTEND: Lógica de Visualización (`app.js`)</h3>
+            <p>El frontend se encarga de pintar la lista de "Active Nodes" en el sidebar.</p>
 
             <div class="code-block">
-                <span class="kwd">function</span> <span class="fun">updateStatus</span>() {
-                <span class="fun">fetch</span>(<span class="str">'/status'</span>)
+                <span class="kwd">function</span> <span class="fun">updateClientList</span>() {
+                <span class="fun">fetch</span>(<span class="str">'/api/clients'</span>)
                 .then(<span class="kwd">res</span> => res.<span class="fun">json</span>())
-                .then(<span class="kwd">data</span> => {
-                <span class="com">// Servidor responde: Actualizar UI real</span>
-                <span class="fun">setVisualStatus</span>(<span class="str">'online'</span>);
-                })
-                .catch(<span class="kwd">err</span> => {
-                <span class="com">// ERROR CRÍTICO: Backend no disponible -> Activar Simulación</span>
-                <span class="kwd">if</span> (!IS_SIMULATION) {
-                <span class="fun">log</span>(<span class="str">"CONNECTION TRACE FAILED. REROUTING TO
-                    SIMULATION..."</span>, <span class="str">'error'</span>);
-                IS_SIMULATION = <span class="kwd">true</span>;
-                }
+                .then(<span class="kwd">clients</span> => {
+                <span class="com">// Generar botones para cada nodo detectado</span>
+                nodesList.innerHTML = clients.<span class="fun">map</span>(c =>
+                <span class="str">`&lt;div class="node-item"&gt;${c.id}&lt;/div&gt;`</span>
+                ).<span class="fun">join</span>(<span class="str">''</span>);
                 });
                 }
             </div>
-
-            <h3>C. ESTILO: Arquitectura CSS (`style.css`)</h3>
-            <p>Para conseguir el efecto "Cyberpunk", no usamos librerías como Bootstrap. Todo es <strong>CSS
-                    Nativo</strong> utilizando:</p>
-            <ul>
-                <li><strong>Variables CSS (`:root`):</strong> Centralizan los colores neón (`--neon-blue`,
-                    `--neon-purple`) para cambios globales rápidos de tema.</li>
-                <li><strong>Glassmorphism:</strong> Uso de fondos semitransparentes (`rgba(0,0,0,0.8)`) para superponer
-                    paneles sobre el fondo animado.</li>
-                <li><strong>CSS Grid Layout:</strong> Define la estructura rígida del dashboard (Columnas 1fr 2fr)
-                    manteniéndolo responsivo.</li>
-                <li><strong>Animaciones Keyframes:</strong> Para el latido del núcleo rojo (`pulse-red`) y el brillo de
-                    los botones.</li>
-            </ul>
         </section>
 
         <!-- 3. PROCESO DE RESOLUCIÓN -->
@@ -426,63 +421,34 @@
                 <!-- FASE 1 -->
                 <div class="timeline-item">
                     <h4>FASE 1: Prototipado "Backend First"</h4>
-                    <span class="tech-tag">Node.js</span> <span class="tech-tag">Express</span> <span
-                        class="tech-tag">MVP</span>
-                    <p>El primer desafío fue establecer la comunicación técnica. No importaba el diseño, solo que
-                        Node.js pudiera hablar con el Sistema Operativo.</p>
-                    <div class="prompt-box">
-                        <span class="prompt-label">PROMPT INICIAL:</span>
-                        "Crea una carpeta dashboard-servidores. Inicializa Node.js e instala express. REGLAS: Sin tildes
-                        en código, Javascript Vanilla, semáforo visual y ejecución de comandos reales."
-                    </div>
-                    <p><strong>Resultado:</strong> Un servidor funcional pero con una interfaz HTML blanca muy básica.
-                        Se verificó que `exec` funcionaba correctamente en Windows.</p>
+                    <span class="tech-tag">Node.js</span> <span class="tech-tag">Express</span>
+                    <p>Objetivo inicial: Comunicación básica Node.js <-> OS.</p>
                 </div>
 
                 <!-- FASE 2 -->
                 <div class="timeline-item">
-                    <h4>FASE 2: Integración y Despliegue</h4>
-                    <span class="tech-tag">Git</span> <span class="tech-tag">GitHub</span> <span
-                        class="tech-tag">Refactor</span>
-                    <p>Se procedió a organizar el código en una estructura profesional (`ASI/` y `DI/`) y subirlo a la
-                        nube. Surgieron conflictos de nombres de archivo (`ejercicio.html` vs `index.html`) que
-                        requirieron intervención manual en Git.</p>
-                    <div class="prompt-box">
-                        <span class="prompt-label">ACCIÓN CLAVE:</span>
-                        Resolución de conflictos de "Merge" en Git, eliminando archivos duplicados y unificando la
-                        navegación.
-                    </div>
+                    <h4>FASE 2: Integración Web</h4>
+                    <span class="tech-tag">Git</span> <span class="tech-tag">HTML5</span>
+                    <p>Creación de estructura base y resolución de conflictos Git.</p>
                 </div>
 
                 <!-- FASE 3 -->
                 <div class="timeline-item">
-                    <h4>FASE 3: Rediseño Visual Total ("Overhaul")</h4>
-                    <span class="tech-tag">CSS3</span> <span class="tech-tag">Cyberpunk</span> <span
-                        class="tech-tag">Chart.js</span>
-                    <p>El usuario rechazó el diseño inicial por ser "cutre". Se iteró hacia una estética agresiva
-                        inspirada en "Tokyo Night". Se abandonó el diseño plano por uno con profundidad (sombras,
-                        neones).</p>
-                    <div class="prompt-box">
-                        <span class="prompt-label">FEEDBACK USUARIO:</span>
-                        "No me gusta nada el estilo, es muy feo. Quiero una estética gótica cyberpunk neon street
-                        japonesa, super estética. Pon fotos de fondo y hazlo atractivo."
-                    </div>
-                    <p><strong>Solución:</strong> Se reescribió el 100% del CSS. Se añadieron fuentes de Google
-                        (Orbitron) y se integró <strong>Chart.js</strong> para visualización de datos en tiempo real,
-                        reemplazando las listas de texto plano.</p>
+                    <h4>FASE 3: Rediseño Visual Total</h4>
+                    <span class="tech-tag">CSS3</span> <span class="tech-tag">Cyberpunk</span>
+                    <p>Reescritura completa del CSS inspirado en "Tokyo Night". Inyección de CSS crítico.</p>
                 </div>
 
                 <!-- FASE 4 -->
                 <div class="timeline-item">
-                    <h4>FASE 4: Documentación y Estabilización</h4>
-                    <span class="tech-tag">Docs</span> <span class="tech-tag">Debugging</span> <span
-                        class="tech-tag">Inyección CSS</span>
-                    <p>Al desplegar en GitHub Pages (entorno estático), el dashboard falló visualmente. Se diagnosticó
-                        un problema de caché y de carga de CSS externo.</p>
+                    <h4>FASE 4: Arquitectura Distribuida (V3.0)</h4>
+                    <span class="tech-tag">Networking</span> <span class="tech-tag">Agentes</span>
+                    <p>Expansión final para soportar múltiples dispositivos. Creación del endpoint
+                        <code>/api/heartbeat</code> y el script <code>agent.js</code>.</p>
                     <div class="prompt-box">
-                        <span class="prompt-label">SOLUCIÓN TÉCNICA:</span>
-                        Se inyectó el CSS crítico ("Critical Path CSS") directamente en el HTML y se programó el "Modo
-                        Simulación" en Javascript para que la web no parezca rota si no hay conexión con el backend.
+                        <span class="prompt-label">SOLICITUD USUARIO:</span>
+                        "Quiero que dispositivos se puedan conectar al servidor y todos esos dispositivos se pudiesen
+                        ver en el dashboard."
                     </div>
                 </div>
             </div>
@@ -490,7 +456,7 @@
 
         <footer
             style="text-align: center; margin-top: 5rem; border-top: 1px solid #333; padding-top: 2rem; color: #555;">
-            SYSTEM_DOCS_VER_3.1 // LU-15 SYSTEM // END OF FILE
+            SYSTEM_DOCS_VER_3.2 // LU-15 SYSTEM // END OF FILE
         </footer>
     </div>
 </body>
