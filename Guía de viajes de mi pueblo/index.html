@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>España Explore | Guía Turística de Ciudades</title>
+    <!-- Incluir Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración personalizada de Tailwind (Carbón y Magenta) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Habilitar el modo oscuro basado en la clase 'dark'
+            theme: {
+                extend: {
+                    colors: {
+                        // Modo Claro (Base: Rosa/Fucsia)
+                        'primary-light': '#E91E63', // Rosa vibrante
+                        'secondary-light': '#F8BBD0', // Rosa claro para fondos/acento
+                        'bg-light': '#f4f4ff', // Fondo muy claro
+                        'text-light': '#1f2937', // Gris oscuro para texto
+
+                        // MODO OSCURO (CARBÓN Y MAGENTA)
+                        'primary-dark': '#FF3366', // Magenta vibrante
+                        'secondary-dark': '#50001B', // Tono oscuro del acento
+                        'bg-dark': '#1E1E1E', // Fondo Carbón muy oscuro
+                        'card-dark': '#2C2C2C', // Fondo de tarjeta oscuro (más gris)
+                        'text-dark': '#F0F0F0', // Blanco suave para texto
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Estilos personalizados para transiciones y estética avanzada -->
+    <style>
+        /* Aplicar transiciones suaves a todos los elementos importantes */
+        body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* --- Estilos Comunes de Transición y Sombra --- */
+        .card-transition,
+        .detail-transition {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-origin: center;
+        }
+
+        /* --- ESTILOS DE CARDS HOME --- */
+        .card-transition {
+            background-color: white;
+            color: theme('colors.text-light');
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid theme('colors.secondary-light');
+        }
+        .card-transition:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 40px -8px rgba(0, 0, 0, 0.2), 0 15px 15px -8px rgba(0, 0, 0, 0.1);
+        }
+        .dark .card-transition {
+            background-color: theme('colors.card-dark');
+            color: theme('colors.text-dark');
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5), 0 5px 10px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid theme('colors.primary-dark');
+        }
+        .dark .card-transition:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 40px -8px rgba(0, 0, 0, 0.7), 0 15px 15px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Estilos para la imagen de fondo de las cards de Home */
+        .card-bg {
+            height: 14rem; /* h-56 */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .card-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%);
+            z-index: 1;
+        }
+        .card-bg h3, .card-bg p {
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+        /* --- FIN ESTILOS DE CARDS HOME --- */
+
+
+        /* --- NUEVOS ESTILOS PARA EL HEADER (NAVBAR) --- */
+        #main-header {
+            position: relative; 
+            overflow: hidden;
+            padding-top: 1.5rem; 
+            padding-bottom: 1.5rem;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://placehold.co/1200x200/4CAF50/ffffff?text=ESPA%C3%91A+PAISAJE'); 
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            opacity: 0.15; 
+            transition: opacity 0.5s ease;
+        }
+        
+        .dark .header-bg {
+            opacity: 0.08; 
+        }
+        
+        /* Ajustar el z-index para que el contenido de la nav esté por encima */
+        #main-header > div {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* --- ESTILOS PARA EL BANNER DE DETALLE (Banner Dinámico) --- */
+        .detail-banner {
+            position: relative;
+            height: 20rem; /* h-80 */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
+
+        .detail-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* Overlay más fuerte para asegurar legibilidad del título */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 1;
+        }
+
+        .detail-banner h3, .detail-banner p {
+            color: white;
+            z-index: 2;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+        }
+
+        /* --- Estilos de Páginas y Toggle --- */
+        .page-detail {
+            display: none;
+            opacity: 0;
+            background-color: theme('colors.bg-light');
+            color: theme('colors.text-light');
+            transform: translateY(20px); 
+            transition: background-color 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+        }
+        .dark .page-detail {
+            background-color: theme('colors.bg-dark');
+            color: theme('colors.text-dark');
+        }
+        .page-detail.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .main-gradient-light {
+            background: linear-gradient(180deg, theme('colors.bg-light') 0%, #ffffff 100%);
+        }
+        .dark .main-gradient-dark {
+            background: linear-gradient(180deg, theme('colors.bg-dark') 0%, #000000 100%);
+        }
+
+        /* --- Estilos para el Accordion (Mejorados) --- */
+        .accordion-item {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05); /* Sombra base para la tarjeta */
+            margin-bottom: 1rem; /* Margen para separarlos visualmente */
+        }
+        
+        /* Estilo para el botón cuando está abierto (más limpio, sin afectar layout) */
+        .accordion-active-button {
+            background-color: theme('colors.primary-light') !important; /* Resalta el botón abierto */
+            color: white !important;
+            box-shadow: 0 0 15px rgba(233, 30, 99, 0.5); /* Sombra sutil al botón activo */
+        }
+        .dark .accordion-active-button {
+            background-color: theme('colors.primary-dark') !important;
+            color: theme('colors.text-dark') !important;
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+        }
+
+        .accordion-content {
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out; 
+            max-height: 0;
+            /* Fondo para el contenido desplegado (diferente al botón/tarjeta) */
+            background-color: theme('colors.bg-light') !important; 
+            border-top: 1px solid theme('colors.primary-light'); 
+        }
+        
+        .dark .accordion-content {
+            background-color: theme('colors.card-dark') !important; 
+            border-top: 1px solid theme('colors.primary-dark');
+        }
+
+        /* Estilos del texto dentro del contenido desplegado */
+        .accordion-content .detail-text {
+            padding: 1.25rem;
+            color: theme('colors.text-light');
+        }
+        .dark .accordion-content .detail-text {
+            color: theme('colors.text-dark');
+        }
+        
+        .accordion-button:hover {
+            cursor: pointer;
+        }
+        
+        /* Asegurar que el botón tenga una altura mínima para evitar saltos */
+        .accordion-button {
+            min-height: 4rem; /* 64px */
+        }
+
+        /* Estilos para el indicador de carga de la IA */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--tw-color-primary-light, #E91E63); /* Utiliza color primario */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        .dark .loader {
+            border-top: 4px solid var(--tw-color-primary-dark, #FF3366); /* Utiliza color primario oscuro */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+
+<!-- El cuerpo de la aplicación usa las clases de fondo y texto que cambian con el modo oscuro -->
+<body class="bg-bg-light text-text-light dark:bg-bg-dark dark:text-text-dark min-h-screen font-sans">
+
+    <!-- Navbar/Header Fijo y Responsive con imagen de fondo -->
+    <header id="main-header" class="sticky top-0 z-30 shadow-2xl transition duration-500 border-b border-secondary-light dark:border-primary-dark/50 bg-white dark:bg-card-dark">
+        <!-- Imagen de fondo sutil para el header -->
+        <div class="header-bg"></div>
+
+        <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+            <h1 id="app-title" class="text-3xl font-black transition-colors duration-300 text-primary-light dark:text-primary-dark cursor-pointer transform hover:scale-105" onclick="showPage('home')">
+                🇪🇸 Ciudades de España
+            </h1>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Botón de Home (solo visible en pantallas de detalle) -->
+                <button id="back-button" class="hidden p-2 rounded-full hover:bg-secondary-light dark:hover:bg-primary-dark/20 text-text-light dark:text-text-dark transition duration-300" onclick="showPage('home')">
+                    <!-- Icono de flecha izquierda -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+
+                <!-- Toggle para Modo Claro/Oscuro -->
+                <div class="flex items-center space-x-3">
+                    <!-- Sol Icono (Claro) -->
+                    <svg id="sun-icon" class="h-6 w-6 text-yellow-500 dark:text-gray-400 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.321 4.321a1 1 0 01.018 1.424l-.707.707a1 1 0 01-1.424-.018l.707-.707a1 1 0 011.424-.018zM16 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-4.321 4.321a1 1 0 01-1.424-.018l-.707.707a1 1 0 01.018 1.424l.707-.707a1 1 0 011.424-.018zM10 16a1 1 0 01-1 1v1a1 1 0 112 0v-1a1 1 0 01-1-1zm-4.321-4.321a1 1 0 01-.018-1.424l.707-.707a1 1 0 011.424.018l-.707.707a1 1 0 01-1.424.018zM4 10a1 1 0 01-1 1H2a1 1 0 010-2h1a1 1 0 011 1zm4.321-4.321a1 1 0 011.424-.018l.707.707a1 1 0 01-.018 1.424l-.707-.707a1 1 0 01-1.424-.018zM10 4a6 6 0 100 12 6 6 0 000-12z" />
+                    </svg>
+                    <!-- Switch Toggle -->
+                    <label for="dark-mode-toggle" class="relative toggle-switch cursor-pointer">
+                        <input type="checkbox" id="dark-mode-toggle" class="sr-only">
+                        <div class="block bg-gray-400 dark:bg-gray-700 toggle-switch w-10 h-6 rounded-full transition duration-300 shadow-inner"></div>
+                        <div class="dot absolute toggle-dot bg-white w-5 h-5 rounded-full shadow-lg left-0.5 top-0.5 transition-transform duration-300"></div>
+                    </label>
+                    <!-- Luna Icono (Oscuro) -->
+                    <svg id="moon-icon" class="h-6 w-6 text-gray-400 dark:text-indigo-400 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M17.293 13.903a8.97 8.97 0 01-10.7-10.7A1 1 0 005.122 2.373a1 1 0 00-.735-.42 1 1 0 00-.913.687A10 10 0 1018.665 14.76a1 1 0 00-1.372-.857z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de la Aplicación con gradiente -->
+    <main class="max-w-7xl mx-auto p-4 md:p-8 main-gradient-light dark:main-gradient-dark min-h-screen">
+
+        <!-- PANTALLA 1: HOME (Índice de Secciones) -->
+        <section id="home-page" class="page-content active">
+            <h2 class="text-4xl md:text-5xl font-black mb-6 transition-colors duration-300 text-primary-light dark:text-primary-dark tracking-tight">Guía de Ciudades Principales 🏙️</h2>
+            <p class="text-xl mb-8 text-gray-600 dark:text-gray-300 max-w-2xl">Busca tu próximo destino o explora las joyas culturales y arquitectónicas de España.</p>
+            
+            <!-- Buscador/Filtro -->
+            <div class="mb-10">
+                <input type="text" id="city-search" onkeyup="filterCities()" placeholder="Buscar ciudad, barrio o tema..." 
+                        class="w-full p-4 text-lg border-2 border-gray-300 dark:border-card-dark rounded-xl 
+                            bg-white dark:bg-card-dark text-text-light dark:text-text-dark 
+                            focus:outline-none focus:ring-4 focus:ring-primary-light/50 dark:focus:ring-primary-dark/50 
+                            transition duration-300 shadow-lg">
+            </div>
+
+            <!-- Grid Responsive de Cards (Ciudades) -->
+            <div id="city-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+
+                <!-- CARD: MADRID -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="madrid" onclick="loadDetailPage('madrid')">
+                    <!-- FONDO CON IMAGEN Y OVERLAY -->
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/34495e/ffffff?text=MADRID+SKYLINE');">
+                        <h3 class="text-2xl font-bold card-title mb-1">👑 Madrid</h3>
+                        <p class="text-sm">Capital y corazón cultural, museos y Gran Vía.</p>
+                    </div>
+                    <!-- CONTENIDO INFERIOR CON EL TEMA CLARO/OSCURO -->
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Paseo del Arte, Plaza Mayor y Retiro.</p>
+                    </div>
+                </div>
+
+                <!-- CARD: BARCELONA -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="barcelona" onclick="loadDetailPage('barcelona')">
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/4c4c99/ffffff?text=BARCELONA+SAGRADA');">
+                        <h3 class="text-2xl font-bold card-title mb-1">🏖️ Barcelona</h3>
+                        <p class="text-sm">Arquitectura modernista, playas y vida nocturna.</p>
+                    </div>
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Gaudí, Barrio Gótico y Mediterráneo.</p>
+                    </div>
+                </div>
+
+                <!-- CARD: SEVILLA -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="sevilla" onclick="loadDetailPage('sevilla')">
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/943126/ffffff?text=SEVILLA+ALCÁZAR');">
+                        <h3 class="text-2xl font-bold card-title mb-1">💃 Sevilla</h3>
+                        <p class="text-sm">Cuna del flamenco, Alcázar y el sol andaluz.</p>
+                    </div>
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Giralda, Triana y tapas.</p>
+                    </div>
+                </div>
+
+                <!-- CARD: VALENCIA -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="valencia" onclick="loadDetailPage('valencia')">
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/27ae60/ffffff?text=VALENCIA+CIENCIA');">
+                        <h3 class="text-2xl font-bold card-title mb-1">🍚 Valencia</h3>
+                        <p class="text-sm">Paella, Ciudad de las Artes y las Fallas.</p>
+                    </div>
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Oceanográfico y Jardín del Turia.</p>
+                    </div>
+                </div>
+
+                <!-- CARD: BILBAO -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="bilbao" onclick="loadDetailPage('bilbao')">
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/f39c12/ffffff?text=BILBAO+GUGGENHEIM');">
+                        <h3 class="text-2xl font-bold card-title mb-1">🖼️ Bilbao</h3>
+                        <p class="text-sm">Vanguardia artística, gastronomía del norte y pintxos.</p>
+                    </div>
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Museo Guggenheim y Casco Viejo.</p>
+                    </div>
+                </div>
+                
+                <!-- CARD: RUTAS DE COCHE (Funcionalidad Especial) -->
+                <div class="city-card card-transition rounded-2xl overflow-hidden cursor-pointer shadow-xl transform hover:shadow-2xl" 
+                    data-city="rutas coche" onclick="loadDetailPage('coches')">
+                    <div class="card-bg flex flex-col justify-end p-6" 
+                        style="background-image: url('https://placehold.co/600x400/9b59b6/ffffff?text=RUTA+MONTAÑA');">
+                        <h3 class="text-2xl font-bold card-title mb-1">🚗 Rutas en Coche</h3>
+                        <p class="text-sm">Las rutas más escénicas y consejos de viaje por carretera.</p>
+                    </div>
+                    <div class="p-4 bg-white dark:bg-card-dark text-text-light dark:text-text-dark border-t border-secondary-light dark:border-primary-dark/30">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Pueblos Blancos y Costa Cantábrica.</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Mensaje de No Resultados (Inicialmente oculto) -->
+            <p id="no-results-message" class="hidden text-center text-2xl font-semibold mt-16 text-gray-500 dark:text-gray-400">
+                No se encontraron resultados para tu búsqueda.
+            </p>
+
+        </section>
+
+
+        <!-- PANTALLA 2: PANTALLA DE DETALLE (Contenido dinámico) -->
+        <!-- Z-20 para asegurar que cubre el contenido del Home -->
+        <section id="detail-page" class="page-detail fixed inset-0 z-20 overflow-y-auto transition-opacity duration-500">
+            <div id="detail-content" class="max-w-4xl mx-auto detail-transition py-4">
+                <!-- El contenido dinámico de la página de detalle se insertará aquí -->
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Script para Lógica de Navegación, Modo Oscuro, Filtro y Accordion -->
+    <script>
+        // Referencias a elementos clave del DOM
+        const htmlElement = document.documentElement;
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const homePage = document.getElementById('home-page');
+        const detailPage = document.getElementById('detail-page');
+        const detailContent = document.getElementById('detail-content');
+        const backButton = document.getElementById('back-button');
+        const citySearchInput = document.getElementById('city-search');
+        const cityCards = document.querySelectorAll('.city-card');
+        const noResultsMessage = document.getElementById('no-results-message');
+
+        // Variable global
+        let currentMap = null; 
+        let currentCityName = ''; // Almacenar el nombre de la ciudad actual para el prompt de la IA
+
+        // --- 1. Lógica del Modo Claro/Oscuro ---
+        function setDarkMode(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                darkModeToggle.checked = true;
+                // Ajuste de posición del toggle
+                document.querySelector('.toggle-dot').classList.remove('left-0.5');
+                document.querySelector('.toggle-dot').classList.add('translate-x-4');
+            } else {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                darkModeToggle.checked = false;
+                // Ajuste de posición del toggle
+                document.querySelector('.toggle-dot').classList.remove('translate-x-4');
+                document.querySelector('.toggle-dot').classList.add('left-0.5');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (savedTheme === null && prefersDark)) {
+                setDarkMode(true);
+            } else {
+                setDarkMode(false);
+            }
+        }
+
+        darkModeToggle.addEventListener('change', (e) => {
+            setDarkMode(e.target.checked);
+        });
+
+        loadTheme();
+
+
+        // --- 2. Lógica de Navegación (Multipantalla) ---
+
+        /**
+         * Muestra una página y oculta la otra con transición.
+         * @param {string} pageId 'home' o 'detail'
+         */
+        function showPage(pageId) {
+            // Limpieza (aunque ya no usamos Leaflet, es buena práctica)
+            if (currentMap) {
+                currentMap = null;
+            }
+
+            // Manejar la visibilidad de los botones
+            backButton.classList.toggle('hidden', pageId === 'home');
+            
+            // Asegurar que ambas páginas están ocultas antes de la activación
+            // Se usa requestAnimationFrame para asegurar que el DOM se actualice antes de la transición
+            requestAnimationFrame(() => {
+                if (pageId === 'home') {
+                    // Transición a Home (desactivar detalle y activar home)
+                    detailPage.classList.remove('active');
+                    // Esperar a que termine la transición de salida antes de cambiar display
+                    setTimeout(() => {
+                        detailPage.style.display = 'none';
+                        homePage.style.display = 'block';
+                        // Pequeño retardo para activar la transición de entrada
+                        setTimeout(() => homePage.classList.add('active'), 10);
+                    }, 400); // 400ms es la duración de la transición CSS
+                    
+                    window.scrollTo(0, 0); // Volver arriba
+                    // Limpiar el buscador al volver a Home
+                    citySearchInput.value = '';
+                    filterCities(); 
+                } else {
+                    // Transición a Detalle (activar detalle)
+                    homePage.classList.remove('active');
+                    // Esperar a que termine la transición de salida de home antes de mostrar detail
+                    setTimeout(() => {
+                         homePage.style.display = 'none';
+                         detailPage.style.display = 'block';
+                         window.scrollTo(0, 0); // Volver arriba
+                         // Pequeño retardo para activar la transición de entrada
+                         setTimeout(() => detailPage.classList.add('active'), 10);
+                    }, 400); // 400ms es la duración de la transición CSS
+                }
+            });
+        }
+
+        // --- 3. Lógica del Accordion ---
+        
+        /**
+         * Abre o cierra el contenido del accordion y rota el icono.
+         * @param {HTMLElement} button El botón que fue clickeado.
+         * @param {string} id El ID único del contenido.
+         * @param {string} categoryId La ID de la categoría (ej: 'lugares').
+         */
+        function toggleAccordion(button, id, categoryId) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            // Cerrar el acordeón si ya está abierto
+            if (content.classList.contains('open')) {
+                closeAccordion(button, content, icon);
+                return;
+            }
+
+            // 1. Cerrar todos los demás acordeones de esta categoría
+            // Seleccionamos todos los acordeones abiertos con la clase de contenido específica.
+            document.querySelectorAll(`#detail-content [data-category-id="${categoryId}"] .accordion-content.open`).forEach(openContent => {
+                const openButton = openContent.previousElementSibling;
+                const openIcon = openButton.querySelector('svg');
+                closeAccordion(openButton, openContent, openIcon);
+            });
+
+            // 2. Abrir el acordeón actual:
+            // Usamos un pequeño delay para asegurar que el scrollHeight se recalcule si se cerró otro justo antes
+            setTimeout(() => {
+                content.style.maxHeight = content.scrollHeight + 'px'; 
+                content.classList.add('open');
+            }, 50); 
+            
+            // Añadir estilos de botón activo
+            button.classList.add('accordion-active-button', 'text-white', 'dark:text-text-dark');
+            button.classList.remove('text-primary-light', 'dark:text-primary-dark');
+            icon.style.transform = 'rotate(180deg)';
+        }
+        
+        /**
+         * Función auxiliar para cerrar un acordeón específico.
+         */
+        function closeAccordion(button, content, icon) {
+             // Cerrar:
+            content.style.maxHeight = 0; 
+            content.classList.remove('open');
+            // Quitar estilos de botón activo
+            button.classList.remove('accordion-active-button', 'text-white', 'dark:text-text-dark');
+            button.classList.add('text-primary-light', 'dark:text-primary-dark');
+            icon.style.transform = 'rotate(0deg)';
+        }
+
+
+        // Función auxiliar para renderizar cada sección temática
+        function renderCategory(title, icon, dataArray, categoryId) {
+            if (!dataArray || dataArray.length === 0) return '';
+            
+            return `
+                <section class="mt-12" data-category-id="${categoryId}">
+                    <h4 class="text-3xl font-extrabold mb-6 text-text-light dark:text-text-dark tracking-tight flex items-center border-b pb-2 border-primary-light/50 dark:border-primary-dark/50">
+                        <span class="text-4xl mr-3 text-primary-light dark:text-primary-dark">${icon}</span> ${title}
+                    </h4>
+                    <!-- Grid Responsive para elementos internos (cajones/accordion) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${dataArray.map((item, index) => {
+                            const uniqueId = `${categoryId}-${index}`;
+                            // Usamos el item.content como preview y item.extraInfo como contenido desplegable
+                            return `
+                                <!-- Añadimos mb-4 para la separación visual de los cajones -->
+                                <div class="accordion-item rounded-xl border border-secondary-light dark:border-primary-dark/30 shadow-lg transition duration-300 overflow-hidden">
+                                    <button onclick="toggleAccordion(this, '${uniqueId}', '${categoryId}')"
+                                            class="accordion-button w-full text-left p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center 
+                                                    font-bold text-xl text-primary-light dark:text-primary-dark 
+                                                    bg-white dark:bg-card-dark hover:bg-secondary-light/50 dark:hover:bg-primary-dark/20 transition duration-300">
+                                        
+                                        <!-- Título y Preview (visible antes de hacer click) -->
+                                        <div class="flex-grow">
+                                            <span>${item.title}</span>
+                                            <p class="text-sm font-normal text-gray-500 dark:text-gray-400 mt-1">${item.content}</p>
+                                        </div>
+                                        
+                                        <!-- Icono de Despliegue -->
+                                        <svg id="icon-${uniqueId}" class="h-5 w-5 mt-2 sm:mt-0 ml-0 sm:ml-4 flex-shrink-0 transform transition-transform duration-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    
+                                    <!-- Contenido Desplegable (Inicialmente oculto) -->
+                                    <div id="content-${uniqueId}" class="accordion-content overflow-hidden">
+                                        <!-- El padding se aplica aquí para un mejor control del layout -->
+                                        <div class="detail-text"> 
+                                            <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+                                                ${item.extraInfo || 'Este es el contenido detallado extra que se despliega al hacer clic. Aquí se incluiría la historia completa o los pasos para visitar.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </section>
+            `;
+        }
+        
+        // Función principal para cargar contenido y cambiar de página
+        function loadDetailPage(topic) {
+            const data = getContent(topic);
+            currentCityName = data.title; // Almacenar el nombre de la ciudad
+
+            // 1. Limpieza
+            if (currentMap) currentMap = null; 
+
+            // Generar la URL de búsqueda en Google Maps para el título de la ciudad (muestra marcadores)
+            const mapQuery = data.title;
+            const mapZoom = data.coords.zoom || 14;
+            const googleMapsSearchLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+            
+            // Nota: Se usa 'embed' para el iframe, pero la consulta es por el nombre de la ciudad.
+            const googleMapsEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=${mapZoom}&output=embed&hl=es`;
+
+            detailContent.innerHTML = `
+                <!-- Encabezado y banner con transición -->
+                <div class="rounded-2xl overflow-hidden shadow-2xl mb-8 bg-white dark:bg-card-dark detail-transition">
+                    <!-- Banner Dinámico con Imagen de Fondo y Overlay -->
+                    <div class="detail-banner" style="background-image: url('${data.image}');">
+                        <h3 class="text-5xl font-extrabold tracking-tight">${data.title}</h3>
+                        <p class="text-2xl mt-1">${data.subtitle}</p>
+                    </div>
+                </div>
+
+                <!-- Contenedor de Contenido Principal (con secciones separadas) -->
+                <div class="bg-white dark:bg-card-dark p-6 md:p-10 rounded-2xl shadow-xl detail-transition mb-12">
+                    <!-- Sección Introductoria -->
+                    <p class="text-lg leading-relaxed mb-10 text-gray-700 dark:text-gray-300 border-b pb-4">
+                        ${data.description}
+                    </p>
+                    
+                    <!-- 1. Lugares Típicos (Accordion) -->
+                    ${renderCategory('Lugares Típicos (Imprescindibles)', '🏛️', data.lugares, 'lugares')}
+
+                    <!-- 2. Gastronomía Esencial (Accordion) -->
+                    ${renderCategory('Gastronomía Esencial', '🍴', data.gastronomia, 'gastronomia')}
+
+                    <!-- 3. Historia y Cultura (Accordion) -->
+                    ${renderCategory('Historia y Cultura Clave', '📜', data.historiaCultura, 'historia')}
+
+                    <!-- Sección de Mapa Estático/Funcional (Sustituye Leaflet) -->
+                    <section class="mt-12">
+                        <h4 class="text-3xl font-extrabold mb-6 text-text-light dark:text-text-dark tracking-tight flex items-center border-b pb-2 border-primary-light/50 dark:border-primary-dark/50">
+                            <span class="text-4xl mr-3 text-primary-light dark:text-primary-dark">🗺️</span> Ubicación y Puntos de Interés
+                        </h4>
+                        <!-- Mapa Estático con enlace a Google Maps -->
+                        <div class="rounded-xl shadow-lg overflow-hidden border-4 border-secondary-light dark:border-primary-dark relative group h-96">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                style="border:0;"
+                                loading="lazy" 
+                                allowfullscreen 
+                                referrerpolicy="no-referrer-when-downgrade" 
+                                src="${googleMapsEmbedSrc}">
+                            </iframe>
+                            <a href="${googleMapsSearchLink}" target="_blank" class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span class="text-white text-xl font-bold p-4 bg-primary-dark/80 rounded-lg shadow-2xl">Abrir Mapa en Google Maps (Ver Puntos de Interés)</span>
+                            </a>
+                        </div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 italic">
+                            El mapa está centrado en ${data.title} y muestra los lugares más importantes.
+                        </p>
+                    </section>
+                    
+                    <!-- NUEVA SECCIÓN: RECOMENDADOR DE VIAJES IA -->
+                    <section class="mt-12">
+                        <h4 class="text-3xl font-extrabold mb-6 text-text-light dark:text-text-dark tracking-tight flex items-center border-b pb-2 border-primary-light/50 dark:border-primary-dark/50">
+                            <span class="text-4xl mr-3 text-primary-light dark:text-primary-dark">🤖</span> Recomendador de Viajes Inteligente (IA)
+                        </h4>
+                        <div class="p-6 rounded-xl bg-secondary-light/30 dark:bg-primary-dark/20 transition duration-300">
+                            <p class="text-base text-gray-700 dark:text-gray-300 mb-4">
+                                ¿Necesitas un plan de viaje personalizado? Pregúntale a nuestra IA (Gemini) sobre tu visita a ${data.title}.
+                            </p>
+                            <textarea id="ai-prompt" class="w-full p-3 rounded-lg border border-gray-300 dark:border-card-dark bg-white dark:bg-card-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light/50 transition duration-300 resize-none" rows="3" placeholder="Ej: Sugiere una ruta de tapas en Triana y los 3 mejores platos que debo pedir."></textarea>
+                            
+                            <button onclick="generateRecommendationContent(currentCityName)" id="ai-button" class="mt-4 w-full sm:w-auto px-6 py-3 rounded-xl bg-primary-light text-white font-bold hover:bg-primary-dark transition duration-300 shadow-md transform hover:scale-[1.02]">
+                                Obtener Recomendación Inteligente
+                            </button>
+
+                            <div id="ai-output" class="mt-6 p-4 border-l-4 border-primary-light dark:border-primary-dark bg-white dark:bg-card-dark rounded-r-lg shadow-inner min-h-16">
+                                <p class="text-gray-500 dark:text-gray-400 italic" id="ai-placeholder">
+                                    Tu recomendación de viaje aparecerá aquí...
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- FIN NUEVA SECCIÓN -->
+
+                    <!-- Sección Extra: Rutas y Consejos (Accordion General) -->
+                    ${renderCategory('Rutas y Consejos Adicionales', '💡', data.subContent.map(item => ({ ...item, content: item.description, extraInfo: 'Consejos extra para disfrutar de esta sección.' })), 'extra')}
+                    
+                </div>
+            `;
+            
+            // 2. Ejecutar la transición de pantalla
+            showPage('detail');
+        }
+
+        // --- 4. Lógica de Filtrado (Funcionalidad extra) ---
+
+        function filterCities() {
+            const searchTerm = citySearchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            cityCards.forEach(card => {
+                const cityData = card.getAttribute('data-city').toLowerCase();
+                const cardText = card.textContent.toLowerCase();
+
+                // Filtrar por el atributo de ciudad o por el contenido de la tarjeta
+                if (cityData.includes(searchTerm) || cardText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Mostrar u ocultar el mensaje de no resultados
+            if (visibleCount === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+
+        // --- 5. Lógica de la IA (Recomendador Inteligente) ---
+
+        // Función con backoff exponencial para manejar reintentos de API
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            // CLAVE API INSERTADA POR EL USUARIO
+            const apiKey = "AIzaSyCV909rt4LzcAsW-Fj7DR9dmYR2Juhi5TQ"; 
+            const apiUrl = `${url}?key=${apiKey}`;
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, options);
+                    if (response.status === 429 && i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    // Los errores de red se reintentan
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        // Función principal para generar la recomendación
+        async function generateRecommendationContent(cityName) {
+            const promptInput = document.getElementById('ai-prompt');
+            const outputDiv = document.getElementById('ai-output');
+            const button = document.getElementById('ai-button');
+            const userQuery = promptInput.value.trim();
+
+            if (!userQuery) {
+                outputDiv.innerHTML = '<p class="text-red-500 italic">Por favor, ingresa tu pregunta o plan de viaje.</p>';
+                return;
+            }
+
+            button.disabled = true;
+            button.innerHTML = '<div class="loader inline-block"></div> Generando...';
+            outputDiv.innerHTML = '<div class="flex items-center space-x-3 text-primary-light dark:text-primary-dark"><div class="loader"></div><p>Buscando las mejores rutas y consejos...</p></div>';
+
+            const systemPrompt = `Eres un experto guía turístico de España. Proporciona una respuesta detallada, útil y en tono conversacional (amigable, usando contracciones y emojis) a la solicitud del usuario, centrada en la ciudad de ${cityName}. Utiliza listas Markdown si es necesario. Asegúrate de incluir una referencia histórica o cultural interesante al principio.`;
+
+            const fullQuery = `Ciudad: ${cityName}. Consulta del usuario: ${userQuery}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: fullQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent';
+
+            try {
+                const result = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude obtener una recomendación en este momento. Inténtalo de nuevo.';
+                
+                // Formatear el texto a HTML básico para visualización (simulando Markdown)
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\n/g, '<br>')
+                                        .replace(/-\s/g, '• ');
+
+                outputDiv.innerHTML = `<p class="text-base text-gray-700 dark:text-gray-300">${formattedText}</p>`;
+
+            } catch (error) {
+                console.error("Error al llamar a la API de Gemini:", error);
+                outputDiv.innerHTML = '<p class="text-red-500 italic">Error de conexión con el recomendador. La clave API puede ser incorrecta o el límite de uso excedido.</p>';
+            } finally {
+                button.disabled = false;
+                button.innerHTML = 'Obtener Recomendación Inteligente';
+            }
+        }
+
+        // --- 6. Base de Datos Simulada (Contenido con Coordenadas y Extra Info) ---
+        function getContent(topic) {
+            // Se usan URLs con colores temáticos para simular mejor las imágenes de la ciudad
+            const baseContent = {
+                'madrid': {
+                    title: 'Madrid',
+                    subtitle: 'Capital, Cultura y Centro Político de España',
+                    image: 'https://placehold.co/800x400/4a148c/ffffff?text=MADRID+%7C+GRAN+VIA', // Simulación de la Gran Vía
+                    description: 'Madrid es una ciudad cosmopolita y llena de vida que nunca duerme. Es un centro cultural y financiero con una arquitectura impresionante, grandes parques y una oferta de ocio inigualable.',
+                    coords: { center: [40.4168, -3.7038], zoom: 14 },
+                    lugares: [
+                        { title: 'Museo Nacional del Prado', content: 'Visita obligada para ver obras maestras de Velázquez y Goya.', extraInfo: 'El Prado alberga la colección más importante de pintura española. Se recomienda comprar entradas online para evitar largas colas. La entrada es gratuita en las últimas dos horas de cada día.' },
+                        { title: 'Parque del Retiro', content: 'El pulmón de la ciudad, ideal para pasear, hacer deporte y relajarse junto al estanque.', extraInfo: 'No te pierdas el Palacio de Cristal y los paseos en barca por el estanque principal. Ideal para visitar al atardecer.' },
+                        { title: 'Palacio Real', content: 'Residencia oficial del Rey, impresionante por su tamaño y riqueza ornamental.', extraInfo: 'Aunque es la residencia oficial, se utiliza principalmente para ceremonias de Estado. Se puede visitar la mayoría del año.' },
+                        { title: 'Museo Reina Sofía', content: 'Hogar del Guernica de Picasso, un punto clave del Paseo del Arte.', extraInfo: 'Imprescindible ver el Guernica. La entrada también es gratuita por las tardes, pero las colas pueden ser largas.' }
+                    ],
+                    gastronomia: [
+                        { title: 'Cocido Madrileño', content: 'El plato más tradicional, a base de garbanzos, verduras y carnes.', extraInfo: 'Es un plato invernal que se sirve en tres "vuelcos" (servicios). ¡Prepárate, es abundante!' },
+                        { title: 'Bocadillo de Calamares', content: 'El clásico de la Plaza Mayor. Simple, crujiente y delicioso.', extraInfo: 'Se come con el pan crujiente y los calamares fritos, a menudo se acompaña de una caña (cerveza pequeña).' },
+                        { title: 'Churros con Chocolate', content: 'El desayuno o merienda perfecto, especialmente en la Chocolatería San Ginés.', extraInfo: 'La Chocolatería San Ginés está abierta 24 horas y es un clásico desde 1894. Pide porras si quieres algo más esponjoso.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'La Movida', content: 'Explosión contracultural de los años 80 tras la dictadura franquista.', extraInfo: 'Artistas como Pedro Almodóvar y Alaska fueron iconos de esta época de libertad y cambio cultural.' },
+                        { title: 'Plaza Mayor', content: 'Centro de la vida madrileña desde el siglo XVI, escenario de eventos históricos y festejos.', extraInfo: 'Antiguamente fue escenario de corridas de toros, juicios de la Inquisición y coronaciones.' },
+                        { title: 'El Siglo de Oro', content: 'Periodo de máximo esplendor cultural, con figuras como Cervantes y Lope de Vega en el Barrio de las Letras.', extraInfo: 'Recorre el Barrio de las Letras y busca las citas de escritores grabadas en el suelo.' },
+                    ],
+                    subContent: [
+                        { title: 'Barrio de las Letras', description: 'La zona histórica con las mejores librerías y tabernas.' },
+                        { title: 'Guía de Compras', description: 'Las mejores tiendas en la Gran Vía y el Barrio de Salamanca.' }
+                    ]
+                },
+                'barcelona': {
+                    title: 'Barcelona',
+                    subtitle: 'Capital del Modernismo y la Arquitectura de Gaudí',
+                    image: 'https://placehold.co/800x400/004d40/ffffff?text=BARCELONA+%7C+SAGRADA+FAMILIA', // Simulación de la Sagrada Familia
+                    description: 'Barcelona es la ciudad del modernismo catalán, con las obras únicas de Gaudí presidiendo sus calles. Combina la energía de una gran urbe con la calma del Mediterráneo.',
+                    coords: { center: [41.3851, 2.1734], zoom: 13 },
+                    lugares: [
+                        { title: 'Sagrada Familia', content: 'Obra maestra inacabada de Gaudí, el monumento más icónico de la ciudad.', extraInfo: 'La finalización está prevista para 2026. Reserva entradas con meses de antelación.' },
+                        { title: 'Park Güell', content: 'Parque público lleno de elementos arquitectónicos coloridos y mosaicos, con vistas panorámicas.', extraInfo: 'Gran parte del parque es de acceso gratuito, pero la Zona Monumental requiere entrada.' },
+                        { title: 'Barrio Gótico', content: 'Laberinto de calles estrechas y edificios medievales y romanos, corazón histórico.', extraInfo: 'Explora la Plaza Sant Felip Neri y la Catedral de Barcelona.' },
+                        { title: 'Casa Batlló', content: 'Otro de los hitos modernistas clave en el Paseo de Gracia.', extraInfo: 'Destaca por su fachada de "huesos" y el tejado que simula la piel de un dragón.' }
+                    ],
+                    gastronomia: [
+                        { title: 'Pa amb tomàquet', content: 'El pan con tomate catalán, la base de muchas comidas.', extraInfo: 'Se trata de untar tomate maduro en pan tostado con aceite de oliva y sal.' },
+                        { title: 'Crema Catalana', content: 'Postre similar a la crème brûlée, pero con base láctea y aroma a canela y limón.', extraInfo: 'Se carameliza con una plancha de hierro al rojo vivo, creando una capa crujiente.' },
+                        { title: 'Fideuà', content: 'Variante de la paella donde el arroz se sustituye por fideos cortos.', extraInfo: 'Se originó en Gandía y se cocina típicamente con marisco. A menudo se sirve con alioli.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'Modernismo Catalán', content: 'Movimiento artístico de finales del siglo XIX, liderado por Gaudí, Domènech i Montaner y Puig i Cadafalch.', extraInfo: 'El modernismo buscaba una identidad nacional catalana a través del arte y la arquitectura.' },
+                        { title: 'Juegos Olímpicos 92', content: 'Evento que transformó la ciudad y abrió Barcelona al mar.', extraInfo: 'Visita la zona de Montjuïc, donde se celebraron la mayoría de los eventos.' },
+                        { title: 'La Diada', content: 'Día Nacional de Cataluña, que se celebra cada 11 de septiembre.', extraInfo: 'Conmemora la caída de Barcelona en manos borbónicas en 1714.' },
+                    ],
+                    subContent: [
+                        { title: 'Rutas de Tapas', description: 'Los mejores lugares para probar la gastronomía local.' },
+                        { title: 'Playas y Ocio', description: 'Información sobre la Barceloneta y actividades acuáticas.' }
+                    ]
+                },
+                'sevilla': {
+                    title: 'Sevilla',
+                    subtitle: 'El Alma de Andalucía, Flamenco y Pasión',
+                    image: 'https://placehold.co/800x400/e65100/ffffff?text=SEVILLA+%7C+PLAZA+DE+ESPAÑA', // Simulación de la Plaza de España
+                    description: 'Capital andaluza famosa por su luz, su gente y su arte. Sevilla es un crisol de culturas, donde el legado islámico, la pasión del flamenco y la alegría se entrelazan.',
+                    coords: { center: [37.3828, -5.9732], zoom: 14 },
+                    lugares: [
+                        { title: 'Real Alcázar', content: 'Palacio real con jardines exuberantes y arquitectura mudéjar espectacular, declarado Patrimonio de la Humanidad.', extraInfo: 'No te pierdas los Baños de Doña María de Padilla, situados bajo el Patio del Crucero.' },
+                        { title: 'Giralda y Catedral', content: 'La Catedral gótica más grande del mundo y su campanario (antiguo alminar).', extraInfo: 'Sube a la Giralda. No tiene escaleras, sino rampas, ya que el sultán subía a caballo para avisar de la oración.' },
+                        { title: 'Plaza de España', content: 'Impresionante conjunto arquitectónico de ladrillo y cerámica creado para la Exposición Iberoamericana de 1929.', extraInfo: 'Busca los bancos de cerámica que representan a cada una de las provincias españolas.' },
+                    ],
+                    gastronomia: [
+                        { title: 'Tapas y Cerveza', content: 'La cultura de tapear en barrios como Triana y Santa Cruz es una experiencia diaria.', extraInfo: 'La tapa es casi siempre gratuita con la bebida en muchos bares. ¡Aprovecha para probar muchas cosas!' },
+                        { title: 'Pescaito Frito', content: 'Variedad de pescado frito (boquerones, cazón, etc.) crujiente y fresco.', extraInfo: 'El cazón en adobo es uno de los más populares, marinado en vinagre, ajo y especias.' },
+                        { title: 'Torrijas', content: 'Postre tradicional de Semana Santa, similar a la tostada francesa, empapado en leche y miel.', extraInfo: 'Aunque es un dulce de Semana Santa, muchas pastelerías las venden todo el año.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'Semana Santa', content: 'Una de las celebraciones religiosas más importantes y emotivas de España, con procesiones multitudinarias.', extraInfo: 'Las hermandades desfilan con sus pasos (esculturas religiosas) durante toda la semana, con gran fervor popular.' },
+                        { title: 'Legado Almohade', content: 'La Giralda y parte del Alcázar son herencia del periodo de dominio musulmán.', extraInfo: 'Los Almohades fueron una dinastía bereber que gobernó el sur de la península ibérica.' },
+                        { title: 'Feria de Abril', content: 'La fiesta más colorida de la ciudad, con casetas, sevillanas y trajes de flamenca.', extraInfo: 'La Feria tiene lugar una o dos semanas después de Semana Santa y dura seis días, comenzando con el "alumbrao" (encendido de luces).' },
+                    ],
+                    subContent: [
+                        { title: 'Tablaos de Flamenco', description: 'Dónde ver un auténtico espectáculo de flamenco.' },
+                        { title: 'Rutas por Triana', description: 'Descubre el barrio cuna de alfareros y artistas.' }
+                    ]
+                },
+                'valencia': {
+                    title: 'Valencia',
+                    subtitle: 'La Ciudad de las Artes y el Origen de la Paella',
+                    image: 'https://placehold.co/800x400/1565c0/ffffff?text=VALENCIA+%7C+C.A.C.', // Simulación de la Ciudad de las Artes y las Ciencias
+                    description: 'Valencia combina tradición y modernidad. Es la cuna de la paella y alberga la futurista Ciudad de las Artes y las Ciencias, ofreciendo historia y playas a partes iguales.',
+                    coords: { center: [39.4699, -0.3763], zoom: 13 },
+                    lugares: [
+                        { title: 'Ciudad de las Artes y las Ciencias', content: 'Impresionante complejo futurista con el Oceanográfico, el Hemisfèric y el Museo de las Ciencias.', extraInfo: 'Diseñada por Santiago Calatrava y Félix Candela, es un icono de la arquitectura moderna.' },
+                        { title: 'Mercado Central', content: 'Uno de los mercados de abastos más grandes de Europa, con arquitectura modernista y productos frescos.', extraInfo: 'El edificio modernista es una obra de arte. Se recomienda probar la horchata y los fartons en los puestos cercanos.' },
+                        { title: 'Plaza de la Virgen', content: 'Corazón histórico de la ciudad, rodeada por la Catedral y la Basílica de la Virgen de los Desamparados.', extraInfo: 'Busca la Puerta de los Apóstoles de la Catedral, donde se reúne el Tribunal de las Aguas cada jueves, Patrimonio Inmaterial de la Humanidad.' },
+                    ],
+                    gastronomia: [
+                        { title: 'Paella Valenciana', content: 'Hecha con pollo, conejo y garrofó (judía plana), el plato más famoso del mundo.', extraInfo: 'Los valencianos son muy estrictos con los ingredientes originales. ¡Cuidado con el chorizo!' },
+                        { title: 'Horchata y Fartons', content: 'Bebida refrescante a base de chufa, que se acompaña con los dulces alargados llamados fartons.', extraInfo: 'La horchata es muy dulce y se bebe fría. Los fartons son largos y absorbentes, perfectos para mojar.' },
+                        { title: 'Agua de Valencia', content: 'Cóctel local a base de cava o champagne, zumo de naranja, vodka y ginebra.', extraInfo: 'A pesar de su nombre, no contiene agua. Se inventó en 1959 en el Café Madrid.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'Las Fallas', content: 'Fiesta de marzo famosa por la creación y quema de monumentales figuras de cartón (fallas).', extraInfo: 'La "cremà" (quema) es el punto culminante, donde se queman todos los monumentos, excepto el "ninot indultat" (indultado).' },
+                        { title: 'Río Turia', content: 'El antiguo cauce del río se transformó en un gigantesco parque lineal que atraviesa toda la ciudad.', extraInfo: 'El desvío del río se produjo tras la gran riada de 1957. Es un lugar perfecto para el deporte y el ocio.' },
+                        { title: 'Lonja de la Seda', content: 'Edificio gótico civil, testigo del esplendor mercantil de Valencia en el Siglo de Oro.', extraInfo: 'Sus columnas helicoidales son una maravilla arquitectónica y simbolizan las palmeras del Paraíso.' },
+                    ],
+                    subContent: [
+                        { title: 'Receta de la Paella', description: 'Los ingredientes originales y cómo prepararla correctamente.' },
+                        { title: 'Playas', description: 'Las mejores playas urbanas y cercanas a la ciudad.' }
+                    ]
+                },
+                'bilbao': {
+                    title: 'Bilbao',
+                    subtitle: 'Vanguardia, Arte y Gastronomía del Norte',
+                    image: 'https://placehold.co/800x400/263238/ffffff?text=BILBAO+%7C+GUGGENHEIM', // Simulación del Guggenheim
+                    description: 'Bilbao es la capital de la transformación, famosa por su arquitectura de vanguardia, su excelente gastronomía y la vitalidad del País Vasco. El contraste entre el Casco Viejo y el nuevo Bilbao es cautivador.',
+                    coords: { center: [43.2560, -2.9348], zoom: 14 },
+                    lugares: [
+                        { title: 'Museo Guggenheim', content: 'Obra maestra de Frank Gehry que puso a Bilbao en el mapa mundial. Es un icono de titanio y arte moderno.', extraInfo: 'No te pierdas las esculturas exteriores, como "Puppy" (el perro de flores) y "Mamá" (la araña gigante).' },
+                        { title: 'Casco Viejo', content: 'Las "Siete Calles" históricas, llenas de vida, tiendas y los mejores bares de pintxos.', extraInfo: 'Es el lugar perfecto para hacer el "txikiteo" (ruta de vinos y pintxos).' },
+                        { title: 'Puente Colgante (Vizcaya)', content: 'Patrimonio de la Humanidad, transbordador que une Getxo y Portugalete.', extraInfo: 'Es el transbordador más antiguo del mundo en funcionamiento, inaugurado en 1893.' },
+                    ],
+                    gastronomia: [
+                        { title: 'Pintxos', content: 'La versión vasca de las tapas, pequeños bocados de alta cocina que son el corazón de la vida social.', extraInfo: 'Se suelen pinchar con un palillo, que se usa para contar cuántos pintxos has comido a la hora de pagar.' },
+                        { title: 'Bacalao a la Vizcaína', content: 'Plato tradicional de bacalao con una salsa roja a base de pimiento choricero.', extraInfo: 'La salsa vizcaína no lleva tomate, sino la pulpa del pimiento choricero, dando un sabor dulce y profundo.' },
+                        { title: 'Txakoli', content: 'Vino blanco joven, ligeramente ácido y espumoso, que se sirve escanciado (vertido con altura).', extraInfo: 'El escanciado se realiza para oxigenar el vino y despertar sus burbujas naturales.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'La Ría', content: 'El río Nervión ha sido el motor industrial y de la transformación de la ciudad.', extraInfo: 'El proceso de regeneración urbana de la Ría, liderado por el Guggenheim, es un ejemplo mundial de revitalización.' },
+                        { title: 'Txikiteo', content: 'La costumbre local de ir de bar en bar tomando vinos o txakoli acompañado de pintxos.', extraInfo: 'Es una forma de socializar muy arraigada en la cultura vasca.' },
+                        { title: 'Euskera', content: 'El idioma vasco, una de las lenguas más antiguas de Europa, que se habla en toda la región.', extraInfo: 'El euskera no tiene raíces latinas, lo que lo hace un idioma único y misterioso.' },
+                    ],
+                    subContent: [
+                        { title: 'Rutas de Pintxos', description: 'Los mejores bares para degustar los famosos pintxos vascos.' },
+                        { title: 'Excursiones', description: 'Viajes de un día a San Sebastián o San Juan de Gaztelugatxe.' }
+                    ]
+                },
+                'coches': {
+                    title: 'Rutas Panorámicas',
+                    subtitle: 'Los Mejores Viajes por Carretera de España',
+                    image: 'https://placehold.co/800x400/388e3c/ffffff?text=Picos+de+Europa+%7C+RUTA', // Simulación de una carretera de montaña
+                    description: 'España ofrece carreteras increíbles que atraviesan montañas, costas y desiertos. Aquí tienes una selección de las rutas más impresionantes para recorrer en coche o moto, con consejos esenciales para el viaje.',
+                    coords: { center: [40.4168, -3.7038], zoom: 6 }, // Centro de España
+                    lugares: [
+                        { title: 'Norte: Costa Cantábrica', content: 'Recorrido por la costa verde de Asturias, Cantabria y País Vasco, con acantilados y pueblos pesqueros.', extraInfo: 'La Ruta de los Faros en Galicia y la costa de Cantabria son tramos imperdibles. Prepara ropa para la lluvia.' },
+                        { title: 'Sur: Ruta de los Pueblos Blancos', content: 'Un camino por los pintorescos pueblos encalados de la Sierra de Cádiz y Málaga.', extraInfo: 'Ideal para la primavera. Visita Ronda y Zahara de la Sierra. Las carreteras son montañosas y estrechas.' },
+                        { title: 'Canarias: Carretera de La Gomera', content: 'Ruta espectacular por paisajes volcánicos y el bosque de laurisilva.', extraInfo: 'El Parque Nacional de Garajonay es un punto clave. ¡Conduce con precaución en las curvas cerradas!' },
+                    ],
+                    gastronomia: [
+                        { title: 'Paradas de Venta', content: 'Pequeños restaurantes de carretera con comida casera tradicional a buen precio.', extraInfo: 'Busca las "ventas" en Andalucía y Castilla, suelen tener menú del día muy económico y contundente.' },
+                        { title: 'Picnic en Miradores', content: 'Consejos para preparar una comida sencilla y disfrutar de las vistas más impresionantes.', extraInfo: 'Lleva siempre contigo agua y bolsas para recoger tus residuos. La naturaleza te lo agradecerá.' },
+                    ],
+                    historiaCultura: [
+                        { title: 'El Camino de Santiago', content: 'Una ruta histórica que se puede seguir en coche, visitando catedrales y catedrales medievales.', extraInfo: 'Puedes seguir el Camino Francés o el del Norte. Respeta siempre a los peregrinos a pie o en bicicleta.' },
+                        { title: 'Vías Pecuarias', content: 'Antiguos caminos para el ganado que ahora sirven como rutas secundarias y senderos.', extraInfo: 'Ideales para buscar rutas de senderismo cortas o para una escapada lejos del tráfico.' },
+                    ],
+                    subContent: [
+                        { title: 'Consejos de Viaje', description: 'Recomendaciones para preparar tu coche y tu viaje (gasolina, peajes, etc.).' },
+                        { title: 'Alquiler y Normativas', description: 'Información sobre el alquiler de coches y normas de tráfico en España.' }
+                    ]
+                }
+            };
+            return baseContent[topic] || baseContent['madrid']; 
+        }
+
+        // Asegurar que la página principal esté activa al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            showPage('home'); 
+        });
+
+    </script>
+
+</body>
+</html>

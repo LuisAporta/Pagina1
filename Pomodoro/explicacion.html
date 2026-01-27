@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crónica de FocusQuest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3e9d2;
+            color: #4a2c2a;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .font-special {
+            font-family: 'MedievalSharp', cursive;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .user-bubble {
+            background-color: #d9c9b5;
+            border-bottom-left-radius: 0.5rem;
+            align-self: flex-start;
+        }
+        .gemini-bubble {
+            background-color: #c6b5a0;
+            border-bottom-right-radius: 0.5rem;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="font-special text-5xl md:text-7xl">Crónica de FocusQuest</h1>
+            <p class="text-lg text-gray-700 mt-2">La aventura de cómo creamos una aplicación juntos</p>
+        </header>
+
+        <main class="flex flex-col gap-4">
+
+            <!-- Día 1 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 1: El Nacimiento de la Aventura</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Quiero que me hagas un programa de pomodoro lo mas creativo que se te ocurra y la mayor cantidad de funcionalidades que se te ocurran con temas objetivos y cosas asi."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Creé la primera versión de **FocusQuest**. Era una aplicación web completa con un sistema de gamificación (niveles, EXP, monedas), un gestor de misiones y tres temas iniciales para personalizar la experiencia: Aventura Fantástica, Explorador Espacial y Jardín Zen.</p>
+            </div>
+
+            <!-- Día 2 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 2: Forjando al Héroe</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Me gustaría que hicieras más énfasis en el apartado del rpg."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Profundicé en la mecánica del juego. Añadí **Clases de Aventurero** (Guerrero, Mago, Explorador) con habilidades pasivas únicas, un sistema de **Logros** para recompensar hitos y la posibilidad de asignar **Dificultad a las Misiones** para obtener mejores recompensas.</p>
+            </div>
+
+            <!-- Día 3 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 3: La Aventura Cobra Vida</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"No es suficiente rpg para mi gusto me gustaría que tuviese animaciones y se pudiesen visualizar los logros (...) que sea divertida y no un pomodoro para marcarte tiempos."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Implementé las primeras **animaciones de combate** contra "Monstruos de la Distracción". Creé un "Campamento" interactivo para los descansos y rediseñé el panel de logros para que fuera más visual y mostrara el progreso para desbloquear cada uno.</p>
+            </div>
+            
+            <!-- Día 4 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 4: Refinando la Magia</h2>
+             <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Hay pocas cosas que hagan referencia al aspecto rpg, alomejor eventos aleatorios durante los descansos. (...) Y un modo de prueba para que el cronómetro fuese más rápido."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Introduje **Eventos Aleatorios** que pueden ocurrir durante los descansos (como encontrar un tesoro), añadí un **contador visual** de ciclos Pomodoro y creé un **modo de prueba** que cambiaba los minutos por segundos. También añadí títulos descriptivos a cada sección.</p>
+            </div>
+
+            <!-- Día 5 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 5: El Arsenal del Héroe</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"La tienda no hace nada al desbloquear objetos y no me queda claro cómo se completan las misiones. Debería ser más visual. (...) estaría bien poder cambiar entre segundos, minutos, horas."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Rediseñé la tienda para que los objetos se marcaran como "Adquiridos". Cambié el botón de eliminar misión por uno de **"Reclamar Recompensa" (🎁)** con animaciones de monedas y EXP. Finalmente, transformé el "Modo Prueba" en un selector flexible de **Segundos/Minutos/Horas**.</p>
+            </div>
+
+            <!-- Día 6 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 6: Expandiendo el Mundo</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Añadir un tema de mazmorra, más peleas, que los enemigos sean aleatorios, que la tienda esté ordenada y que los iconos de la animación sean mejores."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Creé el tema de **Aventura en la Mazmorra**, reemplacé los emojis por **iconos SVG** para el héroe y monstruos aleatorios. Implementé un ciclo de combate infinito con animaciones de muerte y aparición. Reorganicé la tienda por categorías (Clases, Iconos, Bordes) y convertí las clases en objetos desbloqueables con animación de selección.</p>
+            </div>
+
+        </main>
+        
+        <footer class="text-center mt-12">
+            <a href="./explicacionParte2.html" class="font-special text-2xl text-amber-800 hover:text-amber-900 underline">Continuar a la Parte 2...</a>
+        </footer>
+
+    </div>
+
+</body>
+</html>
+

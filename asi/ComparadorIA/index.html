@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador Avanzado de Modelos LLM</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .input-dark {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .input-dark:focus { outline: 2px solid #6366f1; border-color: transparent; }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- COMPONENTE ICONO SEGURO ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const [svgHtml, setSvgHtml] = useState(null);
+            useEffect(() => {
+                if (window.lucide) {
+                    const pascalName = name.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+                    const iconDefinition = window.lucide.icons ? window.lucide.icons[pascalName] : null;
+                    if (iconDefinition && window.lucide.createElement) {
+                        const svgElement = window.lucide.createElement(iconDefinition);
+                        svgElement.setAttribute('class', className);
+                        svgElement.setAttribute('width', size);
+                        svgElement.setAttribute('height', size);
+                        svgElement.setAttribute('stroke-width', 2);
+                        setSvgHtml(svgElement.outerHTML);
+                    }
+                }
+            }, [name, size, className]);
+            if (!svgHtml) return <span className="w-5 h-5 inline-block bg-slate-700/50 rounded animate-pulse"></span>;
+            return <span dangerouslySetInnerHTML={{ __html: svgHtml }} className="inline-flex items-center justify-center" />;
+        };
+
+        // --- COMPONENTE DE GRÁFICO CHART.JS ---
+        const ChartComponent = ({ data, activeTab, chartType }) => {
+            const canvasRef = useRef(null);
+            const chartInstanceRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+                if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+                const ctx = canvasRef.current.getContext('2d');
+                const visibleData = data.filter(d => d.visible);
+                const labels = visibleData.map(d => `${d.model} (${d.promptType.charAt(0)})`);
+                let datasetData = [];
+                let label = "";
+                let color = "";
+                let bgColor = "";
+
+                if (activeTab === 'speed') {
+                    datasetData = visibleData.map(d => d.speed);
+                    label = "Velocidad (tk/s)";
+                    color = 'rgba(52, 211, 153, 1)';
+                    bgColor = 'rgba(52, 211, 153, 0.5)';
+                } else if (activeTab === 'latency') {
+                    datasetData = visibleData.map(d => d.latency);
+                    label = "Latencia (s)";
+                    color = 'rgba(96, 165, 250, 1)';
+                    bgColor = 'rgba(96, 165, 250, 0.5)';
+                } else if (activeTab === 'cost') {
+                    datasetData = visibleData.map(d => d.tokens);
+                    label = "Coste (Tokens)";
+                    color = visibleData.map(d => d.tokens > 1000 ? 'rgba(239, 68, 68, 1)' : 'rgba(167, 139, 250, 1)');
+                    bgColor = visibleData.map(d => d.tokens > 1000 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(167, 139, 250, 0.5)');
+                } else if (activeTab === 'quality') {
+                    datasetData = visibleData.map(d => d.rating);
+                    label = "Calidad Subjetiva (0-10)";
+                    color = 'rgba(251, 191, 36, 1)';
+                    bgColor = 'rgba(251, 191, 36, 0.5)';
+                }
+
+                // Configuración de colores para PolarArea/Pie
+                if (chartType === 'polarArea') {
+                    bgColor = [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ];
+                    color = bgColor.map(c => c.replace('0.5', '1'));
+                }
+
+                const config = {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: datasetData,
+                            backgroundColor: bgColor,
+                            borderColor: Array.isArray(color) && chartType !== 'polarArea' ? color[0] : color,
+                            borderWidth: 2,
+                            pointBackgroundColor: 'white',
+                            pointRadius: 5,
+                            fill: chartType === 'line' // Rellenar área si es línea
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 600 },
+                        scales: (chartType === 'radar' || chartType === 'polarArea') ? {
+                            r: {
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                pointLabels: { color: '#cbd5e1', font: { size: 11 } },
+                                ticks: { display: false, backdropColor: 'transparent' },
+                                suggestMin: 0
+                            }
+                        } : {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#94a3b8' }
+                            },
+                            x: { grid: { display: false }, ticks: { color: '#cbd5e1' } }
+                        },
+                        plugins: {
+                            legend: { display: chartType !== 'bar' && chartType !== 'line', labels: { color: '#e2e8f0' } },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                                titleColor: '#fff',
+                                bodyColor: '#cbd5e1',
+                                padding: 12,
+                                displayColors: true
+                            }
+                        }
+                    }
+                };
+                
+                // Fix colores barras errores
+                if (chartType === 'bar' && activeTab === 'cost') {
+                    config.data.datasets[0].backgroundColor = visibleData.map(d => d.tokens > 1000 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(167, 139, 250, 0.5)');
+                    config.data.datasets[0].borderColor = visibleData.map(d => d.tokens > 1000 ? 'rgba(239, 68, 68, 1)' : 'rgba(167, 139, 250, 1)');
+                }
+
+                chartInstanceRef.current = new Chart(ctx, config);
+                return () => { if (chartInstanceRef.current) chartInstanceRef.current.destroy(); };
+            }, [data, activeTab, chartType]);
+
+            return <canvas ref={canvasRef} />;
+        };
+
+        // --- DATOS INICIALES ---
+        const INITIAL_DATA = [
+            { id: 1, model: 'Qwen3-4b', type: 'Small', promptType: 'Corto', speed: 40.42, latency: 0.51, tokens: 154, rating: 9, visible: true },
+            { id: 2, model: 'Qwen3-4b', type: 'Small', promptType: 'Largo', speed: 36.33, latency: 1.57, tokens: 1903, rating: 1, visible: true },
+            { id: 3, model: 'Qwen3-8b', type: 'Medium', promptType: 'Corto', speed: 12.65, latency: 2.83, tokens: 141, rating: 9, visible: true },
+            { id: 4, model: 'Qwen3-8b', type: 'Medium', promptType: 'Largo', speed: 12.65, latency: 1.32, tokens: 282, rating: 8, visible: true },
+            { id: 5, model: 'GPT-OSS-20b', type: 'Large', promptType: 'Corto', speed: 36.07, latency: 18.92, tokens: 46, rating: 8, visible: true },
+            { id: 6, model: 'GPT-OSS-20b', type: 'Large', promptType: 'Largo', speed: 34.98, latency: 1.50, tokens: 118, rating: 10, visible: true },
+        ];
+
+        // --- APP PRINCIPAL ---
+        const App = () => {
+            const [data, setData] = useState(INITIAL_DATA);
+            const [newEntry, setNewEntry] = useState({ model: '', type: 'Medium', promptType: 'Corto', speed: '', latency: '', tokens: '', rating: 8 });
+            const [activeTab, setActiveTab] = useState('speed'); 
+            const [chartType, setChartType] = useState('bar');
+            const [contextFilter, setContextFilter] = useState('Todos');
+
+            const handleAddData = (e) => {
+                e.preventDefault();
+                if(!newEntry.model || !newEntry.speed) return;
+                const entry = {
+                    id: Date.now(),
+                    model: newEntry.model,
+                    type: newEntry.type,
+                    promptType: newEntry.promptType,
+                    speed: parseFloat(newEntry.speed),
+                    latency: parseFloat(newEntry.latency) || 0,
+                    tokens: parseInt(newEntry.tokens) || 0,
+                    rating: parseInt(newEntry.rating) || 5,
+                    visible: true
+                };
+                setData([...data, entry]);
+                setNewEntry({ model: '', type: 'Medium', promptType: 'Corto', speed: '', latency: '', tokens: '', rating: 8 });
+            };
+
+            const handleDelete = (id) => setData(data.filter(item => item.id !== id));
+            const toggleVisibility = (id) => setData(data.map(item => item.id === id ? { ...item, visible: !item.visible } : item));
+
+            const filteredData = useMemo(() => {
+                if (contextFilter === 'Todos') return data;
+                return data.filter(d => d.promptType === contextFilter);
+            }, [data, contextFilter]);
+
+            // --- LÓGICA DINÁMICA DE KPIs (BOCADILLOS) ---
+            const stats = useMemo(() => {
+                const activeData = filteredData.filter(d => d.visible);
+                if (activeData.length === 0) return null;
+
+                let key = 'speed';
+                let unit = 'tk/s';
+                let labelBest = 'Más Rápido';
+                let labelWorst = 'Más Lento';
+                let higherIsBetter = true;
+
+                if (activeTab === 'latency') {
+                    key = 'latency'; unit = 's'; labelBest = 'Mejor Latencia'; labelWorst = 'Peor Latencia'; higherIsBetter = false;
+                } else if (activeTab === 'cost') {
+                    key = 'tokens'; unit = ''; labelBest = 'Más Eficiente'; labelWorst = 'Más Costoso'; higherIsBetter = false;
+                } else if (activeTab === 'quality') {
+                    key = 'rating'; unit = '/10'; labelBest = 'Mejor Calidad'; labelWorst = 'Peor Calidad'; higherIsBetter = true;
+                }
+
+                const sorted = [...activeData].sort((a, b) => higherIsBetter ? b[key] - a[key] : a[key] - b[key]);
+                const best = sorted[0];
+                const worst = sorted[sorted.length - 1];
+                const avg = activeData.reduce((acc, curr) => acc + curr[key], 0) / activeData.length;
+
+                return { best, worst, avg, unit, labelBest, labelWorst };
+            }, [filteredData, activeTab]);
+
+            return (
+                <div className="min-h-screen bg-slate-900 pb-12 text-slate-200">
+                    <nav className="bg-slate-800/80 backdrop-blur border-b border-slate-700 px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-lg">
+                        <div className="flex items-center gap-3">
+                            <div className="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2 rounded-lg text-white shadow-lg">
+                                <Icon name="bar-chart-big" size={24} />
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-bold text-white tracking-tight leading-none">AI Benchmark PRO</h1>
+                                <span className="text-xs text-indigo-400 font-medium">Análisis Interactivo</span>
+                            </div>
+                        </div>
+                        <a href="#manual" className="text-sm font-medium text-slate-400 hover:text-indigo-400 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-slate-800 border border-transparent hover:border-slate-700">
+                            <Icon name="book-open" size={16} /> Manual
+                        </a>
+                    </nav>
+
+                    <main className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div className="lg:col-span-8 space-y-6">
+                            
+                            {/* BARRA DE HERRAMIENTAS */}
+                            <div className="flex flex-wrap justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700 gap-4 shadow-md">
+                                <div className="flex space-x-1 bg-slate-900 p-1 rounded-lg overflow-x-auto custom-scrollbar">
+                                    {[
+                                        { id: 'speed', icon: 'zap', label: 'Velocidad' },
+                                        { id: 'latency', icon: 'timer', label: 'Latencia' },
+                                        { id: 'cost', icon: 'cpu', label: 'Coste' },
+                                        { id: 'quality', icon: 'star', label: 'Calidad' }
+                                    ].map(tab => (
+                                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} 
+                                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-1.5 whitespace-nowrap
+                                                ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}>
+                                            <Icon name={tab.icon} size={14} /> {tab.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex items-center gap-3 ml-auto flex-wrap">
+                                    <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-700/50">
+                                        {[{ id: 'Todos', label: 'Todos' }, { id: 'Corto', label: 'Cortos' }, { id: 'Largo', label: 'Largos' }].map((opt) => (
+                                            <button key={opt.id} onClick={() => setContextFilter(opt.id)}
+                                                className={`px-3 py-1 text-[10px] font-bold uppercase rounded-md transition-all
+                                                    ${contextFilter === opt.id ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}>
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="flex space-x-1 border-l border-slate-700 pl-3">
+                                        <button onClick={() => setChartType('bar')} title="Barras" className={`p-1.5 rounded ${chartType === 'bar' ? 'bg-slate-700 text-white' : 'text-slate-500'}`}><Icon name="bar-chart-3" size={18} /></button>
+                                        <button onClick={() => setChartType('line')} title="Líneas" className={`p-1.5 rounded ${chartType === 'line' ? 'bg-slate-700 text-white' : 'text-slate-500'}`}><Icon name="trending-up" size={18} /></button>
+                                        <button onClick={() => setChartType('radar')} title="Radar" className={`p-1.5 rounded ${chartType === 'radar' ? 'bg-slate-700 text-white' : 'text-slate-500'}`}><Icon name="hexagon" size={18} /></button>
+                                        <button onClick={() => setChartType('polarArea')} title="Polar Area" className={`p-1.5 rounded ${chartType === 'polarArea' ? 'bg-slate-700 text-white' : 'text-slate-500'}`}><Icon name="pie-chart" size={18} /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* GRÁFICO */}
+                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl min-h-[450px] relative">
+                                <div className="h-[400px] w-full">
+                                    <ChartComponent data={filteredData} activeTab={activeTab} chartType={chartType} />
+                                </div>
+                            </div>
+
+                            {/* TARJETAS RESUMEN (KPIs) DINÁMICAS */}
+                            {stats && (
+                                <div className="grid grid-cols-3 gap-4 fade-in">
+                                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/30 transition-colors relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 bg-emerald-500/10 rounded-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 relative z-10">{stats.labelBest}</div>
+                                        <div className="text-xl font-bold text-emerald-400 flex flex-col relative z-10">
+                                            <span>{stats.best[activeTab === 'quality' ? 'rating' : (activeTab === 'cost' ? 'tokens' : activeTab)]} <span className="text-xs text-slate-500 font-normal">{stats.unit}</span></span>
+                                            <span className="text-xs text-slate-300 font-normal truncate mt-1">{stats.best.model}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-blue-500/30 transition-colors relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 bg-blue-500/10 rounded-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 relative z-10">Promedio</div>
+                                        <div className="text-xl font-bold text-blue-400 flex flex-col relative z-10">
+                                            <span>{stats.avg.toFixed(1)} <span className="text-xs text-slate-500 font-normal">{stats.unit}</span></span>
+                                            <span className="text-xs text-slate-400 font-normal mt-1">Global</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 hover:border-red-500/30 transition-colors relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-8 bg-red-500/10 rounded-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 relative z-10">{stats.labelWorst}</div>
+                                        <div className="text-xl font-bold text-red-400 flex flex-col relative z-10">
+                                            <span>{stats.worst[activeTab === 'quality' ? 'rating' : (activeTab === 'cost' ? 'tokens' : activeTab)]} <span className="text-xs text-slate-500 font-normal">{stats.unit}</span></span>
+                                            <span className="text-xs text-slate-300 font-normal truncate mt-1">{stats.worst.model}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* PANEL LATERAL */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg sticky top-24">
+                                <h3 className="font-bold text-white mb-5 flex items-center gap-2 pb-3 border-b border-slate-700">
+                                    <span className="text-indigo-400"><Icon name="database" size={20} /></span> 
+                                    Gestión de Datos
+                                </h3>
+                                
+                                <form onSubmit={handleAddData} className="space-y-4">
+                                    <div>
+                                        <label className="text-xs font-semibold text-slate-400 block mb-1.5">Nombre del Modelo</label>
+                                        <div className="relative">
+                                            <input type="text" placeholder="Ej: Llama-3-70b" className="input-dark pl-9" 
+                                                value={newEntry.model} onChange={e => setNewEntry({...newEntry, model: e.target.value})} />
+                                            <div className="absolute left-3 top-2.5 text-slate-500"><Icon name="bot" size={14} /></div>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-400 block mb-1.5">Contexto</label>
+                                            <select className="input-dark" value={newEntry.promptType} onChange={e => setNewEntry({...newEntry, promptType: e.target.value})}>
+                                                <option value="Corto">Corto</option>
+                                                <option value="Largo">Largo</option>
+                                                <option value="Complejo">Complejo</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-400 block mb-1.5">Velocidad (tk/s)</label>
+                                            <input type="number" step="0.1" className="input-dark" 
+                                                value={newEntry.speed} onChange={e => setNewEntry({...newEntry, speed: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-400 block mb-1.5">Latencia (s)</label>
+                                            <input type="number" step="0.01" className="input-dark" 
+                                                value={newEntry.latency} onChange={e => setNewEntry({...newEntry, latency: e.target.value})} />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-semibold text-slate-400 block mb-1.5">Coste (Tokens)</label>
+                                            <input type="number" className="input-dark"
+                                                value={newEntry.tokens} onChange={e => setNewEntry({...newEntry, tokens: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between mb-1.5">
+                                            <label className="text-xs font-semibold text-slate-400">Calidad Subjetiva</label>
+                                            <span className="text-xs font-bold text-amber-400">{newEntry.rating}/10</span>
+                                        </div>
+                                        <input type="range" min="0" max="10" step="1" className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                            value={newEntry.rating} onChange={e => setNewEntry({...newEntry, rating: e.target.value})} />
+                                    </div>
+                                    <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition-all shadow-lg shadow-indigo-900/20 mt-2 flex justify-center items-center gap-2 group">
+                                        <Icon name="plus" size={18} className="group-hover:scale-110 transition-transform" /> Añadir a la Gráfica
+                                    </button>
+                                </form>
+
+                                <div className="mt-8">
+                                    <div className="flex justify-between items-end mb-3">
+                                        <h4 className="text-xs font-bold text-slate-500 uppercase">Modelos ({filteredData.length})</h4>
+                                    </div>
+                                    <div className="max-h-[220px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                        {filteredData.map(d => (
+                                            <div key={d.id} className={`flex justify-between items-center text-xs p-2.5 rounded-lg border transition-all group ${d.visible ? 'bg-slate-900/50 border-slate-700/50 hover:border-slate-600' : 'bg-slate-900/20 border-transparent opacity-60'}`}>
+                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                    <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${d.rating > 7 ? 'bg-emerald-500' : (d.rating < 4 ? 'bg-red-500' : 'bg-amber-500')}`}></div>
+                                                    <div className="truncate">
+                                                        <span className={`font-medium block truncate ${d.visible ? 'text-slate-200' : 'text-slate-500 line-through'}`}>{d.model}</span>
+                                                        <span className="text-slate-500 text-[10px]">{d.promptType} • {d.rating}/10</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-1 flex-shrink-0">
+                                                    <button onClick={() => toggleVisibility(d.id)} className={`p-1.5 rounded transition-colors ${d.visible ? 'text-indigo-400 hover:bg-indigo-900/30' : 'text-slate-600 hover:text-slate-400'}`}><Icon name={d.visible ? "eye" : "eye-off"} size={14} /></button>
+                                                    <button onClick={() => handleDelete(d.id)} className="p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-900/20 rounded transition-colors"><Icon name="trash-2" size={14} /></button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* MANUAL EXTENDIDO (ACTUALIZADO) */}
+                    <div id="manual" className="max-w-7xl mx-auto px-4">
+                        <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
+                            <div className="bg-slate-900/50 p-6 border-b border-slate-700 flex items-center gap-4">
+                                <div className="p-3 bg-indigo-500/10 rounded-full text-indigo-400"><Icon name="book-open" size={32} /></div>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white">Manual Completo de Evaluación y Metodología</h2>
+                                    <p className="text-sm text-slate-400">Guía detallada para la interpretación de métricas, gráficos y análisis de LLMs locales.</p>
+                                </div>
+                            </div>
+                            
+                            <div className="p-8 space-y-12 text-slate-300">
+                                
+                                {/* 1. Introducción */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white mb-3 border-l-4 border-indigo-500 pl-3">Propósito de la Herramienta</h3>
+                                        <p className="text-sm leading-relaxed mb-4">
+                                            Esta plataforma interactiva permite a estudiantes e investigadores comparar el rendimiento de Modelos de Lenguaje Grande (LLMs) ejecutados en local (offline). 
+                                            Facilita la visualización de los compromisos (trade-offs) entre velocidad, tamaño del modelo y capacidad de razonamiento.
+                                        </p>
+                                    </div>
+                                    <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                        <h4 className="text-xs font-bold text-indigo-400 uppercase mb-2">Resumen Rápido de Uso</h4>
+                                        <ol className="list-decimal pl-4 space-y-2 text-sm text-slate-400">
+                                            <li>Selecciona una métrica arriba (Velocidad, Latencia...).</li>
+                                            <li>Añade tus propios datos en el panel derecho.</li>
+                                            <li>Usa el icono <Icon name="eye" size={12} className="inline" /> para ocultar modelos sin borrarlos.</li>
+                                            <li>Filtra por "Contexto" para comparar peras con peras.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <hr className="border-slate-700" />
+
+                                {/* 2. Glosario de Métricas Detallado */}
+                                <div>
+                                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                                        <Icon name="activity" className="text-emerald-400" size={24} /> 
+                                        Glosario Técnico de Métricas
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800">
+                                            <strong className="text-emerald-400 block mb-2 text-base">1. Velocidad (tk/s)</strong>
+                                            <p className="text-sm text-slate-400 mb-2">Tokens por segundo. Es la medida de "fluidez".</p>
+                                            <ul className="text-xs space-y-1 text-slate-500 list-disc pl-4">
+                                                <li><strong>&gt; 30 tk/s:</strong> Muy rápido (sensación tiempo real).</li>
+                                                <li><strong>10-20 tk/s:</strong> Velocidad de lectura humana promedio.</li>
+                                                <li><strong>&lt; 5 tk/s:</strong> Lento, frustrante para chat.</li>
+                                            </ul>
+                                        </div>
+                                        <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800">
+                                            <strong className="text-blue-400 block mb-2 text-base">2. Latencia (TTFT)</strong>
+                                            <p className="text-sm text-slate-400 mb-2">Time To First Token. El tiempo que pasa desde que envías el mensaje hasta que aparece la primera letra.</p>
+                                            <ul className="text-xs space-y-1 text-slate-500 list-disc pl-4">
+                                                <li>Afectado por: Carga en RAM y tamaño del prompt.</li>
+                                                <li>Modelos grandes en hardware modesto tienen latencias altas.</li>
+                                            </ul>
+                                        </div>
+                                        <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800">
+                                            <strong className="text-purple-400 block mb-2 text-base">3. Coste (Tokens)</strong>
+                                            <p className="text-sm text-slate-400 mb-2">Coste computacional. Mide cuánto "trabajo" hizo el modelo.</p>
+                                            <ul className="text-xs space-y-1 text-slate-500 list-disc pl-4">
+                                                <li><strong>Eficiencia:</strong> Queremos respuestas concisas.</li>
+                                                <li><strong className="text-red-400">Peligro:</strong> Si un acertijo simple consume 2000 tokens, el modelo ha entrado en un bucle (fallo lógico).</li>
+                                            </ul>
+                                        </div>
+                                        <div className="bg-slate-900/30 p-4 rounded-xl border border-slate-800">
+                                            <strong className="text-amber-400 block mb-2 text-base">4. Calidad (Subjetiva)</strong>
+                                            <p className="text-sm text-slate-400 mb-2">Evaluación humana del 0 al 10.</p>
+                                            <ul className="text-xs space-y-1 text-slate-500 list-disc pl-4">
+                                                <li><strong>10:</strong> Lógica perfecta, sin alucinaciones.</li>
+                                                <li><strong>5:</strong> Respuesta vaga o parcialmente correcta.</li>
+                                                <li><strong>1:</strong> Alucinación total o bucle infinito.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr className="border-slate-700" />
+
+                                {/* 3. Tipos de Contexto */}
+                                <div>
+                                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                        <Icon name="layers" className="text-indigo-400" size={24} /> 
+                                        Tipos de Contexto (Prompts)
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                        <div className="p-4 rounded-lg bg-slate-800 border border-slate-700">
+                                            <strong className="block text-white mb-1">Contexto Corto</strong>
+                                            <p className="text-slate-400">Preguntas directas sin historial previo. <br/><em>Ej: "¿Cuánto es 2+2?"</em></p>
+                                        </div>
+                                        <div className="p-4 rounded-lg bg-slate-800 border border-slate-700">
+                                            <strong className="block text-white mb-1">Contexto Largo</strong>
+                                            <p className="text-slate-400">Preguntas con mucha información previa o historial de chat largo. Ponen a prueba la memoria RAM.</p>
+                                        </div>
+                                        <div className="p-4 rounded-lg bg-slate-800 border border-slate-700">
+                                            <strong className="block text-white mb-1">Contexto Complejo</strong>
+                                            <p className="text-slate-400">Acertijos lógicos o instrucciones con trampas. Ponen a prueba el razonamiento, no la velocidad.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 4. Análisis del Caso de Estudio */}
+                                <div className="bg-indigo-900/20 p-6 rounded-xl border border-indigo-500/30">
+                                    <h3 className="text-lg font-bold text-white mb-3">🔍 Análisis del Caso de Estudio: El Trapecio</h3>
+                                    <p className="text-sm text-slate-300 mb-4">
+                                        En los datos precargados, observamos un fenómeno fascinante al comparar <strong>Qwen-4b (Pequeño)</strong> contra <strong>GPT-OSS-20b (Grande)</strong> en un acertijo geométrico:
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <ul className="list-disc pl-5 text-sm text-slate-400 space-y-2">
+                                            <li>
+                                                <strong className="text-white">El fallo del modelo pequeño:</strong> Qwen-4b es muy rápido (40 tk/s) pero carece de profundidad lógica. Al enfrentarse a una contradicción ("parece cuadrado pero no lo es"), entró en un <strong>bucle infinito</strong> repitiendo "Es un trapecio... ¡pero no!". Esto disparó su coste a +1900 tokens y su calidad a 1/10.
+                                            </li>
+                                        </ul>
+                                        <ul className="list-disc pl-5 text-sm text-slate-400 space-y-2">
+                                            <li>
+                                                <strong className="text-white">La robustez del modelo grande:</strong> GPT-20b fue más lento y tardó mucho en empezar (Latencia alta), pero "pensó" la respuesta correctamente y fue conciso (118 tokens), obteniendo un 10/10 en calidad.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <p className="text-xs text-indigo-300 mt-4 font-bold text-center">
+                                        CONCLUSIÓN: La velocidad no sirve de nada si el razonamiento es incorrecto.
+                                    </p>
+                                </div>
+
+                                {/* 5. Guía de Gráficos */}
+                                <div>
+                                    <h3 className="text-lg font-bold text-white mb-4">📈 Guía de Visualización</h3>
+                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                        <li className="flex items-start gap-3">
+                                            <div className="bg-slate-700 p-2 rounded"><Icon name="bar-chart-3" size={16} /></div>
+                                            <div><strong className="text-white">Gráfico de Barras:</strong> Úsalo para comparar magnitudes exactas (quién es más rápido).</div>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <div className="bg-slate-700 p-2 rounded"><Icon name="hexagon" size={16} /></div>
+                                            <div><strong className="text-white">Gráfico de Radar:</strong> Úsalo para ver el "perfil" del modelo. Un modelo equilibrado tendrá una forma amplia y regular.</div>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <div className="bg-slate-700 p-2 rounded"><Icon name="trending-up" size={16} /></div>
+                                            <div><strong className="text-white">Gráfico de Líneas:</strong> Útil si añades datos secuenciales (ej: Modelo v1, v2, v3).</div>
+                                        </li>
+                                        <li className="flex items-start gap-3">
+                                            <div className="bg-slate-700 p-2 rounded"><Icon name="pie-chart" size={16} /></div>
+                                            <div><strong className="text-white">Polar Area:</strong> Excelente para destacar visualmente métricas desproporcionadas (como el coste de tokens en un error).</div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

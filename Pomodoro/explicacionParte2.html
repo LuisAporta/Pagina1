@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crónica de FocusQuest - Parte 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3e9d2;
+            color: #4a2c2a;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .font-special {
+            font-family: 'MedievalSharp', cursive;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .user-bubble {
+            background-color: #d9c9b5;
+            border-bottom-left-radius: 0.5rem;
+            align-self: flex-start;
+        }
+        .gemini-bubble {
+            background-color: #c6b5a0;
+            border-bottom-right-radius: 0.5rem;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-12">
+            <h1 class="font-special text-5xl md:text-7xl">Crónica de FocusQuest</h1>
+            <p class="text-lg"><a href="./explicacion.html" class="text-amber-800 hover:text-amber-900 underline">Volver a la Parte 1</a></p>
+        </header>
+
+        <main class="flex flex-col gap-4">
+
+            <!-- Día 7 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 7: El Enigma de las Clases Bloqueadas</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Vale me encantan los temas pero como compro las clases siempre las tendre bloqueadas"</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>¡El primer gran obstáculo! Las clases estaban bloqueadas, pero el camino para desbloquearlas no era claro. Propuse una solución: al hacer clic en una clase bloqueada, aparecería un mensaje guiándote a la tienda, que se iluminaría para mostrarte el camino.</p>
+            </div>
+
+            <!-- Día 8 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 8: El Gremio de Mercaderes Fantasma</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"no hace lo que me has dicho (...) me esta trolleando te estoy diciendo que las clases no se pueden comprar porque no aparecen en el arsenal del heroe"</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>¡Un desastre en dos actos! Primero, mi solución no funcionó porque los botones bloqueados no se podían pulsar. Tras corregirlo, descubrimos el verdadero problema gracias a tu captura de pantalla: las clases ni siquiera aparecían en la tienda. El culpable fue un error tipográfico (`classs` en lugar de `classes`). ¡Una sola letra había hecho invisible a todo el gremio de mercaderes de clases! Finalmente, lo corregí.</p>
+            </div>
+
+             <!-- Día 9 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 9: En Busca de la Inspiración Perdida</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"En versiones anteriores había un botón de 'Buscar Inspiración' con citas. ¿Podrías volver a ponerlo? Y también aclarar cómo se completan las misiones."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Reintroduje el botón **"Buscar Inspiración"** para los descansos. Para mayor claridad, añadí una descripción emergente en el icono del regalo (🎁) de cada misión, explicando que se necesitan sesiones de trabajo para acumular recompensas.</p>
+            </div>
+
+             <!-- Día 10 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 10: Refinando la Experiencia de Descanso</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"No me gusta la ubicación del botón de inspiración. Y las citas son muy densas (Kafka, Camus...). Prefiero algo más ligero para desconectar."</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Rediseñé la función de inspiración varias veces basándome en tu feedback. Primero la integré en la hoguera interactiva y, finalmente, la coloqué en su ubicación definitiva: un espacio limpio **encima del temporizador** que solo aparece durante los descansos. Además, sustituí las citas filosóficas por frases más motivacionales y ligeras.</p>
+            </div>
+
+            <!-- Día 11 -->
+            <h2 class="font-special text-3xl my-4 self-center">Día 11: Los Últimos Retoques</h2>
+            <div class="chat-bubble user-bubble">
+                <p class="font-bold mb-2">Tu Petición:</p>
+                <p>"Los contrastes del tablón de misiones están mal y los campos de texto no se leen. Y, ¡has quitado los eventos aleatorios!"</p>
+            </div>
+            <div class="chat-bubble gemini-bubble">
+                <p class="font-bold mb-2">Mi Aventura:</p>
+                <p>Fue el día de los ajustes finos. Creé **colores de dificultad temáticos** para el tablón de misiones, asegurando un contraste perfecto. También apliqué estilos a los campos de texto y desplegables para que siempre fueran legibles. Por último, reactivé los **eventos aleatorios** para que la aventura durante los descansos volviera a ser impredecible.</p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

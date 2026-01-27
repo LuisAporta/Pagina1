@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Line Chess - DevLog</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel (necesario para JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-[#15130B] text-[#E8E2D9]">
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        // Importaciones consistentes desde ESM.sh para evitar conflictos de versiones
+        import React, { useState } from 'https://esm.sh/react@18.2.0';
+        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+        import { 
+          ArrowRight, ArrowLeft, History, Gamepad2, Cpu, LineChart, 
+          Palette, Eye, Timer, User, CheckCircle2, Code2, 
+          LayoutTemplate, Move, MousePointerClick, Layers, Sparkles 
+        } from 'https://esm.sh/lucide-react@0.292.0';
+
+        // --- COLORES DEL TEMA ---
+        const theme = {
+          bg: "bg-[#15130B]",
+          surface1: "bg-[#201E15]",
+          surface2: "bg-[#252319]",
+          primary: "text-[#EDC242]",
+          primaryContainer: "bg-[#584400]",
+          primaryBorder: "border-[#EDC242]",
+          textMain: "text-[#E8E2D9]",
+          textMuted: "text-[#979080]",
+          timelineLine: "bg-[#4B4639]"
+        };
+
+        // --- COMPONENTES ---
+
+        // PANTALLA 1: DIARIO DE DESARROLLO
+        const ScreenDevLog = ({ onNavigate }) => {
+          return (
+            <div className={`min-h-screen p-8 ${theme.bg} ${theme.textMain} font-sans`}>
+              <div className="max-w-5xl mx-auto">
+                
+                {/* HEADER */}
+                <header className="text-center mb-16 animate-in fade-in duration-700">
+                  <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full ${theme.primaryContainer} mb-6 border ${theme.primaryBorder} ${theme.primary}`}>
+                    <History size={40} />
+                  </div>
+                  <h1 className={`text-5xl md:text-6xl font-serif font-bold ${theme.primary} mb-2`}>Grand Line Chess</h1>
+                  <p className={`text-xl ${theme.textMuted} font-light tracking-widest uppercase`}>Diario de Desarrollo & Evolución</p>
+                  
+                  <div className="mt-8 flex justify-center">
+                    <button 
+                      onClick={onNavigate}
+                      className="group flex items-center gap-2 px-6 py-3 bg-[#EDC242] hover:bg-[#D4AC30] text-[#3E2E00] font-bold rounded-full transition-all hover:scale-105 active:scale-95"
+                    >
+                      Ver Especificaciones Técnicas
+                      <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform"/>
+                    </button>
+                  </div>
+                </header>
+
+                {/* SECCIÓN 1: HITOS CLAVE */}
+                <section className="mb-20">
+                  <h2 className="text-3xl font-serif text-white mb-8 flex items-center gap-3">
+                    <LineChart className="text-[#EDC242]" /> Evolución del Proyecto
+                  </h2>
+                  
+                  <div className="relative space-y-12 pl-4">
+                    <div className={`absolute left-[23px] top-0 bottom-0 w-0.5 ${theme.timelineLine} z-0`}></div>
+
+                    {/* Hito 1 */}
+                    <div className="relative flex gap-6 items-start z-10">
+                      <div className={`w-12 h-12 rounded-full ${theme.surface2} border-2 border-[#979080] flex items-center justify-center flex-shrink-0`}>
+                        <Gamepad2 className="text-[#979080]" size={24} />
+                      </div>
+                      <div className={`${theme.surface1} p-6 rounded-2xl border border-white/10 flex-1 hover:border-[#EDC242]/50 transition-colors shadow-lg`}>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-bold text-white">El Origen: Motor Básico</h3>
+                          <span className="text-xs bg-white/10 px-2 py-1 rounded text-gray-400">Fase 1</span>
+                        </div>
+                        <p className="text-gray-400 mb-4 text-sm leading-relaxed">
+                          <strong className="text-gray-200">Petición:</strong> Crear una web de ajedrez simple con barra de evaluación y explicaciones.<br/>
+                          <strong className="text-gray-200">Solución:</strong> Implementación inicial con <em>chess.js</em> y lógica heurística básica para feedback inmediato.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Hito 2 */}
+                    <div className="relative flex gap-6 items-start z-10">
+                      <div className={`w-12 h-12 rounded-full ${theme.primaryContainer} border-2 ${theme.primaryBorder} flex items-center justify-center flex-shrink-0 ${theme.primary}`}>
+                        <Cpu size={24} />
+                      </div>
+                      <div className={`${theme.surface1} p-6 rounded-2xl border border-[#EDC242]/30 flex-1 shadow-[0_0_30px_rgba(237,194,66,0.1)]`}>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className={`text-xl font-bold ${theme.primary}`}>Integración de Stockfish (WASM)</h3>
+                          <span className={`text-xs bg-[#EDC242]/20 ${theme.primary} px-2 py-1 rounded`}>Hito Técnico</span>
+                        </div>
+                        <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                          <strong className="text-[#EDC242]">Petición:</strong> "Los comentarios son genéricos. Conecta una API real."<br/>
+                          <strong className="text-[#EDC242]">Solución:</strong> Se reemplazó la lógica básica por <strong>Stockfish 16</strong> vía WebWorkers. Retos superados: errores de carga CORS y gestión de hilos asíncronos para evitar congelar la UI.
+                        </p>
+                        <div className="flex gap-2 mt-3">
+                          <span className={`text-xs border border-[#EDC242]/30 px-2 py-1 rounded text-[#EDC242]/80`}>Centipawns</span>
+                          <span className={`text-xs border border-[#EDC242]/30 px-2 py-1 rounded text-[#EDC242]/80`}>Best Move Calculation</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hito 3 */}
+                    <div className="relative flex gap-6 items-start z-10">
+                      <div className={`w-12 h-12 rounded-full ${theme.surface2} border-2 border-[#AACFA6] flex items-center justify-center flex-shrink-0 text-[#AACFA6]`}>
+                        <LineChart size={24} />
+                      </div>
+                      <div className={`${theme.surface1} p-6 rounded-2xl border border-white/10 flex-1 hover:border-[#AACFA6]/50 transition-colors shadow-lg`}>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-bold text-white">El Analista Post-Partida</h3>
+                          <span className="text-xs bg-[#AACFA6]/10 text-[#AACFA6] px-2 py-1 rounded">Fase 3</span>
+                        </div>
+                        <p className="text-gray-400 mb-4 text-sm leading-relaxed">
+                          <strong className="text-gray-200">Petición:</strong> Un informe final detallado y un prompt para que la IA analice la partida.<br/>
+                          <strong className="text-gray-200">Solución:</strong> Creación del "Informe de Navegación" con estadísticas de precisión, conteo de errores (Blunders) y generación automática de prompts enriquecidos.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Hito 4 */}
+                    <div className="relative flex gap-6 items-start z-10">
+                      <div className={`w-12 h-12 rounded-full ${theme.surface2} border-2 ${theme.primaryBorder} flex items-center justify-center flex-shrink-0 ${theme.primary}`}>
+                        <Palette size={24} />
+                      </div>
+                      <div className={`${theme.surface1} p-6 rounded-2xl border border-white/10 flex-1 hover:border-[#EDC242]/50 transition-colors shadow-lg`}>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-bold text-white">Rediseño UI/UX (M3)</h3>
+                          <span className={`text-xs bg-[#EDC242]/10 ${theme.primary} px-2 py-1 rounded`}>Design</span>
+                        </div>
+                        <p className="text-gray-400 mb-4 text-sm leading-relaxed">
+                          <strong className="text-gray-200">Petición:</strong> "Hazla más bonita, usa Material Design 3."<br/>
+                          <strong className="text-gray-200">Solución:</strong> Implementación total de <strong>Material You</strong>. Paleta de colores dorada/oscura, Navigation Rail, Cards redondeadas, tipografía clásica y eliminación de alertas nativas por Snackbars y Modales.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECCIÓN 2: CARACTERÍSTICAS TÉCNICAS (Cards) */}
+                <section className="mb-12">
+                  <h2 className="text-3xl font-serif text-white mb-8 flex items-center gap-3">
+                    <Code2 className="text-[#AACFA6]" /> Ingeniería Detrás del Tablero
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Card 1 */}
+                    <div className={`${theme.surface2} p-6 rounded-3xl border border-white/5`}>
+                      <div className={`w-10 h-10 rounded-full bg-[#EDC242]/20 flex items-center justify-center ${theme.primary} mb-4`}>
+                        <Cpu size={24} />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">Stockfish Resiliente</h3>
+                      <p className="text-sm text-gray-400">Implementamos un sistema de carga "Try-Catch-Fetch" para inyectar el motor como un Blob local, evitando bloqueos de seguridad del navegador.</p>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div className={`${theme.surface2} p-6 rounded-3xl border border-white/5`}>
+                      <div className="w-10 h-10 rounded-full bg-[#AACFA6]/20 flex items-center justify-center text-[#AACFA6] mb-4">
+                        <Eye size={24} />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">UX Sutil</h3>
+                      <p className="text-sm text-gray-400">Puntos de ayuda no intrusivos, enroque clásico (arrastrar Rey a Torre) y feedback visual inmediato sin saturar al jugador.</p>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div className={`${theme.surface2} p-6 rounded-3xl border border-white/5`}>
+                      <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 mb-4">
+                        <Timer size={24} />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">Gestión de Tiempo</h3>
+                      <p className="text-sm text-gray-400">Relojes configurables (Bullet, Blitz, Rapid) integrados en la UI que declaran "Derrota por Tiempo" automáticamente.</p>
+                    </div>
+
+                    {/* Card 4 */}
+                    <div className={`${theme.surface2} p-6 rounded-3xl border border-white/5`}>
+                      <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 mb-4">
+                        <User size={24} />
+                      </div>
+                      <h3 className="text-lg font-bold text-white mb-2">Perfil de Usuario</h3>
+                      <p className="text-sm text-gray-400">Menú contextual animado y persistente para gestión de sesión, manteniendo la estética inmersiva.</p>
+                    </div>
+                  </div>
+                </section>
+
+                <footer className="text-center text-gray-500 text-sm font-mono pb-8">
+                  <p>Generado para el proyecto Grand Line Chess.</p>
+                </footer>
+              </div>
+            </div>
+          );
+        };
+
+        // PANTALLA 2: ESPECIFICACIONES TÉCNICAS
+        const ScreenSpecs = ({ onNavigate }) => {
+          return (
+            <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+              {/* Header Institucional */}
+              <header className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-slate-900 text-white p-2 rounded-lg">
+                      <Code2 size={24} />
+                    </div>
+                    <div>
+                      <h1 className="text-lg font-bold text-slate-900 leading-tight">Documentación Técnica</h1>
+                      <p className="text-xs text-slate-500 font-mono">v2.1.0-stable • Diciembre 2025</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={onNavigate}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <ArrowLeft size={16} />
+                    Volver al DevLog
+                  </button>
+                </div>
+              </header>
+
+              <main className="max-w-7xl mx-auto px-6 py-10">
+                
+                <div className="mb-12 text-center md:text-left border-b border-slate-200 pb-8">
+                  <h2 className="text-4xl font-bold text-slate-900 mb-4">Especificaciones del Sistema</h2>
+                  <p className="text-slate-600 max-w-4xl leading-relaxed text-lg">
+                    Documentación técnica integral de la aplicación. El proyecto utiliza una arquitectura de Componentes React de alto rendimiento, 
+                    integración WASM para el motor de ajedrez y un sistema de renderizado visual avanzado para la gestión del tablero.
+                  </p>
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-12">
+                  
+                  {/* Columna Izquierda */}
+                  <div className="space-y-12">
+                    
+                    {/* SECCIÓN 1: EXPERIENCIA VISUAL Y MECÁNICAS */}
+                    <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                      <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">
+                        <Sparkles className="text-amber-500" size={24} />
+                        Mecánicas de Tablero & Visuals
+                      </h3>
+                      
+                      <div className="space-y-6">
+                        <div className="flex gap-4">
+                          <div className="bg-amber-100 p-2 rounded-lg h-fit text-amber-700"><Move size={20} /></div>
+                          <div>
+                            <h4 className="font-bold text-slate-800 text-lg">Motor de Arrastre Híbrido</h4>
+                            <p className="text-slate-600 text-sm mt-1 leading-relaxed">
+                              Implementación dual de eventos <code>TouchEvents</code> y <code>MouseEvents</code>. 
+                              El sistema detecta la presión y velocidad del gesto para diferenciar entre un "tap" (selección) y un "drag" (arrastre), 
+                              evitando el <em>ghosting</em> en pantallas táctiles de alta frecuencia.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                          <div className="bg-amber-100 p-2 rounded-lg h-fit text-amber-700"><Layers size={20} /></div>
+                          <div>
+                            <h4 className="font-bold text-slate-800 text-lg">Renderizado por Capas (Z-Index)</h4>
+                            <p className="text-slate-600 text-sm mt-1 leading-relaxed">
+                              El tablero se renderiza en tres capas independientes para optimizar el repaint:
+                              <br/>1. <strong>Base Layer:</strong> Casillas y coordenadas (Estático).
+                              <br/>2. <strong>Highlight Layer:</strong> Indicadores de último movimiento y casillas válidas.
+                              <br/>3. <strong>Piece Layer:</strong> Sprites SVG de las piezas con propiedades `will-change: transform`.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                          <div className="bg-amber-100 p-2 rounded-lg h-fit text-amber-700"><MousePointerClick size={20} /></div>
+                          <div>
+                            <h4 className="font-bold text-slate-800 text-lg">Animaciones de Interpolación</h4>
+                            <p className="text-slate-600 text-sm mt-1 leading-relaxed">
+                              Las piezas no "saltan" de una casilla a otra. Se utiliza una interpolación CSS `cubic-bezier(0.4, 0, 0.2, 1)` 
+                              para suavizar el movimiento (150ms), calculando el delta (X,Y) desde la posición de origen para una transición fluida.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* SECCIÓN 2: MOTOR DE AJEDREZ */}
+                    <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                      <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">
+                        <Cpu className="text-blue-600" size={24} />
+                        Backend Lógico (Engine)
+                      </h3>
+                      <ul className="space-y-4">
+                        <li className="flex gap-3">
+                          <CheckCircle2 className="text-green-600 mt-1 flex-shrink-0" size={20} />
+                          <div>
+                            <h4 className="font-semibold text-slate-800">WASM Stockfish 16+</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                              Ejecución de binarios compilados a WebAssembly. Permite evaluaciones de profundidad 20+ en milisegundos.
+                            </p>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <CheckCircle2 className="text-green-600 mt-1 flex-shrink-0" size={20} />
+                          <div>
+                            <h4 className="font-semibold text-slate-800">Thread Isolation</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                              Uso estricto de Web Workers para aislar el cálculo computacional del hilo principal de renderizado.
+                            </p>
+                          </div>
+                        </li>
+                      </ul>
+                    </section>
+
+                  </div>
+
+                  {/* Columna Derecha */}
+                  <div className="space-y-12">
+                    
+                    {/* SECCIÓN 3: INTERFAZ DE USUARIO (UI/UX) */}
+                    <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                      <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">
+                        <LayoutTemplate className="text-teal-600" size={24} />
+                        Interfaz y Accesibilidad
+                      </h3>
+                      
+                      <div className="space-y-5">
+                        <div className="group border-l-4 border-teal-500 pl-4 py-1 hover:bg-slate-50 transition-colors">
+                          <h4 className="font-bold text-slate-800">Feedback Háptico y Sonoro</h4>
+                          <p className="text-sm text-slate-600 mt-1">
+                            Implementación de la API `Navigator.vibrate()` para feedback táctil en móviles al realizar capturas o jaques, sincronizado con efectos de sonido espaciales (Web Audio API).
+                          </p>
+                        </div>
+
+                        <div className="group border-l-4 border-teal-500 pl-4 py-1 hover:bg-slate-50 transition-colors">
+                          <h4 className="font-bold text-slate-800">Sistema de Temas Dinámicos</h4>
+                          <p className="text-sm text-slate-600 mt-1">
+                            Soporte para cambio en caliente de skins de tablero (Madera, Mármol, Neon) y sets de piezas (Staunton, Pixel, 3D), utilizando variables CSS y SVG masks para coloreado dinámico.
+                          </p>
+                        </div>
+
+                        <div className="group border-l-4 border-teal-500 pl-4 py-1 hover:bg-slate-50 transition-colors">
+                          <h4 className="font-bold text-slate-800">Diseño Responsivo Líquido</h4>
+                          <p className="text-sm text-slate-600 mt-1">
+                            El tablero mantiene su relación de aspecto (1:1) mediante `aspect-ratio` CSS, ajustándose dinámicamente al viewport vertical u horizontal sin desbordamiento.
+                          </p>
+                        </div>
+                      </div>
+                    </section>
+
+                    {/* SECCIÓN 4: ANALÍTICA */}
+                    <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                      <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">
+                        <LineChart className="text-purple-600" size={24} />
+                        Analítica y Datos
+                      </h3>
+                      <ul className="space-y-4">
+                        <li className="flex gap-3">
+                          <CheckCircle2 className="text-green-600 mt-1 flex-shrink-0" size={20} />
+                          <div>
+                            <h4 className="font-semibold text-slate-800">Blunder Detection Algorithm</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                              Comparativa de delta-cp (centipawn loss) pre y post movimiento para categorizar jugadas: Brillante, Mejor, Imprecisión, Error y Error Grave.
+                            </p>
+                          </div>
+                        </li>
+                        <li className="flex gap-3">
+                          <CheckCircle2 className="text-green-600 mt-1 flex-shrink-0" size={20} />
+                          <div>
+                            <h4 className="font-semibold text-slate-800">Exportación PGN Avanzada</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                              Generación de metadatos completos incluyendo marcas de tiempo por movimiento (`%clk`) y anotaciones NAG (`$1`, `$2`).
+                            </p>
+                          </div>
+                        </li>
+                      </ul>
+                    </section>
+
+                     {/* SECCIÓN 5: REGLAS */}
+                     <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 opacity-80 hover:opacity-100 transition-opacity">
+                      <h3 className="flex items-center gap-2 text-xl font-bold text-slate-700 mb-4">
+                        <Gamepad2 className="text-indigo-600" size={20} />
+                        Validación Normativa
+                      </h3>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Validación estricta FIDE (En Passant, Regla 50 movimientos, Triple repetición, Coronación) gestionada por librería de estados finitos.
+                      </p>
+                    </section>
+
+                  </div>
+                </div>
+
+                {/* FOOTER */}
+                <div className="mt-16 pt-8 border-t border-slate-300 text-center">
+                  <p className="text-slate-500 font-medium">Documento técnico generado para el proyecto Grand Line Chess.</p>
+                  <p className="text-slate-400 text-sm mt-1">© Diciembre 2025. Todos los derechos reservados.</p>
+                </div>
+              </main>
+            </div>
+          );
+        };
+
+        const App = () => {
+          const [currentView, setCurrentView] = useState('page1');
+
+          return (
+            <div>
+              {currentView === 'page1' ? (
+                <ScreenDevLog onNavigate={() => setCurrentView('page2')} />
+              ) : (
+                <ScreenSpecs onNavigate={() => setCurrentView('page1')} />
+              )}
+            </div>
+          );
+        }
+
+        // Renderizado en el DOM
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

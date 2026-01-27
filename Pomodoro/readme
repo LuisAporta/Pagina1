@@ -1,0 +1,83 @@
+FocusQuest: Tu Aventura de Productividad
+
+FocusQuest es una aplicación web Pomodoro gamificada, diseñada para transformar la gestión del tiempo en una emocionante aventura de rol. En lugar de simplemente contar minutos, te embarcarás en una misión donde cada sesión de trabajo fortalece a tu héroe, te acerca a tus metas y desbloquea nuevas recompensas.
+
+📜 Funcionalidades Épicas
+
+Temporizador de Aventura (Núcleo Pomodoro)
+
+Modos de Sesión: Alterna entre ciclos de Trabajo, Descanso Corto y Descanso Largo.
+
+Contador de Ciclo: Un indicador visual te muestra en qué parte del ciclo de 4 sesiones de trabajo te encuentras.
+
+Control Total del Tiempo: Configura la duración de cada sesión y elige la unidad de tiempo (Segundos, Minutos u Horas), ideal tanto para pruebas rápidas como para maratones de productividad.
+
+Sistema de Héroe (RPG)
+
+Perfil del Héroe: Sube de Nivel, gana EXP con cada sesión de trabajo y acumula FocusCoins para gastar en la tienda.
+
+Clases Desbloqueables:
+
+Comienzas como un Aventurero versátil.
+
+Usa tus ganancias para desbloquear permanentemente en la tienda las clases de Guerrero (+EXP), Mago (+Monedas) y Explorador (Probabilidad de recompensas dobles).
+
+¡Una animación de destello confirma tu nueva maestría al seleccionar una clase!
+
+Tablón de Misiones:
+
+Añade tus tareas como misiones con diferentes niveles de dificultad (Fácil, Normal, Difícil, Épica).
+
+Las misiones más difíciles otorgan mayores recompensas.
+
+Al completar tus pomodoros en una misión, pulsa el botón de Reclamar Recompensa (🎁) para ver una satisfactoria animación de monedas y experiencia volando hacia tu perfil.
+
+Inmersión y Gamificación
+
+Animaciones Dinámicas del Héroe:
+
+Combate: Durante el modo "Trabajo", un héroe SVG lucha contra un monstruo aleatorio (Esqueleto, Murciélago, Limo, Orco). Al ser derrotado, el monstruo se desvanece y uno nuevo aparece, ¡la batalla nunca se detiene!
+
+Descanso: Tu héroe se sienta junto a una hoguera durante los descansos cortos y se echa a dormir en los largos.
+
+Mundos de Aventura (Temas): Cambia completamente la atmósfera con 9 temas únicos, cada uno con sus propias fuentes, colores e iconos:
+
+Aventura Fantástica
+
+Explorador Espacial
+
+Aventura en el Bosque
+
+Aventura Pirata
+
+Aventura en la Mazmorra
+
+Aventura Volcánica
+
+Aventura en la Playa
+
+Aventura en el Cielo
+
+Aventura en las Minas
+
+Arsenal del Héroe (Tienda):
+
+La tienda está perfectamente organizada por categorías: Clases, Iconos y Bordes.
+
+Desbloquea nuevas clases, personaliza el icono de tu avatar y el color de su borde.
+
+Salón de los Héroes (Logros):
+
+Un panel visual muestra todos los logros disponibles, tu progreso para desbloquearlos y los que ya has conseguido.
+
+Eventos Aleatorios: Durante los descansos, puedes encontrarte con eventos sorpresa que te ofrecen elecciones con diferentes riesgos y recompensas.
+
+Experiencia de Usuario
+
+Interfaz Clara: Todos los botones e iconos cuentan con títulos descriptivos para una fácil navegación.
+
+Contraste Asegurado: Los colores de la interfaz, especialmente en los menús, están ajustados para ser perfectamente legibles en todos los temas.
+
+
+los eventos aleatorios se generan al pulsar el boton porque si no me daba muchos errores o no podia que no salieran nunca entonces lo puse en el boton para que puedeses verlos
+
