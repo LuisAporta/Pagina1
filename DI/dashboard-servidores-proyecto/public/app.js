@@ -1,4 +1,4 @@
-// JS Dashboard Logic - "Don Viejo" Rules applied where possible (No frameworks like React, just Vanilla + Chart.js lib)
+// JS Dashboard Logic - "Don Viejo" Rules applied where possible
 
 const btnStart = document.getElementById('btn-start');
 const btnStop = document.getElementById('btn-stop');
@@ -10,65 +10,79 @@ const statusMsg = document.getElementById('status-msg');
 const statusIndicator = document.getElementById('traffic-light-text');
 
 // --- CHART.JS CONFIG ---
-const ctx = document.getElementById('metricsChart').getContext('2d');
-const metricsChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: [],
-        datasets: [{
-            label: 'CPU LOAD (%)',
-            borderColor: '#00f3ff',
-            backgroundColor: 'rgba(0, 243, 255, 0.1)',
-            data: [],
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true
-        }, {
-            label: 'RAM USAGE (%)',
-            borderColor: '#9d00ff',
-            backgroundColor: 'rgba(157, 0, 255, 0.1)',
-            data: [],
-            borderWidth: 2,
-            tension: 0.4,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                max: 100,
-                grid: { color: '#333' },
-                ticks: { color: '#888' }
-            },
-            x: {
-                grid: { display: false },
-                ticks: { color: '#888' }
-            }
+// Setup inicial seguro
+let metricsChart;
+const ctxElement = document.getElementById('metricsChart');
+
+if (ctxElement) {
+    const ctx = ctxElement.getContext('2d');
+    metricsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'CPU LOAD (%)',
+                borderColor: '#00f3ff',
+                backgroundColor: 'rgba(0, 243, 255, 0.15)',
+                data: [],
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'RAM USAGE (%)',
+                borderColor: '#bc13fe',
+                backgroundColor: 'rgba(188, 19, 254, 0.15)',
+                data: [],
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0.4,
+                fill: true
+            }]
         },
-        plugins: {
-            legend: { labels: { color: '#fff' } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false, // Mejor rendimiento
+            interaction: { intersect: false, mode: 'index' },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#666', font: { family: 'Share Tech Mono' } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { display: false }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff', font: { family: 'Orbitron' } } }
+            }
         }
-    }
-});
+    });
+}
 
 // --- FUNCIONES UTILIDAD ---
 
 function log(msg, type = 'info') {
-    const span = document.createElement('span');
-    span.classList.add('log-line');
+    if (!consoleOutput) return;
+
+    const div = document.createElement('div');
+    div.classList.add('log-line');
 
     // Timestamp
     const date = new Date();
-    const time = date.toLocaleTimeString();
+    const time = date.toLocaleTimeString([], { hour12: false });
 
-    if (type === 'error') span.classList.add('log-error');
-    if (type === 'info') span.classList.add('log-info');
+    if (type === 'error') div.classList.add('log-error');
+    if (type === 'success') div.classList.add('log-success');
+    if (type === 'sys') div.classList.add('log-sys');
+    else div.classList.add('log-info');
 
-    span.innerHTML = `[${time}] > ${msg}`;
-    consoleOutput.appendChild(span);
+    div.innerHTML = `<span style="opacity:0.5">[${time}]</span> ${msg}`;
+    consoleOutput.appendChild(div);
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
 }
 
@@ -80,33 +94,46 @@ function updateStatus() {
         .then(data => {
             // Limpiar clases
             coreCircle.classList.remove('green', 'red', 'yellow');
+            const btns = document.querySelectorAll('.tech-btn');
 
             if (data.status === 'ok') {
                 coreCircle.classList.add('green');
-                statusMsg.innerText = "SYSTEM: OPTIMAL";
-                statusMsg.style.color = "#00ff41";
+                statusMsg.innerText = "SYSTEM: ONLINE";
+                statusMsg.style.color = "#0aff0a";
                 statusIndicator.innerText = "ONLINE";
-                statusIndicator.style.color = "#00ff41";
+                statusIndicator.style.color = "#0aff0a";
+
+                // Habilitar botones de comandos
+                btns.forEach(b => b.classList.remove('disabled'));
+
             } else if (data.status === 'error' || data.status === 'offline') {
                 coreCircle.classList.add('red');
-                statusMsg.innerText = "SYSTEM: CRITICAL / OFFLINE";
-                statusMsg.style.color = "#ff003c";
+                statusMsg.innerText = "SYSTEM: OFFLINE";
+                statusMsg.style.color = "#ff2a2a";
                 statusIndicator.innerText = "OFFLINE";
-                statusIndicator.style.color = "#ff003c";
+                statusIndicator.style.color = "#ff2a2a";
+
+                // Deshabilitar botones de comandos
+                btns.forEach(b => b.classList.add('disabled'));
+
             } else if (data.status === 'warning') {
                 coreCircle.classList.add('yellow');
-                statusMsg.innerText = "SYSTEM: PROCESSING...";
+                statusMsg.innerText = "PROCESSING...";
                 statusMsg.style.color = "#fcee0a";
                 statusIndicator.innerText = "BUSY";
                 statusIndicator.style.color = "#fcee0a";
             }
         })
         .catch(err => {
-            console.log(err);
+            console.log("Fetch Error (Server Offline?):", err);
+            statusIndicator.innerText = "CONNECTION LOST";
+            statusIndicator.style.color = "#555";
         });
 }
 
 function updateStats() {
+    if (!metricsChart) return;
+
     fetch('/api/stats')
         .then(res => res.json())
         .then(data => {
@@ -115,56 +142,58 @@ function updateStats() {
             metricsChart.data.datasets[0].data = data.cpu;
             metricsChart.data.datasets[1].data = data.ram;
             metricsChart.update();
-        });
+        })
+        .catch(() => { }); // Silencio si falla
 }
 
 function controlSystem(action) {
-    log(`INITIATING SEQUENCE: ${action.toUpperCase()}...`, 'info');
+    if (action === 'start') log(`> INITIATING START SEQUENCER...`, 'sys');
+    if (action === 'stop') log(`> INITIATING SHUTDOWN PROTOCOL...`, 'sys');
 
     fetch(`/control/${action}`, { method: 'POST' })
         .then(res => res.json())
         .then(data => {
-            log(`SERVER RESPONSE: ${data.msg}`, 'info');
-            updateStatus();
+            log(`ACK: ${data.msg}`, 'success');
+            setTimeout(updateStatus, 1000);
         })
         .catch(err => {
-            log(`COMMAND FAILED: ${err}`, 'error');
+            log(`ERR: COMMAND FAILED. IS SERVER RUNNING?`, 'error');
         });
 }
 
 // --- EVENT LISTENERS ---
 
-btnStart.addEventListener('click', () => controlSystem('start'));
-btnStop.addEventListener('click', () => controlSystem('stop'));
+if (btnStart) btnStart.addEventListener('click', () => controlSystem('start'));
+if (btnStop) btnStop.addEventListener('click', () => controlSystem('stop'));
 
-btnRam.addEventListener('click', () => {
-    log("SCANNING PHYSICAL MEMORY...", 'info');
+if (btnRam) btnRam.addEventListener('click', (e) => {
+    if (e.target.classList.contains('disabled')) return;
+    log("> EXEC: wmic memory check", 'info');
     fetch('/api/ram')
         .then(res => res.text())
         .then(text => {
-            log("MEMORY SCAN RESULT:", 'info');
-            // Formatear salida un poco
-            let lines = text.split('\n');
-            lines.forEach(l => {
-                if (l.trim() !== "") log(l.trim());
-            });
+            // Formatear salida
+            let clean = text.replace(/\s+/g, ' ').trim();
+            log(`RESULT: ${clean.substring(0, 50)}...`, 'success');
         });
 });
 
-btnCpu.addEventListener('click', () => {
-    log("ANALYZING CPU THREADS...", 'info');
+if (btnCpu) btnCpu.addEventListener('click', (e) => {
+    if (e.target.classList.contains('disabled')) return;
+    log("> EXEC: wmic cpu load", 'info');
     fetch('/api/cpu')
         .then(res => res.text())
         .then(text => {
-            log(`CPU LOAD: ${text.trim()}%`);
+            log(`CPU LOAD: ${text.trim()}%`, 'success');
         });
 });
 
 // --- LOOPS DE ACTUALIZACION ---
 setInterval(updateStatus, 2000); // Check status cada 2s
-setInterval(updateStats, 5000);  // Update graficos cada 5s
+setInterval(updateStats, 3000);  // Update graficos cada 3s (rapido)
 
 // Inicial
-log("DASHBOARD INITIALIZED. CONNECTING TO CORE...", 'info');
+log("INTERFACE INITIALIZED.", 'sys');
+log("CONNECTING TO LOCALHOST:3000...", 'sys');
 updateStatus();
 updateStats();
