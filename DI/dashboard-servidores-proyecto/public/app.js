@@ -1,4 +1,4 @@
-// JS Dashboard Logic - "Don Viejo" Rules applied where possible
+// JS Dashboard Logic - MULTI-DEVICE SUPPORT
 
 const btnStart = document.getElementById('btn-start');
 const btnStop = document.getElementById('btn-stop');
@@ -8,9 +8,15 @@ const consoleOutput = document.getElementById('console-output');
 const coreCircle = document.getElementById('core-circle');
 const statusMsg = document.getElementById('status-msg');
 const statusIndicator = document.getElementById('traffic-light-text');
+const nodesList = document.getElementById('nodes-list');
+const nodesCount = document.getElementById('nodes-count');
+
+// GLOBAL STATE
+let IS_SIMULATION = false;
+let simStatus = 'offline';
+let selectedClientId = 'HOST'; // 'HOST' or Agent ID
 
 // --- CHART.JS CONFIG ---
-// Setup inicial seguro
 let metricsChart;
 const ctxElement = document.getElementById('metricsChart');
 
@@ -43,7 +49,7 @@ if (ctxElement) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: false, // Mejor rendimiento
+            animation: false,
             interaction: { intersect: false, mode: 'index' },
             scales: {
                 y: {
@@ -52,10 +58,7 @@ if (ctxElement) {
                     grid: { color: 'rgba(255,255,255,0.05)' },
                     ticks: { color: '#666', font: { family: 'Share Tech Mono' } }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { display: false }
-                }
+                x: { grid: { display: false }, ticks: { display: false } }
             },
             plugins: {
                 legend: { labels: { color: '#fff', font: { family: 'Orbitron' } } }
@@ -64,11 +67,9 @@ if (ctxElement) {
     });
 }
 
-// --- FUNCIONES UTILIDAD ---
-
+// --- LOGGING ---
 function log(msg, type = 'info') {
     if (!consoleOutput) return;
-
     const div = document.createElement('div');
     div.classList.add('log-line');
 
@@ -86,69 +87,137 @@ function log(msg, type = 'info') {
     consoleOutput.scrollTop = consoleOutput.scrollHeight;
 }
 
+// --- VISUAL HELPERS ---
+function setVisualStatus(status) {
+    coreCircle.classList.remove('green', 'red', 'yellow');
+    const btns = document.querySelectorAll('.tech-btn');
+
+    if (status === 'online') {
+        coreCircle.classList.add('green');
+        statusMsg.innerText = "SYSTEM: ONLINE";
+        statusMsg.style.color = "#0aff0a";
+        statusIndicator.innerText = "ONLINE";
+        statusIndicator.style.color = "#0aff0a";
+        btns.forEach(b => b.classList.remove('disabled'));
+    } else {
+        coreCircle.classList.add('red');
+        statusMsg.innerText = "SYSTEM: OFFLINE";
+        statusMsg.style.color = "#ff2a2a";
+        statusIndicator.innerText = "OFFLINE";
+        statusIndicator.style.color = "#ff2a2a";
+        btns.forEach(b => b.classList.add('disabled'));
+    }
+}
+
+// --- CLIENT LIST LOGIC ---
+function updateClientList() {
+    if (IS_SIMULATION) return;
+
+    fetch('/api/clients')
+        .then(res => res.json())
+        .then(clients => {
+            nodesCount.innerText = `[${clients.length}]`;
+
+            // Clear list (except Host? No, rebuild all to keep simple for now)
+            nodesList.innerHTML = '';
+
+            // 1. HOST ITEM (Always there)
+            const hostDiv = document.createElement('div');
+            hostDiv.className = `node-item ${selectedClientId === 'HOST' ? 'selected' : ''}`;
+            hostDiv.innerHTML = `<div class="node-led on"></div><div class="node-name">HOST (LOCAL)</div>`;
+            hostDiv.onclick = () => { selectedClientId = 'HOST'; updateClientList(); log("SWITCHING VIEW: LOCALHOST", 'sys'); };
+            nodesList.appendChild(hostDiv);
+
+            // 2. REMOTE CLIENTS
+            clients.forEach(c => {
+                const div = document.createElement('div');
+                div.className = `node-item ${selectedClientId === c.id ? 'selected' : ''}`;
+                div.innerHTML = `<div class="node-led on"></div><div class="node-name">${c.id}</div>`;
+                div.onclick = () => { selectedClientId = c.id; updateClientList(); log(`SWITCHING VIEW: ${c.id}`, 'sys'); };
+                nodesList.appendChild(div);
+            });
+        })
+        .catch(err => console.log("Error fetching clients", err));
+}
+
+
 // --- CORE FUNCTIONS ---
 
 function updateStatus() {
+    if (IS_SIMULATION) return;
+
     fetch('/status')
         .then(res => res.json())
         .then(data => {
-            // Limpiar clases
-            coreCircle.classList.remove('green', 'red', 'yellow');
-            const btns = document.querySelectorAll('.tech-btn');
-
-            if (data.status === 'ok') {
-                coreCircle.classList.add('green');
-                statusMsg.innerText = "SYSTEM: ONLINE";
-                statusMsg.style.color = "#0aff0a";
-                statusIndicator.innerText = "ONLINE";
-                statusIndicator.style.color = "#0aff0a";
-
-                // Habilitar botones de comandos
-                btns.forEach(b => b.classList.remove('disabled'));
-
-            } else if (data.status === 'error' || data.status === 'offline') {
-                coreCircle.classList.add('red');
-                statusMsg.innerText = "SYSTEM: OFFLINE";
-                statusMsg.style.color = "#ff2a2a";
-                statusIndicator.innerText = "OFFLINE";
-                statusIndicator.style.color = "#ff2a2a";
-
-                // Deshabilitar botones de comandos
-                btns.forEach(b => b.classList.add('disabled'));
-
-            } else if (data.status === 'warning') {
-                coreCircle.classList.add('yellow');
-                statusMsg.innerText = "PROCESSING...";
-                statusMsg.style.color = "#fcee0a";
-                statusIndicator.innerText = "BUSY";
-                statusIndicator.style.color = "#fcee0a";
-            }
+            if (data.status === 'ok') setVisualStatus('online');
+            else setVisualStatus('offline');
         })
         .catch(err => {
-            console.log("Fetch Error (Server Offline?):", err);
-            statusIndicator.innerText = "CONNECTION LOST";
-            statusIndicator.style.color = "#555";
+            if (!IS_SIMULATION) {
+                console.warn("Backend Unreachable. Switching to SIMULATION MODE.");
+                IS_SIMULATION = true;
+                log("WARNING: CONNECTION LOST. SWITCHING TO SIMULATION MODE.", 'error');
+                setVisualStatus(simStatus);
+            }
         });
 }
 
 function updateStats() {
     if (!metricsChart) return;
 
+    if (IS_SIMULATION) {
+        // Generar datos falsos
+        if (simStatus === 'online') {
+            const cpu = Math.floor(Math.random() * 60) + 20;
+            const ram = Math.floor(Math.random() * 40) + 30;
+            updateChartData(cpu, ram);
+        }
+        return;
+    }
+
+    // REAL FETCH
     fetch('/api/stats')
         .then(res => res.json())
         .then(data => {
-            // Actualizar grafico
+            // Reemplazar historial completo (simple)
             metricsChart.data.labels = data.labels;
             metricsChart.data.datasets[0].data = data.cpu;
             metricsChart.data.datasets[1].data = data.ram;
             metricsChart.update();
         })
-        .catch(() => { }); // Silencio si falla
+        .catch(() => { });
+}
+
+function updateChartData(cpu, ram) {
+    const labels = metricsChart.data.labels;
+    const dataCpu = metricsChart.data.datasets[0].data;
+    const dataRam = metricsChart.data.datasets[1].data;
+
+    if (labels.length > 20) { labels.shift(); dataCpu.shift(); dataRam.shift(); }
+
+    labels.push(new Date().toLocaleTimeString());
+    dataCpu.push(cpu);
+    dataRam.push(ram);
+    metricsChart.update();
 }
 
 function controlSystem(action) {
     if (action === 'start') log(`> INITIATING START SEQUENCER...`, 'sys');
     if (action === 'stop') log(`> INITIATING SHUTDOWN PROTOCOL...`, 'sys');
+
+    if (IS_SIMULATION) {
+        setTimeout(() => {
+            if (action === 'start') {
+                simStatus = 'online';
+                log("ACK: SYSTEM STARTED (SIMULATED)", 'success');
+            } else {
+                simStatus = 'offline';
+                log("ACK: SYSTEM STOPPED (SIMULATED)", 'success');
+            }
+            setVisualStatus(simStatus);
+        }, 1000);
+        return;
+    }
 
     fetch(`/control/${action}`, { method: 'POST' })
         .then(res => res.json())
@@ -157,7 +226,7 @@ function controlSystem(action) {
             setTimeout(updateStatus, 1000);
         })
         .catch(err => {
-            log(`ERR: COMMAND FAILED. IS SERVER RUNNING?`, 'error');
+            log(`ERR: COMMAND FAILED.`, 'error');
         });
 }
 
@@ -166,34 +235,56 @@ function controlSystem(action) {
 if (btnStart) btnStart.addEventListener('click', () => controlSystem('start'));
 if (btnStop) btnStop.addEventListener('click', () => controlSystem('stop'));
 
-if (btnRam) btnRam.addEventListener('click', (e) => {
-    if (e.target.classList.contains('disabled')) return;
-    log("> EXEC: wmic memory check", 'info');
-    fetch('/api/ram')
-        .then(res => res.text())
-        .then(text => {
-            // Formatear salida
-            let clean = text.replace(/\s+/g, ' ').trim();
-            log(`RESULT: ${clean.substring(0, 50)}...`, 'success');
-        });
-});
+if (btnRam) {
+    btnRam.addEventListener('click', (e) => {
+        if (e.target.classList.contains('disabled')) return;
+        log("> EXEC: wmic memory check", 'info');
 
-if (btnCpu) btnCpu.addEventListener('click', (e) => {
-    if (e.target.classList.contains('disabled')) return;
-    log("> EXEC: wmic cpu load", 'info');
-    fetch('/api/cpu')
-        .then(res => res.text())
-        .then(text => {
-            log(`CPU LOAD: ${text.trim()}%`, 'success');
-        });
-});
+        if (IS_SIMULATION) {
+            setTimeout(() => {
+                log(`RESULT: FreePhysicalMemory=${Math.floor(Math.random() * 9000000)}`, 'success');
+            }, 500);
+            return;
+        }
 
-// --- LOOPS DE ACTUALIZACION ---
-setInterval(updateStatus, 2000); // Check status cada 2s
-setInterval(updateStats, 3000);  // Update graficos cada 3s (rapido)
+        fetch('/api/ram')
+            .then(res => res.text())
+            .then(text => {
+                let clean = text.replace(/\s+/g, ' ').trim();
+                log(`RESULT: ${clean.substring(0, 50)}...`, 'success');
+            });
+    });
+}
+
+if (btnCpu) {
+    btnCpu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('disabled')) return;
+        log("> EXEC: wmic cpu load", 'info');
+
+        if (IS_SIMULATION) {
+            setTimeout(() => {
+                log(`CPU LOAD: ${Math.floor(Math.random() * 100)}%`, 'success');
+            }, 500);
+            return;
+        }
+
+        fetch('/api/cpu')
+            .then(res => res.text())
+            .then(text => {
+                log(`CPU LOAD: ${text.trim()}%`, 'success');
+            });
+    });
+}
+
+// --- LOOPS ---
+setInterval(updateStatus, 2000);
+setInterval(updateStats, 2000);
+setInterval(updateClientList, 2000); // Poll de nuevos clientes
 
 // Inicial
 log("INTERFACE INITIALIZED.", 'sys');
-log("CONNECTING TO LOCALHOST:3000...", 'sys');
+log("SCANNING NETWORK FOR NODES...", 'sys');
+
+// Force check immediately
 updateStatus();
-updateStats();
+updateClientList();
