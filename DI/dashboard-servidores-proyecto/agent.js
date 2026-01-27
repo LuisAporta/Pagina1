@@ -2,9 +2,23 @@ const http = require('http');
 const os = require('os');
 const { exec } = require('child_process');
 
-// CONFIGURACIÓN DEL AGENTE
-const SERVER_URL = 'http://localhost:3000'; // IP del servidor central
-const AGENT_ID = 'NODE-' + os.hostname().toUpperCase(); // Nombre único (e.g., NODE-DESKTOP-UK82)
+/* 
+   ╔════════════════════════════════════════════════════════════════════╗
+   ║  INSTRUCCIONES PARA EL AMIGO (CLIENTE)                             ║
+   ╠════════════════════════════════════════════════════════════════════╣
+   ║  1. Instala Node.js en tu PC.                                      ║
+   ║  2. Abre este archivo con el Bloc de Notas.                        ║
+   ║  3. En la línea de abajo (SERVER_URL), cambia 'localhost' por      ║
+   ║     la IP de tu amigo (ej: 'http://192.168.1.45:3000').            ║
+   ║  4. Guarda y ejecuta en terminal: node agent.js                    ║
+   ╚════════════════════════════════════════════════════════════════════╝
+*/
+
+// ▼▼▼ CONFIGURA LA IP DEL SERVIDOR AQUÍ ▼▼▼
+const SERVER_URL = 'http://localhost:3000';
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+const AGENT_ID = 'NODE-' + os.hostname().toUpperCase();
 
 console.log(`
 ╔════════════════════════════════════════╗
