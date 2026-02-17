@@ -163,27 +163,117 @@ $$ language plpgsql;</pre>
                 </div>
             </section>
 
-            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--warning);">
-                <h2><i class="ri-folder-shield-2-line"></i> 4. Gestión Estructurada de Archivos</h2>
-                <p class="desc-text">Los archivos (comprobantes) no se guardan como BLOBs en la base de datos, sino como
-                    objetos en un Storage Bucket optimizado.</p>
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--primary);">
+                <h2><i class="ri-lock-password-line"></i> 5. Autenticación y Seguridad de Sesión</h2>
+                <p class="desc-text">El sistema de autenticación es el pilar de la seguridad. No solo gestiona el
+                    acceso, sino que proporciona el contexto de identidad para todas las operaciones de base de datos.
+                </p>
 
                 <div class="code-container">
-                    <div class="code-header"><i class="ri-code-box-line"></i> Lógica de Carga de Recibos</div>
+                    <div class="code-header"><i class="ri-user-follow-line"></i> Proceso de Login (login.html)</div>
                     <pre>
-// 1. Fase de Validación Local
-const file = fileInput.files[0];
-const fileExt = file.name.split('.').pop();
-const fileName = `${Math.random()}.${fileExt}`;
-
-// 2. Fase de Carga Remota
-const { data, error } = await window.sbClient.storage
-    .from('receipts') // Bucket destino
-    .upload(`${user.id}/${fileName}`, file); // Carpeta privada por usuario</pre>
+async function signIn(email, password) {
+    const { data, error } = await window.sbClient.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+    if (data.session) {
+        // Persistencia local para hidratación de UI inmediata
+        localStorage.setItem('finance_session', JSON.stringify(data.user));
+    }
+}</pre>
                 </div>
-                <p class="desc-text">Este flujo es eficiente porque la aplicación solo almacena la **URL** del archivo
-                    en la tabla de transacciones, mientras que el binario pesado reside en los servidores de
-                    almacenamiento optimizados de Supabase.</p>
+                <div class="highlight-box">
+                    <p><b>Seguridad de Sesión:</b> La función <code>requireAuth()</code> en <code>common.js</code> actúa
+                        como un guardián (Middleware de cliente), redirigiendo al usuario al login si no se detecta un
+                        token válido. Esto evita que usuarios no autorizados accedan a rutas protegidas como el
+                        Dashboard.</p>
+                </div>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--secondary);">
+                <h2><i class="ri-api-line"></i> 6. Integración de APIs de Terceros</h2>
+                <p class="desc-text">FinanceFlow no es un sistema aislado; se comunica con servicios externos para
+                    enriquecer la experiencia del usuario.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="code-container">
+                        <div class="code-header"><i class="ri-bar-chart-2-line"></i> Visualización (Chart.js)</div>
+                        <pre style="font-size: 0.75rem;">
+new Chart(ctx, {
+    type: 'line',
+    data: { ... },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: { // Tooltips customizados
+                backgroundColor: 'rgba(15,23,42,0.9)'
+            }
+        }
+    }
+});</pre>
+                    </div>
+                    <div class="code-container">
+                        <div class="code-header"><i class="ri-money-dollar-circle-line"></i> Divisas (ExchangeRate-API)
+                        </div>
+                        <pre style="font-size: 0.75rem;">
+const res = await fetch(
+    `https://v6.exchangerate-api.com/v6/${KEY}/latest/${base}`
+);
+const data = await res.json();
+const rate = data.conversion_rates[target];</pre>
+                    </div>
+                </div>
+                <p class="desc-text"><b>Optimización de Llamadas API:</b> Implementamos un sistema de "retry" y manejo
+                    de errores para asegurar que la aplicación siga funcionando incluso si un servicio externo
+                    experimenta latencia.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--success);">
+                <h2><i class="ri-palette-line"></i> 7. UX y Estética Premium (Design Tokens)</h2>
+                <p class="desc-text">El "sentimiento" premium de la app se basa en un sistema de diseño estricto
+                    gestionado mediante variables CSS nativas.</p>
+
+                <div class="code-container" style="background: rgba(255,255,255,0.05);">
+                    <div class="code-header"><i class="ri-css3-line"></i> main.css - Design System</div>
+                    <pre>
+:root {
+    --primary: #6366f1;         /* Indigo Neon */
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    --card: rgba(30, 41, 59, 0.5); /* Glassmorphism Base */
+    --blur: blur(12px);         /* Backdrop Filter */
+}
+
+.glass-card {
+    background: var(--card);
+    backdrop-filter: var(--blur);
+    border: 1px solid var(--border);
+}</pre>
+                </div>
+                <p class="desc-text">Este enfoque modular permite cambiar todo el aspecto visual de la aplicación
+                    modificando solo unos pocos tokens en el archivo raíz. La técnica de **Glassmorphism** aporta
+                    profundidad sin sacrificar la legibilidad.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--warning);">
+                <h2><i class="ri-smartphone-line"></i> 8. Adaptabilidad Móvil (Responsive Engine)</h2>
+                <p class="desc-text">El sistema utiliza una arquitectura "Mobile-First" con una barra de navegación
+                    inferior específica para dispositivos táctiles.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-layout-bottom-line"></i> common.js - Mobile Nav Injection
+                    </div>
+                    <pre>
+const mobileNav = `
+    &lt;a href="dashboard.html"&gt;&lt;i class="ri-dashboard-line"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a href="transactions.html"&gt;&lt;i class="ri-exchange-dollar-line"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a href="settings.html"&gt;&lt;i class="ri-settings-4-line"&gt;&lt;/i&gt;&lt;/a&gt;
+`;
+// Se activa solo en resoluciones &lt; 768px via Media Queries</pre>
+                </div>
+                <p class="desc-text">Mediante flexbox y grid layouts, garantizamos que las gráficas y tablas se
+                    reorganicen verticalmente en pantallas pequeñas, manteniendo siempre accesibles los botones de
+                    acción principales.</p>
             </section>
 
             <div class="stat-card" style="text-align:center; background:rgba(255,255,255,0.02); border-style:dashed">
