@@ -1,12 +1,58 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Globe, Sun } from 'lucide-react';
+import { Globe, Sun, Target, Download } from 'lucide-react';
+import { useTransactions } from '../hooks/useTransactions';
 
 const Settings: React.FC = () => {
     const { t, i18n } = useTranslation();
+    const { transactions } = useTransactions();
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
+    };
+
+    const [budgets, setBudgets] = React.useState<Record<string, number>>({});
+
+    React.useEffect(() => {
+        const savedBudgets = localStorage.getItem('budgets');
+        if (savedBudgets) {
+            setBudgets(JSON.parse(savedBudgets));
+        }
+    }, []);
+
+    const handleBudgetChange = (category: string, value: string) => {
+        const val = parseFloat(value);
+        const newBudgets = { ...budgets, [category]: isNaN(val) ? 0 : val };
+        setBudgets(newBudgets);
+        localStorage.setItem('budgets', JSON.stringify(newBudgets));
+    };
+
+    const handleExport = () => {
+        if (transactions.length === 0) {
+            alert('No transactions to export.');
+            return;
+        }
+
+        const headers = ['Date', 'Category', 'Description', 'Amount'];
+        const csvContent = [
+            headers.join(','),
+            ...transactions.map(t => [
+                t.date,
+                t.category,
+                `"${t.description.replace(/"/g, '""')}"`, // Escape quotes
+                t.amount
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'transactions_export.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -54,6 +100,58 @@ const Settings: React.FC = () => {
                     </div>
                     <div className="text-sm text-gray-500">
                         Theme switching coming soon. Currently using System/Light mode.
+                    </div>
+                </div>
+
+                {/* Budget Goals Settings */}
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                            <Target className="h-5 w-5 mr-2 text-emerald-500" />
+                            Budget Goals
+                        </h3>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-4">Set your monthly budget limits for each category.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {['Food', 'Transport', 'Entertainment', 'Bills', 'General'].map((category) => (
+                            <div key={category}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{category}</label>
+                                <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span className="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input
+                                        type="number"
+                                        className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md py-2"
+                                        placeholder="0.00"
+                                        value={budgets[category] || ''}
+                                        onChange={(e) => handleBudgetChange(category, e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Data Management */}
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                            <Download className="h-5 w-5 mr-2 text-blue-500" />
+                            Data Management
+                        </h3>
+                    </div>
+                    <div className="space-y-4">
+                        <p className="text-sm text-gray-500">
+                            Download a copy of your transaction data.
+                        </p>
+                        <button
+                            onClick={handleExport}
+                            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            <Download className="-ml-1 mr-2 h-4 w-4" />
+                            Export to CSV
+                        </button>
                     </div>
                 </div>
             </div>

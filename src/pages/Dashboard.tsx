@@ -1,8 +1,20 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransactions } from '../hooks/useTransactions';
-import { TrendingUp, TrendingDown, DollarSign, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Activity, PieChart as PieChartIcon, BarChart3, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell
+} from 'recharts';
 
 const Dashboard: React.FC = () => {
     const { t } = useTranslation();
@@ -19,6 +31,62 @@ const Dashboard: React.FC = () => {
 
         return { income, expenses, balance };
     }, [transactions]);
+
+    // Data for Area Chart (Income vs Expenses over time) - Mocking daily data for demo
+    const chartData = useMemo(() => {
+        // In a real app, group transactions by date
+        return [
+            { name: 'Mon', income: 4000, expense: 2400 },
+            { name: 'Tue', income: 3000, expense: 1398 },
+            { name: 'Wed', income: 2000, expense: 9800 },
+            { name: 'Thu', income: 2780, expense: 3908 },
+            { name: 'Fri', income: 1890, expense: 4800 },
+            { name: 'Sat', income: 2390, expense: 3800 },
+            { name: 'Sun', income: 3490, expense: 4300 },
+        ];
+    }, []);
+
+    // Data for Pie Chart
+    const pieData = useMemo(() => {
+        return [
+            { name: 'Income', value: stats.income },
+            { name: 'Expenses', value: stats.expenses },
+        ];
+    }, [stats]);
+
+    // Budget Logic
+    const [budgets, setBudgets] = React.useState<Record<string, number>>({});
+
+    React.useEffect(() => {
+        const saved = localStorage.getItem('budgets');
+        if (saved) setBudgets(JSON.parse(saved));
+    }, []);
+
+    const budgetProgress = useMemo(() => {
+        const progress: Record<string, { spent: number; limit: number }> = {};
+
+        // Calculate spent per category
+        const spentByCategory: Record<string, number> = {};
+        transactions.forEach(t => {
+            if (t.amount < 0 && budgets[t.category]) {
+                spentByCategory[t.category] = (spentByCategory[t.category] || 0) + Math.abs(t.amount);
+            }
+        });
+
+        // Merge with limits
+        Object.keys(budgets).forEach(cat => {
+            if (budgets[cat] > 0) {
+                progress[cat] = {
+                    spent: spentByCategory[cat] || 0,
+                    limit: budgets[cat]
+                };
+            }
+        });
+
+        return progress;
+    }, [transactions, budgets]);
+
+    const COLORS = ['#10b981', '#f43f5e'];
 
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -39,10 +107,11 @@ const Dashboard: React.FC = () => {
                     {t('dashboard')}
                 </h2>
                 <span className="text-xs text-indigo-300 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
-                    Beta v0.2
+                    Live Data
                 </span>
             </div>
 
+            {/* Top Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Balance Card */}
                 <motion.div
@@ -60,9 +129,6 @@ const Dashboard: React.FC = () => {
                             <div className="p-3 bg-indigo-500/20 rounded-xl">
                                 <DollarSign className="h-6 w-6 text-indigo-300" />
                             </div>
-                            <span className="text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded flex items-center">
-                                <TrendingUp className="w-3 h-3 mr-1" /> +2.5%
-                            </span>
                         </div>
                         <p className="text-sm font-medium text-slate-400">Total Balance</p>
                         <p className="text-3xl font-bold text-white mt-1">${stats.balance.toFixed(2)}</p>
@@ -114,11 +180,98 @@ const Dashboard: React.FC = () => {
                 </motion.div>
             </div>
 
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Area Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="glass-card p-6"
+                >
+                    <h3 className="text-lg font-medium text-white mb-6 flex items-center">
+                        <BarChart3 className="w-5 h-5 mr-3 text-indigo-400" />
+                        Weekly Overview
+                    </h3>
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData}>
+                                <defs>
+                                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                                    itemStyle={{ color: '#fff' }}
+                                />
+                                <Area type="monotone" dataKey="income" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" />
+                                <Area type="monotone" dataKey="expense" stroke="#f43f5e" fillOpacity={1} fill="url(#colorExpense)" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </motion.div>
+
+                {/* Pie Chart */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="glass-card p-6"
+                >
+                    <h3 className="text-lg font-medium text-white mb-6 flex items-center">
+                        <PieChartIcon className="w-5 h-5 mr-3 text-indigo-400" />
+                        Income vs Expenses
+                    </h3>
+                    <div className="h-64 flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={pieData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {pieData.map((_entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                                    itemStyle={{ color: '#fff' }}
+                                />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="flex justify-center space-x-6 mt-4">
+                        <div className="flex items-center">
+                            <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+                            <span className="text-sm text-slate-300">Income</span>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="w-3 h-3 rounded-full bg-rose-500 mr-2"></div>
+                            <span className="text-sm text-slate-300">Expenses</span>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
             {/* Recent Transactions Preview */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.5 }}
                 className="glass-card p-6 shadow-xl"
             >
                 <div className="flex items-center justify-between mb-6">
@@ -136,7 +289,7 @@ const Dashboard: React.FC = () => {
                                 key={transaction.id}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5 + (index * 0.1) }}
+                                transition={{ delay: 0.6 + (index * 0.1) }}
                                 className="py-4 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors px-4 rounded-lg -mx-4"
                             >
                                 <div className="flex items-center space-x-4">
@@ -168,6 +321,48 @@ const Dashboard: React.FC = () => {
                             </li>
                         )}
                     </ul>
+                </div>
+            </motion.div>
+            {/* Budget Progress Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="glass-card p-6"
+            >
+                <h3 className="text-lg font-medium text-white mb-6 flex items-center">
+                    <Target className="w-5 h-5 mr-3 text-indigo-400" />
+                    Budget Goals
+                </h3>
+                <div className="space-y-6">
+                    {Object.entries(budgetProgress).map(([category, { spent, limit }], index) => {
+                        const percentage = Math.min((spent / limit) * 100, 100);
+                        const isOverBudget = spent > limit;
+
+                        return (
+                            <div key={category}>
+                                <div className="flex justify-between text-sm mb-2">
+                                    <span className="text-slate-300 font-medium">{category}</span>
+                                    <span className={`${isOverBudget ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                        ${spent.toFixed(0)} / ${limit.toFixed(0)}
+                                    </span>
+                                </div>
+                                <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${percentage}%` }}
+                                        transition={{ duration: 1, delay: 0.7 + (index * 0.1) }}
+                                        className={`h-full rounded-full ${isOverBudget ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {Object.keys(budgetProgress).length === 0 && (
+                        <div className="text-center text-slate-500 py-4">
+                            No budgets set. Go to Settings to define your goals.
+                        </div>
+                    )}
                 </div>
             </motion.div>
         </div>
