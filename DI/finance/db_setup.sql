@@ -41,3 +41,11 @@ create policy "Public Access to Receipts"
 create policy "Users can upload receipts"
   on storage.objects for insert
   with check ( bucket_id = 'receipts' and auth.role() = 'authenticated' );
+
+create policy "Users can update own receipts"
+  on storage.objects for update
+  using ( bucket_id = 'receipts' and auth.uid() = owner );
+
+create policy "Users can delete own receipts"
+  on storage.objects for delete
+  using ( bucket_id = 'receipts' and auth.uid() = owner );
