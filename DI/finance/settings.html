@@ -20,10 +20,11 @@
                 <h1>Configuración</h1>
             </header>
 
-            <div class="settings-container">
-                <div class="auth-card" style="margin: 0; max-width: 600px; text-align: left;">
+            <div class="settings-container" style="display: flex; flex-direction: column; gap: 2rem;">
 
-                    <div class="form-group">
+                <div class="auth-card" style="margin: 0; max-width: 600px; text-align: left;">
+                    <h3>General</h3>
+                    <div class="form-group" style="margin-top:1rem">
                         <label>Idioma del Sistema</label>
                         <select id="languageSelect">
                             <option value="es">Español</option>
@@ -41,8 +42,28 @@
 
                     <button class="btn-primary" onclick="alert('Configuración guardada (Local)')">Guardar
                         Cambios</button>
-
                 </div>
+
+                <div class="auth-card" style="margin: 0; max-width: 600px; text-align: left;">
+                    <h3>Gestión de Datos (JSON)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Exporta tus
+                        transacciones para copia de seguridad o impórtalas desde un archivo.</p>
+
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="btn-primary" style="background-color: var(--secondary-color);"
+                            onclick="exportData()">
+                            <i class="ri-download-2-line"></i> Exportar JSON
+                        </button>
+
+                        <label class="btn-primary"
+                            style="background-color: var(--primary-color); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i class="ri-upload-2-line" style="margin-right: 0.5rem;"></i> Importar JSON
+                            <input type="file" id="importFile" accept=".json" style="display: none;"
+                                onchange="importData(event)">
+                        </label>
+                    </div>
+                </div>
+
             </div>
         </main>
 
@@ -54,6 +75,62 @@
     <script>
         setupNavigation('settings');
         requireAuth();
+
+        function exportData() {
+            const data = localStorage.getItem('finance_transactions');
+            if (!data) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if (!Array.isArray(json)) throw new Error("Formato JSON inválido");
+
+                    const user = JSON.parse(localStorage.getItem('finance_session'));
+
+                    if (confirm(`Se van a importar ${json.length} transacciones. Esto sobrescribirá los datos locales. ¿Continuar?`)) {
+                        // Guardar en local
+                        localStorage.setItem('finance_transactions', JSON.stringify(json));
+
+                        // Si hay supabase, intentar sincronizar (opcional, avanzado)
+                        if (window.sbClient && user) {
+                            alert("Datos cargados en local. Sincronizando con la nube...");
+                            // Nota: En una app real haríamos un batch insert o merge
+                            for (const tx of json) {
+                                // Asegurar que el user_id sea el correcto
+                                tx.user_id = user.id;
+                                if (!tx.id) tx.id = crypto.randomUUID();
+                                await window.sbClient.from('transactions').upsert(tx);
+                            }
+                        }
+
+                        alert("Importación completada con éxito.");
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    alert("Error al importar: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
     </script>
 </body>
 
