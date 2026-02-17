@@ -270,10 +270,19 @@
                     },
                     scales: {
                         y: {
+                            beginAtZero: false,
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: {
                                 color: '#94a3b8',
-                                callback: value => '€' + value.toLocaleString()
+                                maxTicksLimit: 6,
+                                padding: 10,
+                                font: { family: 'Outfit', size: 11 },
+                                callback: function (value) {
+                                    if (Math.abs(value) >= 1000) {
+                                        return '€' + (value / 1000).toFixed(1) + 'k';
+                                    }
+                                    return '€' + value.toLocaleString();
+                                }
                             }
                         },
                         x: {
@@ -282,7 +291,9 @@
                                 color: '#94a3b8',
                                 maxRotation: 0,
                                 autoSkip: true,
-                                maxTicksLimit: 10
+                                maxTicksLimit: 8,
+                                font: { family: 'Outfit', size: 11 },
+                                padding: 10
                             }
                         }
                     }
