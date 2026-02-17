@@ -64,7 +64,7 @@
                         result = await window.sbClient.auth.signUp({
                             email,
                             password,
-                            options: { data: { username } }
+                            options: { data: { username: userInput } }
                         });
                     }
                     if (result.error) throw result.error;
