@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentación - FinanceFlow</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css?v=2.0">
 </head>
 
 <body class="dark-theme">
@@ -48,7 +48,8 @@
                         <ul style="font-size:0.9rem; padding-left:1.5rem">
                             <li><b>Servicio:</b> Supabase Storage (Bucket: <code>receipts</code>).</li>
                             <li><b>Código:</b> Functión en <code>transactions.html</code> (líneas ~206-214) usando
-                                <code>storage.from().upload()</code>.</li>
+                                <code>storage.from().upload()</code>.
+                            </li>
                             <li><b>Seguridad:</b> Políticas RLS en SQL para acceso privado por usuario.</li>
                         </ul>
                     </div>
@@ -61,7 +62,8 @@
                             acceso.</p>
                         <ul style="font-size:0.9rem; padding-left:1.5rem">
                             <li><b>Auth:</b> Supabase Auth (Manejado en <code>login.html</code> y
-                                <code>common.js</code>).</li>
+                                <code>common.js</code>).
+                            </li>
                             <li><b>Sesiones:</b> Persistencia via <code>localStorage</code>
                                 (<code>finance_session</code>).</li>
                             <li><b>Conectividad:</b> <code>js/config.js</code> centraliza las credenciales API.</li>
@@ -93,7 +95,7 @@
     </div>
 
     <script src="js/config.js"></script>
-    <script src="js/common.js"></script>
+    <script src="js/common.js?v=2.0"></script>
     <script>
         setupNavigation('docs');
         requireAuth();
