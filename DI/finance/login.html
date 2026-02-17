@@ -86,7 +86,8 @@
                     window.location.href = 'dashboard.html';
                 }
             } catch (err) {
-                alert(err.message);
+                console.error("Auth Error:", err);
+                alert("Error de Conexión: " + err.message + "\n\nVerifica que la URL en config.js sea correcta y que no tengas un AdBlocker bloqueando Supabase.");
             }
         });
     </script>
