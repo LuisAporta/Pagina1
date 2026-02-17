@@ -3,12 +3,17 @@
 // 1. Supabase Initialization
 // Use a distinct global variable to avoid conflict with the CDN library 'supabase'
 if (typeof supabase !== 'undefined' && typeof CONFIG !== 'undefined') {
-    if (CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+    if (CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && CONFIG.SUPABASE_URL.includes('.supabase.co')) {
         console.log("Configurando Supabase con URL:", CONFIG.SUPABASE_URL);
         window.sbClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-        console.log("Supabase Client initialized as window.sbClient");
+
+        // Test connection
+        fetch(CONFIG.SUPABASE_URL).catch(err => {
+            console.error("Supabase URL is unreachable:", err);
+            // This is expected to fail with some CORS error, but if it's 'no such host', then the URL is wrong.
+        });
     } else {
-        console.warn("Supabase credentials not set in config.js");
+        console.warn("Supabase credentials not set or invalid in config.js");
     }
 } else {
     console.error("Supabase library or Config not loaded. Supabase:", typeof supabase, "Config:", typeof CONFIG);

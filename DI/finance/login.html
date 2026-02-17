@@ -49,9 +49,11 @@
 
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value;
+            const userInput = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const email = `${username}@financeflow.local`; // Dummy email
+
+            // If user enters an email, use it. If not, append dummy domain.
+            const email = userInput.includes('@') ? userInput : `${userInput}@financeflow.local`;
 
             try {
                 let result;
