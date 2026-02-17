@@ -86,8 +86,95 @@
                 </div>
             </div>
 
+            <!-- Resolution Process Section -->
+            <div class="stat-card"
+                style="margin-bottom: 2rem; border-left: 4px solid var(--secondary); background: rgba(14, 165, 233, 0.05);">
+                <h2 style="margin-bottom: 1rem;"><i class="ri-history-line"></i> Proceso de Resolución y Evolución</h2>
+                <p style="line-height: 1.6; opacity: 0.8; margin-bottom: 2rem;">
+                    Cronología de las versiones de la aplicación y los prompts principales utilizados para su desarrollo
+                    con IAs generativas (Antigravity).
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 3rem;">
+                    <!-- V1: MVP -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        <div>
+                            <h3 style="color:var(--primary); margin-bottom:1rem">v1.0: El Origen (MVP)</h3>
+                            <p style="font-size:0.9rem; margin-bottom:1rem"><b>Prompt Clave:</b> "Hazme una aplicación
+                                de gastos e ingresos, con login y con una base de datos en Supabase para que me guarde
+                                las cosas".</p>
+                            <ul style="font-size:0.85rem; padding-left:1.5rem; opacity:0.8">
+                                <li>Configuración inicial de la base de datos SQL.</li>
+                                <li>Sistema de autenticación Supabase Auth.</li>
+                                <li>Funciones CRUD básicas en una sola página.</li>
+                            </ul>
+                        </div>
+                        <img src="img/step1_mvp.png" alt="Versión Inicial"
+                            style="width:100%; border-radius:12px; border:1px solid var(--border); box-shadow: var(--glass-shadow);">
+                    </div>
+
+                    <div style="border-top: 1px dashed var(--border);"></div>
+
+                    <!-- V2: Multi-page -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        <div>
+                            <h3 style="color:var(--secondary); margin-bottom:1rem">v2.0: Estructura Multi-Página</h3>
+                            <p style="font-size:0.9rem; margin-bottom:1rem"><b>Prompt Clave:</b> "Separa la aplicación
+                                en distintas páginas: Dashboard, Transacciones y Configuración. Añade un menú lateral".
+                            </p>
+                            <ul style="font-size:0.85rem; padding-left:1.5rem; opacity:0.8">
+                                <li>Refactorización a arquitectura modular.</li>
+                                <li>Inyección dinámica del Sidebar via JavaScript.</li>
+                                <li>Implementación de perfiles de usuario y balance líquido.</li>
+                            </ul>
+                        </div>
+                        <img src="img/step2_premium.png" alt="Versión Premium"
+                            style="width:100%; border-radius:12px; border:1px solid var(--border); box-shadow: var(--glass-shadow);">
+                    </div>
+
+                    <div style="border-top: 1px dashed var(--border);"></div>
+
+                    <!-- V3: Premium UI -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        <div>
+                            <h3 style="color:var(--success); margin-bottom:1rem">v3.0: Premium Overhaul (Glassmorphism)
+                            </h3>
+                            <p style="font-size:0.9rem; margin-bottom:1rem"><b>Prompt Clave:</b> "Dale un aspecto
+                                ultra-premium, futurista, con Glassmorphism, neones y gráficas avanzadas. Que parezca de
+                                otro mundo".</p>
+                            <ul style="font-size:0.85rem; padding-left:1.5rem; opacity:0.8">
+                                <li>Rediseño total de CSS con efectos de desenfoque y capas.</li>
+                                <li>Integración profunda de Chart.js para análisis histórico.</li>
+                                <li>Conversor de divisas dinámico con API externa.</li>
+                            </ul>
+                        </div>
+                        <img src="img/step3_form.png" alt="Nuevo Formulario"
+                            style="width:100%; border-radius:12px; border:1px solid var(--border); box-shadow: var(--glass-shadow);">
+                    </div>
+
+                    <div style="border-top: 1px dashed var(--border);"></div>
+
+                    <!-- V4: Final Polish -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+                        <div>
+                            <h3 style="color:var(--warning); margin-bottom:1rem">v4.0: Pulido Final y Dinámicas</h3>
+                            <p style="font-size:0.9rem; margin-bottom:1rem"><b>Prompt Clave:</b> "El formulario de
+                                transacciones es un poco cutre, mejóralo. Las gráficas deben ser dinámicas y el eje Y no
+                                debe ser infinito".</p>
+                            <ul style="font-size:0.85rem; padding-left:1.5rem; opacity:0.8">
+                                <li>Optimización de ejes en gráficas y adaptabilidad de datos.</li>
+                                <li>Control de caché para actualizaciones inmediatas.</li>
+                                <li>Estandarización de controles de formulario (Segmented Controls).</li>
+                            </ul>
+                        </div>
+                        <img src="img/step4_final.png" alt="Resultado Final"
+                            style="width:100%; border-radius:12px; border:1px solid var(--border); box-shadow: var(--glass-shadow);">
+                    </div>
+                </div>
+            </div>
+
             <div class="stat-card" style="border-style: dashed; opacity: 0.6; text-align: center;">
-                <p>Próximamente: Guías paso a paso proporcionadas por el usuario.</p>
+                <p>IA Utilizada: Antigravity (Google DeepMind) - Versión Agentic 2026</p>
             </div>
         </main>
 
