@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas y Programación - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=2.0">
+</head>
+
+<body class="dark-theme">
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <a href="docs.html"
+                    style="color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem">
+                    <i class="ri-arrow-left-line"></i> Volver al Portal
+                </a>
+                <h1
+                    style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Arquitectura y Programación</h1>
+                <p style="color:var(--text-muted)">Análisis profundo del código y sistemas de datos</p>
+            </header>
+
+            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary);">
+                <h2 style="margin-bottom: 1.5rem;"><i class="ri-database-2-line"></i> 1. Base de Datos y Persistencia
+                </h2>
+                <p style="margin-bottom: 1rem; opacity: 0.8;">El sistema utiliza **PostgreSQL** alojado en **Supabase**
+                    como motor principal. La integridad de los datos se mantiene mediante triggers a nivel de base de
+                    datos.</p>
+
+                <div
+                    style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom:1.5rem">
+                    <h4 style="color:var(--secondary); margin-bottom:0.5rem">Esquema SQL (db_setup.sql)</h4>
+                    <pre style="font-size:0.8rem; overflow-x:auto; color:#94a3b8">
+-- Tabla de transacciones con integridad referencial
+create table transactions (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references auth.users not null,
+  amount numeric not null,
+  type text check (type in ('income', 'expense')),
+  date timestamp with time zone default now()
+);</pre>
+                </div>
+
+                <p style="font-size: 0.9rem; opacity: 0.8;"><b>Lógica de Cálculo Automático:</b> Se utiliza una función
+                    PL/SQL y un trigger (<code>on_transaction_change</code>) que recalcula el balance total del perfil
+                    cada vez que se inserta o borra una transacción. Esto garantiza que el "Líquido" sea siempre preciso
+                    sin sobrecargar el frontend.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--success);">
+                <h2 style="margin-bottom: 1.5rem;"><i class="ri-folder-upload-line"></i> 2. Almacenamiento y Manejo de
+                    Archivos</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <p style="margin-bottom: 1rem; opacity: 0.8;">La gestión de archivos se realiza mediante un
+                            sistema híbrido:</p>
+                        <ul style="font-size: 0.9rem; line-height: 1.6; opacity: 0.8;">
+                            <li><b>Frontend:</b> <code>FileReader</code> de JavaScript para previsualización inmediata.
+                            </li>
+                            <li><b>Backend:</b> Supabase Storage API para persistencia en la nube.</li>
+                            <li><b>Seguridad:</b> Políticas RLS que impiden a un usuario ver los archivos de otro.</li>
+                        </ul>
+                    </div>
+                    <div
+                        style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border);">
+                        <h4 style="margin-bottom:0.5rem">Función Clave</h4>
+                        <p style="font-size:0.85rem; font-family:monospace; color:var(--success)">
+                            supabase.storage.from('receipts').upload(path, file)
+                        </p>
+                        <p style="font-size:0.75rem; margin-top:0.5rem; opacity:0.6">Localizada en:
+                            <code>transactions.html</code></p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--warning);">
+                <h2 style="margin-bottom: 1.5rem;"><i class="ri-braces-line"></i> 3. Lógica Frontend y Analítica</h2>
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="margin-bottom:0.5rem; color:var(--primary)">Visualización Dinámica (Chart.js)</h4>
+                        <p style="font-size:0.9rem; opacity:0.8">En <code>dashboard.html</code>, las gráficas se escalan
+                            dinámicamente según el rango de fechas de las transacciones. El sistema de "Cache Busting"
+                            implementado en v4.0 asegura que cualquier cambio en las gráficas se refleje de inmediato en
+                            el navegador del usuario.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="margin-bottom:0.5rem; color:var(--secondary)">Gestión de Sesiones y Estado</h4>
+                        <p style="font-size:0.9rem; opacity:0.8"><code>common.js</code> actúa como el núcleo de la
+                            aplicación, inyectando la navegación en todas las páginas y controlando la autenticación
+                            mediante <code>requireAuth()</code>. Los datos de sesión se persisten de forma segura en
+                            <code>localStorage</code>.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('docs');
+        requireAuth();
+    </script>
+</body>
+
+</html>

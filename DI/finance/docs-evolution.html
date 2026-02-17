@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proceso de Resolución - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css?v=2.0">
+</head>
+
+<body class="dark-theme">
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <a href="docs.html"
+                    style="color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem">
+                    <i class="ri-arrow-left-line"></i> Volver al Portal
+                </a>
+                <h1
+                    style="background: linear-gradient(to right, var(--text), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Resolución e IA</h1>
+                <p style="color:var(--text-muted)">Historia de desarrollo, prompts y versiones</p>
+            </header>
+
+            <!-- Evolution Timeline -->
+            <div style="display: flex; flex-direction: column; gap: 4rem; padding: 1rem;">
+
+                <!-- STAGE 1 -->
+                <article class="stat-card"
+                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                    <div
+                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--primary); border-radius:50%; box-shadow: 0 0 15px var(--primary-glow)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        <div>
+                            <span
+                                style="color:var(--primary); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
+                                1: El Nacimiento</span>
+                            <h2 style="margin: 0.5rem 0 1.5rem 0">v1.0 La Idea (MVP)</h2>
+                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>IATécnica:</b> Gemini / Antigravity (LLM
+                                Reasoning).<br>Desarrollo funcional centrado en la conectividad con base de datos
+                                remota.</p>
+
+                            <div
+                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--primary)">
+                                <p style="font-size:0.85rem; font-style:italic">"Hazme una aplicación de gastos e
+                                    ingresos con login y Supabase para guardar todo".</p>
+                            </div>
+                        </div>
+                        <div>
+                            <img src="img/step1_mvp.png" alt="Etapa MVP"
+                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        </div>
+                    </div>
+                </article>
+
+                <!-- STAGE 2 -->
+                <article class="stat-card"
+                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                    <div
+                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--secondary); border-radius:50%; box-shadow: 0 0 15px var(--primary-glow)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        <div>
+                            <img src="img/step2_premium.png" alt="Etapa Estructura"
+                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        </div>
+                        <div>
+                            <span
+                                style="color:var(--secondary); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
+                                2: Expansión</span>
+                            <h2 style="margin: 0.5rem 0 1.5rem 0">v2.0 Arquitectura Multi-página</h2>
+                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>IA Utilizada:</b> Coding Agents (Sub-agentes
+                                de herramientas).<br>Refactorización masiva para permitir un escalado real de la
+                                aplicación.</p>
+
+                            <div
+                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--secondary)">
+                                <p style="font-size:0.85rem; font-style:italic">"Divide la app en secciones: Dashboard,
+                                    Transacciones y Ajustes. Pon un menú lateral que se mantenga en todas las
+                                    pantallas".</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- STAGE 3 -->
+                <article class="stat-card"
+                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                    <div
+                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--success); border-radius:50%; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        <div>
+                            <span
+                                style="color:var(--success); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
+                                3: El Cambio Visual</span>
+                            <h2 style="margin: 0.5rem 0 1.5rem 0">v3.0 Premium Redesign</h2>
+                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>Prompts Avanzados:</b> Uso de tokens de
+                                diseño y variables CSS.<br>La IA interpretó el término "Premium" aplicando Glassmorphism
+                                y desenfoques Gaussianos.</p>
+
+                            <div
+                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--success)">
+                                <p style="font-size:0.85rem; font-style:italic">"Quiero un diseño ultra-premium
+                                    futurista con Glassmorphism y neones. Añade gráficas que me digan mi evolución por
+                                    días".</p>
+                            </div>
+                        </div>
+                        <div>
+                            <img src="img/step3_form.png" alt="Etapa Premium"
+                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        </div>
+                    </div>
+                </article>
+
+                <!-- STAGE 4 -->
+                <article class="stat-card"
+                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                    <div
+                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--warning); border-radius:50%; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        <div>
+                            <img src="img/step4_final.png" alt="Etapa Final"
+                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        </div>
+                        <div>
+                            <span
+                                style="color:var(--warning); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
+                                4: Perfeccionamiento</span>
+                            <h2 style="margin: 0.5rem 0 1.5rem 0">v4.0 Pulido Dinámico</h2>
+                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>Ajuste de Precisión:</b> Identificación de
+                                errores en la experiencia de usuario (UX).<br>Conversión de controles clásicos a
+                                controles de segmento (iOS Style).</p>
+
+                            <div
+                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--warning)">
+                                <p style="font-size:0.85rem; font-style:italic">"El formulario es cutre. Mejora los ejes
+                                    de las tablas para que no sean infinitos y que el menú se actualice bien".</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('docs');
+        requireAuth();
+    </script>
+</body>
+
+</html>
