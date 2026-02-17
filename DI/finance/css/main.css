@@ -39,6 +39,26 @@
     box-sizing: border-box;
 }
 
+a {
+    text-decoration: none !important;
+    color: inherit;
+    display: inline-block;
+}
+
+button {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    color: inherit;
+}
+
+select,
+input {
+    outline: none;
+    font: inherit;
+}
+
 body {
     font-family: 'Outfit', sans-serif;
     background: var(--bg);
@@ -115,11 +135,14 @@ body::after {
     align-items: center;
     gap: 1rem;
     padding: 0.8rem 1rem;
-    text-decoration: none;
+    text-decoration: none !important;
     color: var(--text);
     border-radius: 12px;
     transition: all 0.2s ease;
     border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 500;
 }
 
 .nav-btn i {
@@ -130,11 +153,12 @@ body::after {
     background: rgba(99, 102, 241, 0.1);
     border-color: var(--border);
     transform: translateX(5px);
+    color: var(--primary);
 }
 
 .nav-btn.active {
     background: var(--primary);
-    color: white;
+    color: white !important;
     box-shadow: 0 4px 15px var(--primary-glow);
 }
 
