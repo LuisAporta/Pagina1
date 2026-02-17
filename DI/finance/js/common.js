@@ -1,28 +1,18 @@
 // Common Logic & Initialization
 
 // 1. Supabase Initialization
-// Use a distinct global variable to avoid conflict with the CDN library 'supabase'
 if (typeof supabase !== 'undefined' && typeof CONFIG !== 'undefined') {
     if (CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && CONFIG.SUPABASE_URL.includes('.supabase.co')) {
-        console.log("Configurando Supabase con URL:", CONFIG.SUPABASE_URL);
         window.sbClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-
-        // Test connection
-        fetch(CONFIG.SUPABASE_URL).catch(err => {
-            console.error("Supabase URL is unreachable:", err);
-            // This is expected to fail with some CORS error, but if it's 'no such host', then the URL is wrong.
-        });
-    } else {
-        console.warn("Supabase credentials not set or invalid in config.js");
     }
-} else {
-    console.error("Supabase library or Config not loaded. Supabase:", typeof supabase, "Config:", typeof CONFIG);
 }
 
 // 2. Theme Management
 function initTheme() {
-    const theme = localStorage.getItem('theme') || 'light';
+    const theme = localStorage.getItem('theme') || 'dark';
     document.body.className = `${theme}-theme`;
+
+    configThemeIcon(theme);
 
     const toggleBtn = document.getElementById('themeToggle');
     if (toggleBtn) {
@@ -31,7 +21,15 @@ function initTheme() {
             const newTheme = isDark ? 'light' : 'dark';
             document.body.className = `${newTheme}-theme`;
             localStorage.setItem('theme', newTheme);
+            configThemeIcon(newTheme);
         });
+    }
+}
+
+function configThemeIcon(theme) {
+    const icon = document.querySelector('#themeToggle i');
+    if (icon) {
+        icon.className = theme === 'dark' ? 'ri-sun-line' : 'ri-moon-line';
     }
 }
 
@@ -47,8 +45,11 @@ function setupNavigation(activePage) {
             <a href="settings.html" class="nav-btn ${activePage === 'settings' ? 'active' : ''}"><i class="ri-settings-4-line"></i> Configuración</a>
         </nav>
         <div class="user-profile">
-            <span id="userNameDisplay">Usuario</span>
-            <button id="logoutBtn"><i class="ri-logout-box-r-line"></i></button>
+            <div style="display:flex; flex-direction:column">
+                <span id="userNameDisplay" style="font-weight:600; font-size:0.9rem">Cargando...</span>
+                <span style="font-size:0.7rem; color:var(--text-muted)">Premium User</span>
+            </div>
+            <button id="logoutBtn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:1.2rem"><i class="ri-logout-box-r-line"></i></button>
         </div>
     `;
 
@@ -75,14 +76,15 @@ function setupNavigation(activePage) {
     }
 
     // Update User Name
-    const user = JSON.parse(localStorage.getItem('finance_session'));
-    if (user) {
+    const sessionStr = localStorage.getItem('finance_session');
+    if (sessionStr) {
+        const user = JSON.parse(sessionStr);
         const nameDisplay = document.getElementById('userNameDisplay');
-        if (nameDisplay) nameDisplay.innerText = user.user_metadata?.username || user.email || 'Usuario';
+        if (nameDisplay) nameDisplay.innerText = user.user_metadata?.username || user.email?.split('@')[0] || 'Usuario';
     }
 }
 
-// 4. Auth Check (Redirect if not logged in)
+// 4. Auth Check
 function requireAuth() {
     const session = localStorage.getItem('finance_session');
     if (!session) {
@@ -90,8 +92,6 @@ function requireAuth() {
     }
 }
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
-    // activePage is set in the specific html page script
 });

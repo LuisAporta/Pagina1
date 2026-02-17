@@ -7,46 +7,113 @@
     <title>Dashboard - FinanceFlow</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body class="light-theme">
+<body class="dark-theme">
 
     <div id="app">
         <aside class="sidebar"></aside>
 
         <main class="main-content">
             <header class="top-bar">
-                <h1>Resumen Financiero</h1>
-                <button id="themeToggle"><i class="ri-moon-line"></i></button>
+                <div>
+                    <h1
+                        style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        Resumen Financiero</h1>
+                    <p style="color:var(--text-muted)">Analiza tu salud económica en tiempo real</p>
+                </div>
+                <div style="display:flex; gap:1rem">
+                    <button id="themeToggle" class="nav-btn"
+                        style="border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center">
+                        <i class="ri-moon-line"></i>
+                    </button>
+                    <a href="transactions.html" class="btn-primary">
+                        <i class="ri-add-line"></i> Operar
+                    </a>
+                </div>
             </header>
 
-            <!-- API Widget -->
-            <div class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
-                <h3><i class="ri-global-line"></i> Mercado de Divisas</h3>
-                <p id="currencyRate">Cargando cotización USD/EUR...</p>
+            <!-- Market Info Card -->
+            <div class="stat-card"
+                style="margin-bottom:2rem; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(14,165,233,0.1)); border: 1px solid var(--primary-glow);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-global-line" style="color:var(--primary)"></i>
+                        <span style="font-weight:600">DIVISAS EN VIVO</span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; align-items:center">
+                        <select id="baseCurrency" onchange="updateRates()"
+                            style="width:auto; height:35px; padding:0 0.5rem; background:transparent">
+                            <option value="USD">USD</option>
+                            <option value="EUR" selected>EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                        <i class="ri-arrow-right-line"></i>
+                        <select id="targetCurrency" onchange="updateRates()"
+                            style="width:auto; height:35px; padding:0 0.5rem; background:transparent">
+                            <option value="USD" selected>USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                </div>
+                <p id="rateDisplay" style="margin-top:1rem; font-size:1.5rem; font-weight:700">Calculando...</p>
+                <p style="font-size:0.7rem; color:var(--text-muted)">* Datos actualizados de ExchangeRate-API</p>
             </div>
 
             <div class="stats-grid">
-                <div class="stat-card total-balance">
-                    <h3>Balance Total</h3>
+                <div class="stat-card">
+                    <h3 style="color:var(--text-muted); font-size:0.9rem; font-weight:500">LIQUIDEZ TOTAL</h3>
                     <p class="amount" id="totalBalance">€0.00</p>
+                    <p id="balanceLabel"
+                        style="font-size:0.8rem; margin-top:0.5rem; display:flex; align-items:center; gap:0.3rem">
+                        <i class="ri-database-2-line"></i> Cloud Sync
+                    </p>
                 </div>
                 <div class="stat-card income">
-                    <h3>Ingresos</h3>
-                    <p class="amount" id="totalIncome">€0.00</p>
+                    <h3 style="font-size:0.9rem; font-weight:500">INGRESOS (MES)</h3>
+                    <p class="amount" id="monthlyIncome">€0.00</p>
+                    <div style="height:4px; background:var(--success)20; border-radius:2px; margin-top:1rem">
+                        <div id="incomeBar" style="height:100%; background:var(--success); border-radius:2px; width:0%">
+                        </div>
+                    </div>
                 </div>
                 <div class="stat-card expense">
-                    <h3>Gastos</h3>
-                    <p class="amount" id="totalExpense">€0.00</p>
+                    <h3 style="font-size:0.9rem; font-weight:500">GASTOS (MES)</h3>
+                    <p class="amount" id="monthlyExpense">€0.00</p>
+                    <div style="height:4px; background:var(--danger)20; border-radius:2px; margin-top:1rem">
+                        <div id="expenseBar" style="height:100%; background:var(--danger); border-radius:2px; width:0%">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="charts-container">
+            <div class="charts-grid">
                 <div class="chart-box">
-                    <canvas id="balanceChart"></canvas>
+                    <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-line-chart-line" style="color:var(--primary)"></i> Evolución Diaria (30d)
+                    </h2>
+                    <canvas id="lineChart"></canvas>
                 </div>
+                <div class="chart-box" style="display:flex; flex-direction:column">
+                    <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-pie-chart-line" style="color:var(--secondary)"></i> Por Categoría
+                    </h2>
+                    <div style="flex:1; display:flex; align-items:center">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-box" style="margin-top:1.5rem">
+                <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                    <i class="ri-bar-chart-line" style="color:var(--success)"></i> Comparativa Mensual
+                </h2>
+                <canvas id="barChart" style="max-height:300px"></canvas>
             </div>
         </main>
 
@@ -59,73 +126,182 @@
         setupNavigation('dashboard');
         requireAuth();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDashboardData();
-            fetchCurrencyRate();
-        });
+        let charts = {};
 
-        async function loadDashboardData() {
-            let transactions = [];
-            let total = 0;
+        async function initDashboard() {
             const user = JSON.parse(localStorage.getItem('finance_session'));
-            const localData = localStorage.getItem('finance_transactions');
-            if (localData) transactions = JSON.parse(localData);
+            let txs = [];
 
-            // 1. Try to fetch Liquid (Total Balance) from PROFILES table
+            // 1. Fetch Data
             if (window.sbClient && user) {
-                const { data, error } = await window.sbClient
-                    .from('profiles')
-                    .select('total_balance')
-                    .eq('id', user.id)
-                    .single();
-                if (data) total = data.total_balance;
-            } else {
-                // Offline fallback calculation
-                const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
-                const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
-                total = income - expense;
+                const { data } = await window.sbClient.from('transactions').select('*').eq('user_id', user.id);
+                if (data) txs = data;
+
+                // Sync total balance from profile
+                const { data: profile } = await window.sbClient.from('profiles').select('total_balance').eq('id', user.id).single();
+                if (profile) document.getElementById('totalBalance').innerText = `€${profile.total_balance.toLocaleString()}`;
             }
 
-            // Calc for charts
-            const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
-            const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            // Fallback for balance
+            if (txs.length > 0 && document.getElementById('totalBalance').innerText === '€0.00') {
+                const total = txs.reduce((acc, curr) => curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
+                document.getElementById('totalBalance').innerText = `€${total.toLocaleString()}`;
+            }
 
-            // UI
-            document.getElementById('totalBalance').innerText = `€${parseFloat(total).toFixed(2)}`;
-            document.getElementById('totalIncome').innerText = `€${income.toFixed(2)}`;
-            document.getElementById('totalExpense').innerText = `€${expense.toFixed(2)}`;
+            // 2. Calculations for Cards
+            const now = new Date();
+            const currentMonthTxs = txs.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
 
-            // Chart
-            const ctx = document.getElementById('balanceChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
+            const income = currentMonthTxs.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const expense = currentMonthTxs.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+
+            document.getElementById('monthlyIncome').innerText = `€${income.toLocaleString()}`;
+            document.getElementById('monthlyExpense').innerText = `€${expense.toLocaleString()}`;
+
+            const totalActivity = income + expense;
+            if (totalActivity > 0) {
+                document.getElementById('incomeBar').style.width = (income / totalActivity * 100) + '%';
+                document.getElementById('expenseBar').style.width = (expense / totalActivity * 100) + '%';
+            }
+
+            // 3. Render Charts
+            renderLineChart(txs);
+            renderDoughnutChart(txs);
+            renderBarChart(txs);
+        }
+
+        function renderLineChart(txs) {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const last30Days = Array.from({ length: 30 }, (_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (29 - i));
+                return d.toISOString().split('T')[0];
+            });
+
+            const dataPoints = last30Days.map(date => {
+                return txs.filter(t => t.date.split('T')[0] === date)
+                    .reduce((acc, curr) => curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
+            });
+
+            // Cumulative balance for line
+            let running = 0;
+            const cumulative = dataPoints.map(v => running += v);
+
+            if (charts.line) charts.line.destroy();
+            charts.line = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['Ingresos', 'Gastos'],
+                    labels: last30Days.map(d => d.split('-')[2]),
                     datasets: [{
-                        data: [income, expense],
-                        backgroundColor: ['#10b981', '#ef4444'],
-                        borderWidth: 0
+                        label: 'Saldo Neto Diario',
+                        data: cumulative,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%'
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
                 }
             });
         }
 
-        async function fetchCurrencyRate() {
+        function renderDoughnutChart(txs) {
+            const categories = {};
+            txs.filter(t => t.type === 'expense').forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + t.amount;
+            });
+
+            const ctx = document.getElementById('doughnutChart').getContext('2d');
+            if (charts.pie) charts.pie.destroy();
+            charts.pie = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        data: Object.values(categories),
+                        backgroundColor: ['#6366f1', '#0ea5e9', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#ec4899'],
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 20 } }
+                    }
+                }
+            });
+        }
+
+        function renderBarChart(txs) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const incomeData = new Array(12).fill(0);
+            const expenseData = new Array(12).fill(0);
+
+            txs.forEach(t => {
+                const m = new Date(t.date).getMonth();
+                if (t.type === 'income') incomeData[m] += t.amount;
+                else expenseData[m] += t.amount;
+            });
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (charts.bar) charts.bar.destroy();
+            charts.bar = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Ingresos', data: incomeData, backgroundColor: '#10b981' },
+                        { label: 'Gastos', data: expenseData, backgroundColor: '#f43f5e' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { stacked: false, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        async function updateRates() {
+            const base = document.getElementById('baseCurrency').value;
+            const target = document.getElementById('targetCurrency').value;
+            const display = document.getElementById('rateDisplay');
+
+            display.innerText = "Obteniendo...";
             try {
-                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${base}`);
                 const data = await res.json();
-                const rate = data.rates.EUR;
-                document.getElementById('currencyRate').innerHTML =
-                    `1 USD = <strong>${rate} EUR</strong> <span style="font-size:0.8rem; color:#888">(Actualizado hoy)</span>`;
-            } catch (error) {
-                document.getElementById('currencyRate').innerText = "No disponible offline";
+                const rate = data.rates[target];
+                display.innerText = `1 ${base} = ${rate.toFixed(3)} ${target}`;
+            } catch (e) {
+                display.innerText = "API Error";
             }
         }
+
+        window.onload = () => {
+            initDashboard();
+            updateRates();
+        };
     </script>
 </body>
 
