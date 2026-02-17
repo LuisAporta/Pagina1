@@ -277,10 +277,12 @@
                         scales: {
                             y: {
                                 beginAtZero: false,
+                                grace: '10%',
                                 grid: { color: 'rgba(255,255,255,0.05)' },
                                 ticks: {
                                     color: '#94a3b8',
                                     maxTicksLimit: 6,
+                                    padding: 15,
                                     font: { family: 'Outfit', size: 11 },
                                     callback: v => '€' + v.toLocaleString()
                                 }

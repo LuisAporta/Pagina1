@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body class="dark-theme">
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h1
+                        style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Centro de Ayuda</h1>
+                    <p style="color:var(--text-muted)">Guías y documentación del sistema</p>
+                </div>
+            </header>
+
+            <div class="stat-card" style="margin-bottom: 2rem; border-color: var(--primary);">
+                <h2 style="margin-bottom: 1rem;"><i class="ri-book-2-line"></i> Bienvenido a FinanceFlow</h2>
+                <p style="line-height: 1.6; opacity: 0.8;">
+                    Aquí encontrarás toda la información necesaria para gestionar tus finanzas con la máxima eficiencia.
+                    El usuario irá proporcionando los enlaces de documentación progresivamente.
+                </p>
+            </div>
+
+            <div class="stats-grid" id="docsList">
+                <div class="stat-card" style="text-align: center; cursor: pointer; opacity: 0.5; border-style: dashed;">
+                    <i class="ri-add-line" style="font-size: 2rem;"></i>
+                    <p>Esperando recursos...</p>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        setupNavigation('docs');
+        requireAuth();
+    </script>
+</body>
+
+</html>
