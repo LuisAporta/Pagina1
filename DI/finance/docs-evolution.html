@@ -25,126 +25,175 @@
                 <p style="color:var(--text-muted)">Historia de desarrollo, prompts y versiones</p>
             </header>
 
-            <!-- Evolution Timeline -->
-            <div style="display: flex; flex-direction: column; gap: 4rem; padding: 1rem;">
+            <!-- Evolution Deep-Dive -->
+            <div style="display: flex; flex-direction: column; gap: 5rem; max-width: 1000px; margin: 0 auto;">
 
-                <!-- STAGE 1 -->
-                <article class="stat-card"
-                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                <!-- VERSION 1.0 -->
+                <section class="stat-card" style="border-left: 5px solid var(--primary); padding: 2.5rem;">
                     <div
-                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--primary); border-radius:50%; box-shadow: 0 0 15px var(--primary-glow)">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <div>
                             <span
-                                style="color:var(--primary); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
-                                1: El Nacimiento</span>
-                            <h2 style="margin: 0.5rem 0 1.5rem 0">v1.0 La Idea (MVP)</h2>
-                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>IATécnica:</b> Gemini / Antigravity (LLM
-                                Reasoning).<br>Desarrollo funcional centrado en la conectividad con base de datos
-                                remota.</p>
-
-                            <div
-                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--primary)">
-                                <p style="font-size:0.85rem; font-style:italic">"Hazme una aplicación de gastos e
-                                    ingresos con login y Supabase para guardar todo".</p>
-                            </div>
+                                style="color:var(--primary); font-weight:bold; letter-spacing:1px; text-transform:uppercase; font-size:0.8rem">Legacy
+                                Milestone</span>
+                            <h2 style="font-size: 2.2rem; margin-top:0.5rem">v1.0: Cimentación Funcional</h2>
                         </div>
-                        <div>
-                            <img src="img/step1_mvp.png" alt="Etapa MVP"
-                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                        <div style="text-align: right; opacity: 0.5; font-size: 0.8rem;">Fase de Prototipado Inicial
                         </div>
                     </div>
-                </article>
 
-                <!-- STAGE 2 -->
-                <article class="stat-card"
-                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem;">
+                        <div>
+                            <h4 style="color:var(--text); margin-bottom:1rem"><i class="ri-chat-voice-line"></i>
+                                Contexto Original del Prompt</h4>
+                            <p class="desc-text"
+                                style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border); font-style: italic;">
+                                "Crea una aplicación financiera web en DI/finance. Usa Vanilla HTML/JS. Conecta con
+                                Supabase (Auth, DB y Storage). La app debe permitir CRUD de transacciones, subir
+                                archivos (recibos) y tener persistencia local."
+                            </p>
+
+                            <h4 style="color:var(--text); margin-top:2rem; margin-bottom:1rem"><i
+                                    class="ri-cpu-line"></i> Razonamiento de la IA</h4>
+                            <p class="desc-text" style="font-size: 0.9rem;">
+                                En esta etapa, el foco fue la **arquitectura de datos**. Instalamos el cliente de
+                                Supabase y definimos el esquema SQL principal (`transactions` y `profiles`). El diseño
+                                era utilitario ("Single Page App" básica) priorizando la funcionalidad de login y el
+                                guardado de datos sobre la estética.
+                            </p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <img src="img/step1_mvp.png" alt="Captura v1.0"
+                                style="width:100%; border-radius:12px; border: 1px solid var(--border); filter: grayscale(50%);">
+                            <p style="font-size: 0.75rem; text-align: center; opacity: 0.6;">Snapshot v1.0: Interfaz
+                                CRUD Cruda</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VERSION 2.0 -->
+                <section class="stat-card" style="border-left: 5px solid var(--secondary); padding: 2.5rem;">
                     <div
-                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--secondary); border-radius:50%; box-shadow: 0 0 15px var(--primary-glow)">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
-                        <div>
-                            <img src="img/step2_premium.png" alt="Etapa Estructura"
-                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
-                        </div>
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <div>
                             <span
-                                style="color:var(--secondary); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
-                                2: Expansión</span>
-                            <h2 style="margin: 0.5rem 0 1.5rem 0">v2.0 Arquitectura Multi-página</h2>
-                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>IA Utilizada:</b> Coding Agents (Sub-agentes
-                                de herramientas).<br>Refactorización masiva para permitir un escalado real de la
-                                aplicación.</p>
+                                style="color:var(--secondary); font-weight:bold; letter-spacing:1px; text-transform:uppercase; font-size:0.8rem">Escalado
+                                de Infraestructura</span>
+                            <h2 style="font-size: 2.2rem; margin-top:0.5rem">v2.0: Refactorización Multi-Pantalla</h2>
+                        </div>
+                        <div style="text-align: right; opacity: 0.5; font-size: 0.8rem;">Arquitectura Modular</div>
+                    </div>
 
-                            <div
-                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--secondary)">
-                                <p style="font-size:0.85rem; font-style:italic">"Divide la app en secciones: Dashboard,
-                                    Transacciones y Ajustes. Pon un menú lateral que se mantenga en todas las
-                                    pantallas".</p>
-                            </div>
+                    <div style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 3rem;">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <img src="img/step2_premium.png" alt="Captura v2.0"
+                                style="width:100%; border-radius:12px; border: 1px solid var(--border);">
+                            <p style="font-size: 0.75rem; text-align: center; opacity: 0.6;">Snapshot v2.0: Introducción
+                                del Sidebar dinámico</p>
+                        </div>
+                        <div>
+                            <h4 style="color:var(--text); margin-bottom:1rem"><i class="ri-input-cursor-move"></i>
+                                Instrucción de Cambio</h4>
+                            <p class="desc-text"
+                                style="background: rgba(99, 102, 241, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+                                "Refactoriza la SPA a una Aplicación Multi-Página (MPA) real para cumplir con el
+                                requisito de multipantalla. Separa la lógica en Dashboard, Transiciones y Ajustes.
+                                Implementa navegación persistente."
+                            </p>
+
+                            <h4 style="color:var(--text); margin-top:2rem; margin-bottom:1rem"><i
+                                    class="ri-code-s-slash-line"></i> Ejecución Técnica</h4>
+                            <p class="desc-text" style="font-size: 0.9rem;">
+                                Pasamos de un sistema de "tabs" ocultos a archivos HTML independientes. Creamos el
+                                núcleo `common.js` para inyectar dinámicamente el Sidebar en cada página, asegurando
+                                consistencia de estado (usuario, tema) sin duplicar código.
+                            </p>
                         </div>
                     </div>
-                </article>
+                </section>
 
-                <!-- STAGE 3 -->
-                <article class="stat-card"
-                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                <!-- VERSION 3.0 -->
+                <section class="stat-card" style="border-left: 5px solid var(--success); padding: 2.5rem;">
                     <div
-                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--success); border-radius:50%; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4)">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <div>
                             <span
-                                style="color:var(--success); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
-                                3: El Cambio Visual</span>
-                            <h2 style="margin: 0.5rem 0 1.5rem 0">v3.0 Premium Redesign</h2>
-                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>Prompts Avanzados:</b> Uso de tokens de
-                                diseño y variables CSS.<br>La IA interpretó el término "Premium" aplicando Glassmorphism
-                                y desenfoques Gaussianos.</p>
-
-                            <div
-                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--success)">
-                                <p style="font-size:0.85rem; font-style:italic">"Quiero un diseño ultra-premium
-                                    futurista con Glassmorphism y neones. Añade gráficas que me digan mi evolución por
-                                    días".</p>
-                            </div>
+                                style="color:var(--success); font-weight:bold; letter-spacing:1px; text-transform:uppercase; font-size:0.8rem">Revolución
+                                Estética</span>
+                            <h2 style="font-size: 2.2rem; margin-top:0.5rem">v3.0: Salto al Concepto Premium</h2>
                         </div>
+                        <div style="text-align: right; opacity: 0.5; font-size: 0.8rem;">Fase de Diseño Visual</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem;">
                         <div>
-                            <img src="img/step3_form.png" alt="Etapa Premium"
-                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
+                            <h4 style="color:var(--text); margin-bottom:1rem"><i class="ri-gradienter-line"></i> El
+                                Prompt de Transformación</h4>
+                            <p class="desc-text"
+                                style="background: rgba(16, 185, 129, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--success-glow);">
+                                "Sustituye todo el diseño actual por uno Ultra-Premium y futurista. Usa Glassmorphism
+                                (transparencias, desenfoques), neones y gráficas avanzadas. El dashboard debe ser
+                                dinámico y visualmente impactante."
+                            </p>
+
+                            <h4 style="color:var(--text); margin-top:2rem; margin-bottom:1rem"><i
+                                    class="ri-brush-3-line"></i> Toma de Decisiones de Diseño</h4>
+                            <p class="desc-text" style="font-size: 0.9rem;">
+                                Implementamos la técnica de **capas translúcidas con blur**. Reemplazamos los colores
+                                estándar por una paleta de Indigo y Cyan Neón. Introdujimos **Chart.js** con
+                                configuraciones de gradientes dinámicos para transformar datos crudos en inteligencia
+                                visual.
+                            </p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <img src="img/step3_form.png" alt="Captura v3.0"
+                                style="width:100%; border-radius:12px; border: 1px solid var(--success);">
+                            <p style="font-size: 0.75rem; text-align: center; opacity: 0.6;">Snapshot v3.0: Los nuevos
+                                formularios Glassmorphism</p>
                         </div>
                     </div>
-                </article>
+                </section>
 
-                <!-- STAGE 4 -->
-                <article class="stat-card"
-                    style="border: none; background: rgba(255,255,255,0.03); position: relative;">
+                <!-- VERSION 4.0 -->
+                <section class="stat-card" style="border-left: 5px solid var(--warning); padding: 2.5rem;">
                     <div
-                        style="position: absolute; left:-1.5rem; top:2rem; width:20px; height:20px; background:var(--warning); border-radius:50%; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4)">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
-                        <div>
-                            <img src="img/step4_final.png" alt="Etapa Final"
-                                style="width:100%; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.5)">
-                        </div>
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                         <div>
                             <span
-                                style="color:var(--warning); font-weight:bold; font-size:0.8rem; text-transform:uppercase">Fase
-                                4: Perfeccionamiento</span>
-                            <h2 style="margin: 0.5rem 0 1.5rem 0">v4.0 Pulido Dinámico</h2>
-                            <p style="margin-bottom:1.5rem; opacity:0.8"><b>Ajuste de Precisión:</b> Identificación de
-                                errores en la experiencia de usuario (UX).<br>Conversión de controles clásicos a
-                                controles de segmento (iOS Style).</p>
-
-                            <div
-                                style="background:rgba(0,0,0,0.3); padding:1rem; border-radius:8px; border-left:3px solid var(--warning)">
-                                <p style="font-size:0.85rem; font-style:italic">"El formulario es cutre. Mejora los ejes
-                                    de las tablas para que no sean infinitos y que el menú se actualice bien".</p>
-                            </div>
+                                style="color:var(--warning); font-weight:bold; letter-spacing:1px; text-transform:uppercase; font-size:0.8rem">Refinamiento
+                                de UX</span>
+                            <h2 style="font-size: 2.2rem; margin-top:0.5rem">v4.0: Pulido de Usuario y Control</h2>
+                        </div>
+                        <div style="text-align: right; opacity: 0.5; font-size: 0.8rem;">Fase Final de Optimización
                         </div>
                     </div>
-                </article>
+
+                    <div style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 3rem;">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <img src="img/step4_final.png" alt="Captura v4.0"
+                                style="width:100%; border-radius:12px; border: 1px solid var(--warning);">
+                            <p style="font-size: 0.75rem; text-align: center; opacity: 0.6;">Snapshot v4.0: Ejes
+                                dinámicos y control segmentado</p>
+                        </div>
+                        <div>
+                            <h4 style="color:var(--text); margin-bottom:1rem"><i class="ri-star-smile-line"></i>
+                                Feedback de Usuario</h4>
+                            <p class="desc-text"
+                                style="background: rgba(245, 158, 11, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--warning);">
+                                "El formulario de transacciones es un poco cutre, mejóralo. El eje Y de las gráficas no
+                                debe expandirse al infinito. El menú debe mostrar la documentación con claridad."
+                            </p>
+
+                            <h4 style="color:var(--text); margin-top:2rem; margin-bottom:1rem"><i
+                                    class="ri-hammer-line"></i> Mejoras Aplicadas</h4>
+                            <p class="desc-text" style="font-size: 0.9rem;">
+                                Implementamos **Segmented Controls** (estilo iOS/Premium) para el tipo de operación.
+                                Ajustamos la escala de Chart.js mediante `grace: '10%'` y `maxTicksLimit` para una
+                                legibilidad quirúrgica de los datos financieros.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </main>
