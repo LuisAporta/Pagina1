@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="light-theme">
+
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Configuración</h1>
+            </header>
+
+            <div class="settings-container">
+                <div class="auth-card" style="margin: 0; max-width: 600px; text-align: left;">
+
+                    <div class="form-group">
+                        <label>Idioma del Sistema</label>
+                        <select id="languageSelect">
+                            <option value="es">Español</option>
+                            <option value="en">English (Beta)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Moneda Principal</label>
+                        <select>
+                            <option value="eur">Euro (€)</option>
+                            <option value="usd">Dólar ($)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" onclick="alert('Configuración guardada (Local)')">Guardar
+                        Cambios</button>
+
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        setupNavigation('settings');
+        requireAuth();
+    </script>
+</body>
+
+</html>

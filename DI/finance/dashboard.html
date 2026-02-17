@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="light-theme">
+
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Resumen Financiero</h1>
+                <button id="themeToggle"><i class="ri-moon-line"></i></button>
+            </header>
+
+            <!-- API Widget -->
+            <div class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
+                <h3><i class="ri-global-line"></i> Mercado de Divisas</h3>
+                <p id="currencyRate">Cargando cotización USD/EUR...</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card total-balance">
+                    <h3>Balance Total</h3>
+                    <p class="amount" id="totalBalance">€0.00</p>
+                </div>
+                <div class="stat-card income">
+                    <h3>Ingresos</h3>
+                    <p class="amount" id="totalIncome">€0.00</p>
+                </div>
+                <div class="stat-card expense">
+                    <h3>Gastos</h3>
+                    <p class="amount" id="totalExpense">€0.00</p>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-box">
+                    <canvas id="balanceChart"></canvas>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        setupNavigation('dashboard');
+        requireAuth();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            fetchCurrencyRate();
+        });
+
+        async function loadDashboardData() {
+            let transactions = [];
+            const localData = localStorage.getItem('finance_transactions');
+            if (localData) transactions = JSON.parse(localData);
+
+            // Calculate
+            const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            const total = income - expense;
+
+            // UI
+            document.getElementById('totalBalance').innerText = `€${total.toFixed(2)}`;
+            document.getElementById('totalIncome').innerText = `€${income.toFixed(2)}`;
+            document.getElementById('totalExpense').innerText = `€${expense.toFixed(2)}`;
+
+            // Chart
+            const ctx = document.getElementById('balanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ingresos', 'Gastos'],
+                    datasets: [{
+                        data: [income, expense],
+                        backgroundColor: ['#10b981', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%'
+                }
+            });
+        }
+
+        async function fetchCurrencyRate() {
+            try {
+                const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await res.json();
+                const rate = data.rates.EUR;
+                document.getElementById('currencyRate').innerHTML =
+                    `1 USD = <strong>${rate} EUR</strong> <span style="font-size:0.8rem; color:#888">(Actualizado hoy)</span>`;
+            } catch (error) {
+                document.getElementById('currencyRate').innerText = "No disponible offline";
+            }
+        }
+    </script>
+</body>
+
+</html>

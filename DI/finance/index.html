@@ -1,200 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinanceFlow - Gestión de Activos</title>
-
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="js/i18n.js"></script>
+  <meta http-equiv="refresh" content="0; url=login.html" />
+  <script>
+    // Redirect Logic based on session
+    const session = localStorage.getItem('finance_session');
+    if (session) {
+      window.location.href = "dashboard.html";
+    } else {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 
-<body class="light-theme">
-
-  <div id="app">
-    <!-- Sidebar Navigation (Desktop) -->
-    <aside class="sidebar">
-      <div class="logo">
-        <i class="ri-wallet-3-fill"></i> FinanceFlow
-      </div>
-      <nav>
-        <button class="nav-btn active" data-target="dashboard"><i class="ri-dashboard-line"></i> Dashboard</button>
-        <button class="nav-btn" data-target="transactions"><i class="ri-exchange-dollar-line"></i>
-          Transacciones</button>
-        <button class="nav-btn" data-target="analytics"><i class="ri-pie-chart-line"></i> Análisis</button>
-        <button class="nav-btn" data-target="settings"><i class="ri-settings-4-line"></i> Configuración</button>
-      </nav>
-      <div class="user-profile hidden" id="userProfileDisplay">
-        <img src="https://via.placeholder.com/40" alt="User" id="userAvatarSmall">
-        <span id="userNameSmall">Usuario</span>
-        <button id="logoutBtnSmall"><i class="ri-logout-box-r-line"></i></button>
-      </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="main-content">
-
-      <!-- Auth Screen (Login/Register) -->
-      <section id="auth-screen" class="screen">
-        <div class="auth-container">
-          <div class="auth-card">
-            <h2>Bienvenido</h2>
-            <p>Gestiona tu capital de forma inteligente.</p>
-            <form id="authForm">
-              <div class="input-group">
-                <i class="ri-user-line"></i>
-                <input type="text" id="email" placeholder="Usuario" required>
-              </div>
-              <div class="input-group">
-                <i class="ri-lock-line"></i>
-                <input type="password" id="password" placeholder="Contraseña" required>
-              </div>
-              <button type="submit" class="btn-primary">Iniciar Sesión</button>
-            </form>
-            <p class="switch-auth">¿No tienes cuenta? <a href="#" id="switchAuthMode">Regístrate</a></p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Dashboard Screen -->
-      <section id="dashboard" class="screen hidden">
-        <header class="top-bar">
-          <h1>Resumen Financiero</h1>
-          <button id="themeToggle"><i class="ri-moon-line"></i></button>
-        </header>
-
-        <div class="stats-grid">
-          <div class="stat-card total-balance">
-            <h3>Balance Total</h3>
-            <p class="amount" id="totalBalance">€0.00</p>
-          </div>
-          <div class="stat-card income">
-            <h3>Ingresos</h3>
-            <p class="amount" id="totalIncome">€0.00</p>
-          </div>
-          <div class="stat-card expense">
-            <h3>Gastos</h3>
-            <p class="amount" id="totalExpense">€0.00</p>
-          </div>
-        </div>
-
-        <div class="charts-container">
-          <div class="chart-box">
-            <canvas id="balanceChart"></canvas>
-          </div>
-        </div>
-
-        <div class="recent-transactions">
-          <h3>Recientes</h3>
-          <ul id="recentList">
-            <!-- Dynamic content -->
-          </ul>
-        </div>
-      </section>
-
-      <!-- Transactions Screen -->
-      <section id="transactions" class="screen hidden">
-        <header class="top-bar">
-          <h1>Transacciones</h1>
-          <button class="btn-primary" id="addTransactionBtn"><i class="ri-add-line"></i> Nuevo</button>
-        </header>
-
-        <div class="filters">
-          <input type="text" placeholder="Buscar..." id="searchInput">
-          <select id="filterType">
-            <option value="all">Todos</option>
-            <option value="income">Ingresos</option>
-            <option value="expense">Gastos</option>
-          </select>
-        </div>
-
-        <div class="transactions-list" id="transactionsList">
-          <!-- Dynamic content -->
-        </div>
-      </section>
-
-      <!-- Modal for New/Edit Transaction -->
-      <div id="transactionModal" class="modal hidden">
-        <div class="modal-content">
-          <span class="close-modal">&times;</span>
-          <h2 id="modalTitle">Nueva Transacción</h2>
-          <form id="transactionForm">
-            <input type="hidden" id="transactionId">
-            <div class="form-group">
-              <label>Tipo</label>
-              <div class="type-selector">
-                <label><input type="radio" name="type" value="income" checked> Ingreso</label>
-                <label><input type="radio" name="type" value="expense"> Gasto</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Monto</label>
-              <input type="number" step="0.01" id="amount" required>
-            </div>
-            <div class="form-group">
-              <label>Concepto</label>
-              <input type="text" id="description" required>
-            </div>
-            <div class="form-group">
-              <label>Categoría</label>
-              <select id="category">
-                <option value="salary">Salario</option>
-                <option value="food">Comida</option>
-                <option value="transport">Transporte</option>
-                <option value="leisure">Ocio</option>
-                <option value="other">Otro</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Adjunto (Imagen/PDF)</label>
-              <input type="file" id="fileUpload">
-            </div>
-            <button type="submit" class="btn-primary">Guardar</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- Settings Screen -->
-      <section id="settings" class="screen hidden">
-        <header class="top-bar">
-          <h1>Configuración</h1>
-        </header>
-        <div class="settings-container">
-          <div class="setting-item">
-            <label>Idioma</label>
-            <select id="languageSelect">
-              <option value="es">Español</option>
-              <option value="en">English</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Mobile Bottom Nav -->
-    <nav class="mobile-nav">
-      <button class="nav-btn active" data-target="dashboard"><i class="ri-dashboard-line"></i></button>
-      <button class="nav-btn" data-target="transactions"><i class="ri-exchange-dollar-line"></i></button>
-      <button class="nav-btn" data-target="settings"><i class="ri-settings-4-line"></i></button>
-    </nav>
-  </div>
-
-  <!-- App Scripts -->
-  <script src="js/config.js"></script>
-  <script src="js/supabase-client.js"></script>
-  <script src="js/app.js"></script>
+<body>
+  Redirigiendo...
 </body>
 
 </html>
