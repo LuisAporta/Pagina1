@@ -175,45 +175,116 @@
         }
 
         function renderLineChart(txs) {
-            const ctx = document.getElementById('lineChart').getContext('2d');
-            const last30Days = Array.from({ length: 30 }, (_, i) => {
-                const d = new Date();
-                d.setDate(d.getDate() - (29 - i));
-                return d.toISOString().split('T')[0];
-            });
+            const chartBox = document.querySelector('#lineChart').parentElement;
+            const title = chartBox.querySelector('h2');
 
-            const dataPoints = last30Days.map(date => {
+            if (txs.length === 0) {
+                title.innerHTML = '<i class="ri-line-chart-line" style="color:var(--primary)"></i> Evolución Diaria';
+                return;
+            }
+
+            // 1. Determine dynamic date range
+            const dates = txs.map(t => new Date(t.date).getTime());
+            let minTimestamp = Math.min(...dates);
+            let maxTimestamp = Math.max(...dates);
+
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            // Add padding and ensure at least 7 days
+            let startDate = new Date(minTimestamp - oneDay);
+            let endDate = new Date(maxTimestamp + oneDay);
+
+            const diffDays = Math.ceil((endDate - startDate) / oneDay);
+            if (diffDays < 7) {
+                const padding = Math.ceil((7 - diffDays) / 2);
+                startDate.setDate(startDate.getDate() - padding);
+                endDate.setDate(endDate.getDate() + padding);
+            }
+
+            // Cap at 60 days to avoid "giant" look
+            const maxDays = 60;
+            const now = new Date();
+            const startLimit = new Date();
+            startLimit.setDate(now.getDate() - maxDays);
+            if (startDate < startLimit) startDate = startLimit;
+            if (endDate > now) endDate = now;
+
+            const range = [];
+            let curr = new Date(startDate);
+            while (curr <= endDate) {
+                range.push(curr.toISOString().split('T')[0]);
+                curr.setDate(curr.getDate() + 1);
+            }
+
+            // Update title
+            title.innerHTML = `<i class="ri-line-chart-line" style="color:var(--primary)"></i> Evolución Diaria (${range.length}d)`;
+
+            // 2. Map data
+            const dataPoints = range.map(date => {
                 return txs.filter(t => t.date.split('T')[0] === date)
                     .reduce((acc, curr) => curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
             });
 
-            // Cumulative balance for line
+            // 3. Cumulative Balance
             let running = 0;
+            // Start from transactions BEFORE our range to keep balance accurate?
+            // For now, simple relative cumulative
             const cumulative = dataPoints.map(v => running += v);
 
+            const ctx = document.getElementById('lineChart').getContext('2d');
             if (charts.line) charts.line.destroy();
             charts.line = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: last30Days.map(d => d.split('-')[2]),
+                    labels: range.map(d => {
+                        const parts = d.split('-');
+                        return `${parts[2]}/${parts[1]}`;
+                    }),
                     datasets: [{
-                        label: 'Saldo Neto Diario',
+                        label: 'Saldo Neto',
                         data: cumulative,
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
                         fill: true,
                         tension: 0.4,
                         borderWidth: 3,
-                        pointRadius: 0
+                        pointRadius: range.length > 30 ? 0 : 4,
+                        pointBackgroundColor: '#6366f1'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Outfit', size: 13 },
+                            bodyFont: { family: 'Outfit', size: 14, weight: 'bold' },
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `Saldo: €${context.raw.toLocaleString()}`
+                            }
+                        }
+                    },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: value => '€' + value.toLocaleString()
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#94a3b8',
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 10
+                            }
+                        }
                     }
                 }
             });
