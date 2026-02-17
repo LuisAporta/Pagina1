@@ -14,28 +14,78 @@
         <aside class="sidebar"></aside>
 
         <main class="main-content">
-            <header class="top-bar">
-                <div>
-                    <h1
-                        style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                        Centro de Ayuda</h1>
-                    <p style="color:var(--text-muted)">Guías y documentación del sistema</p>
-                </div>
-            </header>
-
-            <div class="stat-card" style="margin-bottom: 2rem; border-color: var(--primary);">
-                <h2 style="margin-bottom: 1rem;"><i class="ri-book-2-line"></i> Bienvenido a FinanceFlow</h2>
-                <p style="line-height: 1.6; opacity: 0.8;">
-                    Aquí encontrarás toda la información necesaria para gestionar tus finanzas con la máxima eficiencia.
-                    El usuario irá proporcionando los enlaces de documentación progresivamente.
+            <div class="stat-card"
+                style="margin-bottom: 2rem; border-left: 4px solid var(--primary); background: rgba(99, 102, 241, 0.05);">
+                <h2 style="margin-bottom: 1rem;"><i class="ri-shield-check-line"></i> Identificación Técnica del Sistema
+                </h2>
+                <p style="line-height: 1.6; opacity: 0.8; margin-bottom: 1rem;">
+                    A continuación se detallan los componentes nucleares de la aplicación y el código responsable de
+                    cada función:
                 </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- Database -->
+                    <div class="stat-card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="color:var(--primary); margin-bottom:0.5rem"><i class="ri-database-2-line"></i> Base
+                            de Datos (PostgreSQL)</h3>
+                        <p style="font-size:0.85rem; opacity:0.7; margin-bottom:1rem">Esquema relacional gestionado via
+                            Supabase.</p>
+                        <ul style="font-size:0.9rem; padding-left:1.5rem">
+                            <li><b>Archivo:</b> <code style="color:var(--secondary)">db_setup.sql</code></li>
+                            <li><b>Tablas:</b> <code>profiles</code> (líquido), <code>transactions</code> (movimientos).
+                            </li>
+                            <li><b>Lógica:</b> Trigger <code>on_transaction_change</code> para cálculo automático de
+                                saldo.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Storage -->
+                    <div class="stat-card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="color:var(--success); margin-bottom:0.5rem"><i class="ri-folder-upload-line"></i>
+                            Manejo de Archivos</h3>
+                        <p style="font-size:0.85rem; opacity:0.7; margin-bottom:1rem">Almacenamiento de comprobantes en
+                            la nube.</p>
+                        <ul style="font-size:0.9rem; padding-left:1.5rem">
+                            <li><b>Servicio:</b> Supabase Storage (Bucket: <code>receipts</code>).</li>
+                            <li><b>Código:</b> Functión en <code>transactions.html</code> (líneas ~206-214) usando
+                                <code>storage.from().upload()</code>.</li>
+                            <li><b>Seguridad:</b> Políticas RLS en SQL para acceso privado por usuario.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Backend -->
+                    <div class="stat-card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="color:var(--warning); margin-bottom:0.5rem"><i class="ri-server-line"></i> Backend &
+                            Auth</h3>
+                        <p style="font-size:0.85rem; opacity:0.7; margin-bottom:1rem">Lógica de servidor y control de
+                            acceso.</p>
+                        <ul style="font-size:0.9rem; padding-left:1.5rem">
+                            <li><b>Auth:</b> Supabase Auth (Manejado en <code>login.html</code> y
+                                <code>common.js</code>).</li>
+                            <li><b>Sesiones:</b> Persistencia via <code>localStorage</code>
+                                (<code>finance_session</code>).</li>
+                            <li><b>Conectividad:</b> <code>js/config.js</code> centraliza las credenciales API.</li>
+                        </ul>
+                    </div>
+
+                    <!-- API/Logic -->
+                    <div class="stat-card" style="background: rgba(255,255,255,0.02);">
+                        <h3 style="color:var(--secondary); margin-bottom:0.5rem"><i class="ri-cpu-line"></i> Lógica de
+                            Negocio</h3>
+                        <p style="font-size:0.85rem; opacity:0.7; margin-bottom:1rem">Procesamiento de datos y
+                            analíticas.</p>
+                        <ul style="font-size:0.9rem; padding-left:1.5rem">
+                            <li><b>Gráficas:</b> <code>Chart.js</code> en <code>dashboard.html</code>.</li>
+                            <li><b>Divisas:</b> Integración con <code>Exchangerate-API</code>.</li>
+                            <li><b>CRUD:</b> Funciones <code>loadTransactions</code> y <code>saveTx</code> en páginas
+                                HTML.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            <div class="stats-grid" id="docsList">
-                <div class="stat-card" style="text-align: center; cursor: pointer; opacity: 0.5; border-style: dashed;">
-                    <i class="ri-add-line" style="font-size: 2rem;"></i>
-                    <p>Esperando recursos...</p>
-                </div>
+            <div class="stat-card" style="border-style: dashed; opacity: 0.6; text-align: center;">
+                <p>Próximamente: Guías paso a paso proporcionadas por el usuario.</p>
             </div>
         </main>
 
