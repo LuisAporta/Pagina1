@@ -19,7 +19,6 @@ const Files: React.FC = () => {
     const { user } = useAuth();
     const [files, setFiles] = useState<FileItem[]>([]);
     const [uploading, setUploading] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
     const bucketName = 'receipts'; // Ensure this bucket exists in Supabase
@@ -32,7 +31,6 @@ const Files: React.FC = () => {
 
     const fetchFiles = async () => {
         try {
-            setLoading(true);
             if (!import.meta.env.VITE_SUPABASE_URL) return;
 
             const { data, error } = await supabase
@@ -52,8 +50,6 @@ const Files: React.FC = () => {
             }
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
         }
     };
 
