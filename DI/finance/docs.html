@@ -71,6 +71,54 @@
 
             </div>
 
+            <!-- New Glossary/Best Practices Section -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-top: 3rem;">
+                <section class="stat-card" style="border-color: var(--warning);">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="ri-book-3-line"></i> Glosario de Conceptos</h3>
+                    <dl style="font-size: 0.85rem; line-height: 1.6; opacity: 0.8;">
+                        <dt style="color: var(--primary); font-weight: bold;">RLS (Row Level Security)</dt>
+                        <dd style="margin-bottom: 0.8rem;">Políticas de base de datos que restringen el acceso a filas
+                            específicas basándose en el usuario autenticado.</dd>
+
+                        <dt style="color: var(--secondary); font-weight: bold;">Singleton Pattern</dt>
+                        <dd style="margin-bottom: 0.8rem;">Diseño que garantiza que solo exista una instancia del
+                            cliente de base de datos en toda la aplicación.</dd>
+
+                        <dt style="color: var(--success); font-weight: bold;">JWT (JSON Web Token)</dt>
+                        <dd style="margin-bottom: 0.8rem;">Token de seguridad generado por Supabase para validar la
+                            identidad del usuario en cada petición.</dd>
+                    </dl>
+                </section>
+
+                <section class="stat-card" style="border-left: 4px solid var(--success);">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="ri-check-double-line"></i> Buenas Prácticas de
+                        Desarrollo</h3>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; font-size: 0.9rem; opacity: 0.8;">
+                        <div>
+                            <h4 style="color: var(--text); margin-bottom: 0.5rem;">Seguridad Primero</h4>
+                            <p>Nunca calcules saldos críticos en el cliente; deja que los triggers de SQL manejen la
+                                lógica transaccional para evitar hacks.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--text); margin-bottom: 0.5rem;">Carga Diferida</h4>
+                            <p>Utiliza estados de carga (overlays) en las gráficas para mejorar el UX percibido mientras
+                                los datos se recuperan de la nube.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--text); margin-bottom: 0.5rem;">Consistencia de UI</h4>
+                            <p>Usa siempre las variables definidas en <code>:root</code> de <code>main.css</code> para
+                                mantener la estética Glassmorphism uniforme.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--text); margin-bottom: 0.5rem;">Manejo de Errores</h4>
+                            <p>Envuelve las llamadas a la API en bloques <code>try/catch</code> para mostrar mensajes
+                                amigables si falla la conexión.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
             <div class="stat-card" style="margin-top:2rem; background:rgba(255,193,7,0.05); border-color:#FFC107">
                 <p style="font-size:0.9rem; display:flex; align-items:center; gap:0.5rem">
                     <i class="ri-information-line" style="color:#FFC107"></i>
