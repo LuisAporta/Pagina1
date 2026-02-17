@@ -442,18 +442,29 @@ input::placeholder {
 .transaction-item {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-left: 4px solid var(--primary);
+    /* Default accent */
+    border-radius: 12px 20px 20px 12px;
     padding: 1.2rem;
     margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transaction-item:has(.ri-arrow-left-down-line) {
+    border-left-color: var(--success);
+}
+
+.transaction-item:has(.ri-arrow-right-up-line) {
+    border-left-color: var(--danger);
 }
 
 .transaction-item:hover {
     border-color: var(--primary);
     background: rgba(255, 255, 255, 0.05);
+    transform: translateX(8px);
 }
 
 .t-info {

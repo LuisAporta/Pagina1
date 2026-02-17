@@ -272,8 +272,15 @@
             document.getElementById('date').valueAsDate = new Date();
             document.getElementById('txId').value = '';
             document.getElementById('modalTitle').innerText = 'Nueva Operación';
+            document.getElementById('fileNameDisplay').innerText = 'Seleccionar archivo o arrastra aquí';
             modal.classList.remove('hidden');
         };
+
+        // File name display listener
+        document.getElementById('fileUpload').addEventListener('change', function (e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Seleccionar archivo o arrastra aquí';
+            document.getElementById('fileNameDisplay').innerText = fileName;
+        });
         window.closeModal = () => modal.classList.add('hidden');
     </script>
 </body>
