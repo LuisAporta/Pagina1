@@ -4,9 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistemas y Programación - FinanceFlow</title>
+    <title>Deep-Dive Técnico - FinanceFlow</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css?v=2.0">
+    <style>
+        .code-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .code-header {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        pre {
+            margin: 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #d1d5db;
+            overflow-x: auto;
+        }
+
+        .desc-text {
+            line-height: 1.7;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .highlight-box {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+    </style>
 </head>
 
 <body class="dark-theme">
@@ -17,86 +62,134 @@
             <header class="top-bar">
                 <a href="docs.html"
                     style="color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem">
-                    <i class="ri-arrow-left-line"></i> Volver al Portal
+                    <i class="ri-arrow-left-line"></i> Volver al Portal de Documentación
                 </a>
                 <h1
                     style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                    Arquitectura y Programación</h1>
-                <p style="color:var(--text-muted)">Análisis profundo del código y sistemas de datos</p>
+                    Inmersión Técnica y Programación</h1>
+                <p style="color:var(--text-muted)">Guía exhaustiva del funcionamiento interno del sistema</p>
             </header>
 
-            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary);">
-                <h2 style="margin-bottom: 1.5rem;"><i class="ri-database-2-line"></i> 1. Base de Datos y Persistencia
-                </h2>
-                <p style="margin-bottom: 1rem; opacity: 0.8;">El sistema utiliza **PostgreSQL** alojado en **Supabase**
-                    como motor principal. La integridad de los datos se mantiene mediante triggers a nivel de base de
-                    datos.</p>
+            <section class="stat-card" style="margin-bottom: 3rem;">
+                <h2><i class="ri-plug-2-line"></i> 1. El Ciclo de Conexión (El Cliente SDK)</h2>
+                <p class="desc-text">La aplicación utiliza el SDK oficial de **Supabase JS** para desacoplar el frontend
+                    del backend tradicional. La conexión no es persistente (no hay WebSockets abiertos en todo momento),
+                    sino que funciona mediante llamadas REST autenticadas sobre HTTP/2.</p>
 
-                <div
-                    style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom:1.5rem">
-                    <h4 style="color:var(--secondary); margin-bottom:0.5rem">Esquema SQL (db_setup.sql)</h4>
-                    <pre style="font-size:0.8rem; overflow-x:auto; color:#94a3b8">
--- Tabla de transacciones con integridad referencial
-create table transactions (
-  id uuid default uuid_generate_v4() primary key,
-  user_id uuid references auth.users not null,
-  amount numeric not null,
-  type text check (type in ('income', 'expense')),
-  date timestamp with time zone default now()
-);</pre>
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-file-code-line"></i> js/common.js - Inicialización</div>
+                    <pre>
+// Se verifica la existencia de la librería y las constantes globales
+if (typeof supabase !== 'undefined' && typeof CONFIG !== 'undefined') {
+    // Inicialización del cliente singleton utilizando el patrón factory
+    window.sbClient = supabase.createClient(
+        CONFIG.SUPABASE_URL,       // Endpoint de la REST API
+        CONFIG.SUPABASE_ANON_KEY   // Clave pública para el sistema Auth
+    );
+}</pre>
                 </div>
-
-                <p style="font-size: 0.9rem; opacity: 0.8;"><b>Lógica de Cálculo Automático:</b> Se utiliza una función
-                    PL/SQL y un trigger (<code>on_transaction_change</code>) que recalcula el balance total del perfil
-                    cada vez que se inserta o borra una transacción. Esto garantiza que el "Líquido" sea siempre preciso
-                    sin sobrecargar el frontend.</p>
-            </section>
-
-            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--success);">
-                <h2 style="margin-bottom: 1.5rem;"><i class="ri-folder-upload-line"></i> 2. Almacenamiento y Manejo de
-                    Archivos</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    <div>
-                        <p style="margin-bottom: 1rem; opacity: 0.8;">La gestión de archivos se realiza mediante un
-                            sistema híbrido:</p>
-                        <ul style="font-size: 0.9rem; line-height: 1.6; opacity: 0.8;">
-                            <li><b>Frontend:</b> <code>FileReader</code> de JavaScript para previsualización inmediata.
-                            </li>
-                            <li><b>Backend:</b> Supabase Storage API para persistencia en la nube.</li>
-                            <li><b>Seguridad:</b> Políticas RLS que impiden a un usuario ver los archivos de otro.</li>
-                        </ul>
-                    </div>
-                    <div
-                        style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border);">
-                        <h4 style="margin-bottom:0.5rem">Función Clave</h4>
-                        <p style="font-size:0.85rem; font-family:monospace; color:var(--success)">
-                            supabase.storage.from('receipts').upload(path, file)
-                        </p>
-                        <p style="font-size:0.75rem; margin-top:0.5rem; opacity:0.6">Localizada en:
-                            <code>transactions.html</code></p>
-                    </div>
+                <div class="highlight-box">
+                    <p><b>Por qué funciona así:</b> Al usar <code>window.sbClient</code>, permitimos que cualquier
+                        página de la aplicación (Dashboard, Transacciones, etc.) acceda al mismo objeto de conexión sin
+                        tener que re-autenticar al usuario ni volver a instanciar el cliente.</p>
                 </div>
             </section>
 
-            <section class="stat-card" style="margin-bottom: 2rem; border-left: 4px solid var(--warning);">
-                <h2 style="margin-bottom: 1.5rem;"><i class="ri-braces-line"></i> 3. Lógica Frontend y Analítica</h2>
-                <div style="display: grid; gap: 1.5rem;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px;">
-                        <h4 style="margin-bottom:0.5rem; color:var(--primary)">Visualización Dinámica (Chart.js)</h4>
-                        <p style="font-size:0.9rem; opacity:0.8">En <code>dashboard.html</code>, las gráficas se escalan
-                            dinámicamente según el rango de fechas de las transacciones. El sistema de "Cache Busting"
-                            implementado en v4.0 asegura que cualquier cambio en las gráficas se refleje de inmediato en
-                            el navegador del usuario.</p>
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--secondary);">
+                <h2><i class="ri-database-2-line"></i> 2. Manipulación de Datos y Consultas</h2>
+                <p class="desc-text">Las llamadas a la base de datos se realizan mediante una interfaz fluida (Fluent
+                    Interface) que traduce el código JavaScript directamente a sentencias PostgREST en el servidor.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-dashboard-line"></i> dashboard.html - Lectura de Datos</div>
+                    <pre>
+// Ejemplo de consulta asíncrona filtrada por usuario
+const { data, error } = await window.sbClient
+    .from('transactions') // Tabla principal
+    .select('*')          // Traemos todas las columnas
+    .eq('user_id', user.id); // Cláusula WHERE de seguridad</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-exchange-dollar-line"></i> transactions.html - Inserción
+                        Segura</div>
+                    <pre>
+// El proceso de guardado incluye la vinculación automática del ID de sesión
+const txObj = {
+    amount: parseFloat(amt),
+    type: currentType, // 'income' | 'expense'
+    user_id: user.id   // El user.id proviene de localStorage.finance_session
+};
+
+const { error } = await window.sbClient
+    .from('transactions')
+    .insert([txObj]);</pre>
+                </div>
+                <p class="desc-text"><b>Seguridad RLS:</b> Aunque el código parece "abierto", Supabase bloquea cualquier
+                    petición que no cumpla las **Row Level Security Policies**. El <code>user_id</code> debe coincidir
+                    con el token JWT de la sesión, o la DB devolverá un error 403 automáticamente.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--success);">
+                <h2><i class="ri-cpu-line"></i> 3. Inteligencia en el Servidor (SQL Triggers)</h2>
+                <p class="desc-text">Para evitar desincronizaciones en el saldo, no calculamos el "Líquido" en el
+                    cliente. Usamos lógica procedimental en el servidor (**PL/pgSQL**) que se activa ante cualquier
+                    cambio.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-terminal-box-line"></i> db_setup.sql - Lógica Procedimental
                     </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px;">
-                        <h4 style="margin-bottom:0.5rem; color:var(--secondary)">Gestión de Sesiones y Estado</h4>
-                        <p style="font-size:0.9rem; opacity:0.8"><code>common.js</code> actúa como el núcleo de la
-                            aplicación, inyectando la navegación en todas las páginas y controlando la autenticación
-                            mediante <code>requireAuth()</code>. Los datos de sesión se persisten de forma segura en
-                            <code>localStorage</code>.</p>
-                    </div>
+                    <pre>
+-- Esta función se ejecuta en el SEGUNDO en que haces un INSERT o DELETE
+create or replace function update_total_balance()
+returns trigger as $$
+begin
+  update profiles
+  set total_balance = (
+    select coalesce(sum(case when type = 'income' then amount else -amount end), 0)
+    from transactions
+    where user_id = coalesce(new.user_id, old.user_id)
+  )
+  where id = coalesce(new.user_id, old.user_id);
+  return null;
+end;
+$$ language plpgsql;</pre>
+                </div>
+                <div class="highlight-box">
+                    <p><b>El Disparador (Trigger):</b> Hemos configurado el trigger <code>on_transaction_change</code>
+                        para que escuche los eventos <code>AFTER INSERT OR UPDATE OR DELETE</code>. Esto significa que
+                        el código de la app solo inserta una transacción, y la base de datos "mágicamente" actualiza el
+                        saldo global antes de que el dashboard se refresque.</p>
                 </div>
             </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--warning);">
+                <h2><i class="ri-folder-shield-2-line"></i> 4. Gestión Estructurada de Archivos</h2>
+                <p class="desc-text">Los archivos (comprobantes) no se guardan como BLOBs en la base de datos, sino como
+                    objetos en un Storage Bucket optimizado.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-code-box-line"></i> Lógica de Carga de Recibos</div>
+                    <pre>
+// 1. Fase de Validación Local
+const file = fileInput.files[0];
+const fileExt = file.name.split('.').pop();
+const fileName = `${Math.random()}.${fileExt}`;
+
+// 2. Fase de Carga Remota
+const { data, error } = await window.sbClient.storage
+    .from('receipts') // Bucket destino
+    .upload(`${user.id}/${fileName}`, file); // Carpeta privada por usuario</pre>
+                </div>
+                <p class="desc-text">Este flujo es eficiente porque la aplicación solo almacena la **URL** del archivo
+                    en la tabla de transacciones, mientras que el binario pesado reside en los servidores de
+                    almacenamiento optimizados de Supabase.</p>
+            </section>
+
+            <div class="stat-card" style="text-align:center; background:rgba(255,255,255,0.02); border-style:dashed">
+                <p style="opacity:0.6; font-size:0.9rem">Fin de la Guía Técnica Técnica v4.1 - Documentación Explayada
+                </p>
+            </div>
         </main>
 
         <nav class="mobile-nav"></nav>
