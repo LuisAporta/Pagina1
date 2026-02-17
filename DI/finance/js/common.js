@@ -2,17 +2,16 @@
 
 // 1. Supabase Initialization
 // Use a distinct global variable to avoid conflict with the CDN library 'supabase'
-window.sbClient = null;
-
 if (typeof supabase !== 'undefined' && typeof CONFIG !== 'undefined') {
     if (CONFIG.SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE') {
+        console.log("Configurando Supabase con URL:", CONFIG.SUPABASE_URL);
         window.sbClient = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
         console.log("Supabase Client initialized as window.sbClient");
     } else {
         console.warn("Supabase credentials not set in config.js");
     }
 } else {
-    console.error("Supabase library or Config not loaded");
+    console.error("Supabase library or Config not loaded. Supabase:", typeof supabase, "Config:", typeof CONFIG);
 }
 
 // 2. Theme Management
