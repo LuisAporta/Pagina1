@@ -455,6 +455,30 @@ input::placeholder {
 }
 
 /* Transaction Items */
+/* Transaction List Container */
+.transactions-list {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.transactions-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transactions-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.transactions-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.transactions-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-glow);
+}
+
 .transaction-item {
     background: var(--card);
     border: 1px solid var(--border);

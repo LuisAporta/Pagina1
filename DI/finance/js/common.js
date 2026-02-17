@@ -43,6 +43,8 @@ function setupNavigation(activePage) {
             <a href="dashboard.html" class="nav-btn ${activePage === 'dashboard' ? 'active' : ''}"><i class="ri-dashboard-line"></i> Dashboard</a>
             <a href="transactions.html" class="nav-btn ${activePage === 'transactions' ? 'active' : ''}"><i class="ri-exchange-dollar-line"></i> Transacciones</a>
             <a href="settings.html" class="nav-btn ${activePage === 'settings' ? 'active' : ''}"><i class="ri-settings-4-line"></i> Configuración</a>
+            <div style="margin: 1rem 0; border-top: 1px solid var(--border); opacity: 0.5;"></div>
+            <a href="docs.html" class="nav-btn ${activePage === 'docs' ? 'active' : ''}" style="opacity:0.8"><i class="ri-book-open-line"></i> Documentación</a>
         </nav>
         <div class="user-profile">
             <div style="display:flex; flex-direction:column">
@@ -57,6 +59,7 @@ function setupNavigation(activePage) {
         <a href="dashboard.html" class="nav-btn ${activePage === 'dashboard' ? 'active' : ''}"><i class="ri-dashboard-line"></i></a>
         <a href="transactions.html" class="nav-btn ${activePage === 'transactions' ? 'active' : ''}"><i class="ri-exchange-dollar-line"></i></a>
         <a href="settings.html" class="nav-btn ${activePage === 'settings' ? 'active' : ''}"><i class="ri-settings-4-line"></i></a>
+        <a href="docs.html" class="nav-btn ${activePage === 'docs' ? 'active' : ''}"><i class="ri-book-open-line"></i></a>
     `;
 
     const sidebarEl = document.querySelector('.sidebar');
