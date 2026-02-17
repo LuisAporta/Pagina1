@@ -66,16 +66,32 @@
 
         async function loadDashboardData() {
             let transactions = [];
+            let total = 0;
+            const user = JSON.parse(localStorage.getItem('finance_session'));
             const localData = localStorage.getItem('finance_transactions');
             if (localData) transactions = JSON.parse(localData);
 
-            // Calculate
+            // 1. Try to fetch Liquid (Total Balance) from PROFILES table
+            if (window.sbClient && user) {
+                const { data, error } = await window.sbClient
+                    .from('profiles')
+                    .select('total_balance')
+                    .eq('id', user.id)
+                    .single();
+                if (data) total = data.total_balance;
+            } else {
+                // Offline fallback calculation
+                const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+                const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+                total = income - expense;
+            }
+
+            // Calc for charts
             const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
             const expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
-            const total = income - expense;
 
             // UI
-            document.getElementById('totalBalance').innerText = `€${total.toFixed(2)}`;
+            document.getElementById('totalBalance').innerText = `€${parseFloat(total).toFixed(2)}`;
             document.getElementById('totalIncome').innerText = `€${income.toFixed(2)}`;
             document.getElementById('totalExpense').innerText = `€${expense.toFixed(2)}`;
 

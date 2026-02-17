@@ -68,6 +68,14 @@
                     if (result.error) throw result.error;
 
                     if (result.data.user) {
+                        // Create Profile if new user
+                        if (!isLogin && window.sbClient) {
+                            await window.sbClient.from('profiles').insert({
+                                id: result.data.user.id,
+                                username: username,
+                                total_balance: 0
+                            });
+                        }
                         localStorage.setItem('finance_session', JSON.stringify(result.data.user));
                         window.location.href = 'dashboard.html';
                     }
