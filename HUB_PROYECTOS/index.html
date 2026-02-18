@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUB DE ENTREGAS - LUIS APORTA</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --accent: #00e676;
+            /* Green accent for 'completed' feel */
+            --accent-hover: #00c853;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            margin-top: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 200px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 230, 118, 0.2);
+            border-color: var(--accent);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-btn {
+            margin-top: 50px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>HUB DE PROYECTOS</h1>
+        <p class="subtitle">Acceso directo a las entregas de escritorio</p>
+    </header>
+
+    <div class="grid">
+        <a href="Agente/index.html" class="card">
+            <h2>AGENTE</h2>
+            <span>Módulo de Agente</span>
+        </a>
+
+        <a href="Cuantizacion/index.html" class="card">
+            <h2>CUANTIZACIÓN</h2>
+            <span>Módulo de Optimización</span>
+        </a>
+
+        <a href="Destilación/index.html" class="card">
+            <h2>DESTILACIÓN</h2>
+            <span>Módulo de Reducción</span>
+        </a>
+
+        <a href="PreEntrenamiento/index.html" class="card">
+            <h2>PRE-ENTRENAMIENTO</h2>
+            <span>Fase Inicial</span>
+        </a>
+
+        <a href="Finetuning/index.html" class="card">
+            <h2>FINE-TUNING</h2>
+            <span>Ajuste Fino</span>
+        </a>
+
+        <a href="EntregaFinal/index.html" class="card" style="border-color: var(--accent);">
+            <h2 style="color: var(--accent);">ENTREGA FINAL</h2>
+            <span>Proyecto Completo</span>
+        </a>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Volver al Inicio</a>
+
+</body>
+
+</html>
