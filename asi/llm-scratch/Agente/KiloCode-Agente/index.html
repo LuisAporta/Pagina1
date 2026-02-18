@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Kilo Code Agente</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max_width: 800px;
+            background-color: #252526;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        h1 { color: #61dafb; border-bottom: 2px solid #61dafb; padding-bottom: 10px; }
+        h2 { color: #f0f0f0; margin-top: 30px; border-left: 5px solid #61dafb; padding-left: 10px;}
+        p { line-height: 1.6; margin-bottom: 15px; }
+        .step { margin-bottom: 40px; }
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        img {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #444;
+            transition: transform 0.2s;
+        }
+        img:hover { transform: scale(1.02); border-color: #61dafb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manual de Instalación y Configuración</h1>
+        <div class="step">
+            <p>Guía de Configuración: Integración de Kilo Code con LM Studio local</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 19.59.23.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.02.33.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.04.10.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 1: Instalación de la extensión</h2>
+            <p>Busca la extensión "Kilo Code: AI Coding agent, Copilot, and Autocomplete" dentro del IDE Visual Studio Code y descárgala.</p>
+            <p>Una vez descargada, aparecerá un nuevo icono de la extensión en tu panel; haz clic en él para entrar.</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.04.17.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.04.26.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.16.09.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 2: Registro y Autenticación</h2>
+            <p>Inicia el proceso de registro en Kilo Code.</p>
+            <p>Recibirás un código de verificación que deberás introducir para autorizar el dispositivo.</p>
+            <p>Completa el proceso hasta recibir el mensaje que confirma que la autorización ha sido exitosa.</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.16.42.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.17.35.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.18.10.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 3: Selección del modo de asistencia</h2>
+            <p>En el menú principal de la extensión, selecciona la opción "Code".
+ +1</p>
+            <p>Esto configurará al agente específicamente para ayudarte a la hora de escribir, modificar y refactorizar código.
+ +1</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.19.26.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.20.54.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.21.16.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 4: Configuración del proveedor de API en Kilo Code</h2>
+            <p>Entra al apartado de configuración ("Settings") para elegir el modelo.
+ +1</p>
+            <p>Mantén el campo llamado "Configuration Profile" en la opción "default".</p>
+            <p>En el menú desplegable de "API Provider", busca y selecciona "LM Studio".</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.23.14.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.23.42.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.24.13.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 5: Activación del servidor en LM Studio</h2>
+            <p>Abre tu aplicación de LM Studio y dirígete al apartado "Developer".</p>
+            <p>Activa el interruptor de estado (status).</p>
+            <p>Tras activarlo, el estado cambiará a "Running" y la aplicación te proporcionará una dirección IP local (por ejemplo, http://127.0.0.1:1234).
+ +1</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.24.32.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.30.20.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.30.40.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 6: Enlace del modelo local con Visual Studio Code</h2>
+            <p>Vuelve a los ajustes de Kilo Code en tu editor.</p>
+            <p>Pega la dirección IP que te dio LM Studio en el campo "Base URL".
+ +1</p>
+            <p>En el apartado "Model ID", selecciona el modelo que hayas descargado y quieras utilizar (por ejemplo, qwen/qwen3-vl-4b).
+ +1</p>
+            <p>Para aplicar los cambios, presiona el botón "Save" y a continuación haz clic en "Done".</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-08 a las 20.34.15.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-08 a las 20.34.24.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-09 a las 21.09.03.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+        <div class="step">
+            <h2>Paso 7: Prueba y verificación del funcionamiento</h2>
+            <p>Realiza una petición sencilla al modelo para comprobar que responde (por ejemplo: "haz una página web sencilla con un título que diga PROBANDO KILO CODE").</p>
+            <p>Si lo deseas, puedes ir a la ventana de LM Studio para observar en los registros cómo el modelo empieza a trabajar y procesar tu petición.</p>
+            <p>Para asegurarte definitivamente de que Visual Studio Code está conectado a tu servidor local, pregúntale directamente al asistente en el chat: "¿qué modelo de LLM estás usando?".</p>
+            <p>El asistente deberá responderte confirmando exactamente el modelo que configuraste en el Paso 6 (por ejemplo, el modelo Qwen3-VL-4B).</p>
+            <div class="image-gallery">
+                <img src="Captura de pantalla 2026-01-26 a las 1.46.02.png" alt="Captura de pantalla" loading="lazy">
+                <img src="Captura de pantalla 2026-01-26 a las 1.46.12.png" alt="Captura de pantalla" loading="lazy">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

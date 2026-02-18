@@ -1,4 +1,13 @@
 const files = [
+    // Carpetas del Proyecto (NUEVO)
+    { name: "Agente", type: "PROJECT-MODULE", path: "Agente/index.html" },
+    { name: "Cuantizacion", type: "PROJECT-MODULE", path: "Cuantizacion/index.html" },
+    { name: "Destilación", type: "PROJECT-MODULE", path: "Destilación/index.html" },
+    { name: "PreEntrenamiento", type: "PROJECT-MODULE", path: "PreEntrenamiento/index.html" },
+    { name: "Finetuning", type: "PROJECT-MODULE", path: "Finetuning/index.html" },
+    { name: "EntregaFinal", type: "PROJECT-MODULE", path: "EntregaFinal/index.html" },
+
+    // Archivos Originales
     { name: "GenerateDataSet.html", type: "HTML" },
     { name: "InferenceExplicacion.html", type: "HTML" },
     { name: "MEMORIA_PROYECTO.md", type: "Markdown" },
@@ -28,16 +37,27 @@ function renderGrid(container) {
         const card = document.createElement('div');
         card.className = 'card';
         
-        let actions = `
-            <a href="assets/${file.name}" download class="btn btn-secondary">Descargar</a>
-            <a href="view.html?file=${encodeURIComponent(file.name)}" class="btn btn-primary">Ver Código</a>
-        `;
+        // Determine the link target
+        const targetPath = file.path ? file.path : `assets/${file.name}`;
+        
+        let actions = '';
 
-        // If it's an HTML file, allow viewing it directly
-        if (file.type === 'HTML') {
-            actions += `
-                <a href="assets/${file.name}" target="_blank" class="btn btn-secondary" style="margin-top: 8px; flex-basis: 100%;">Abrir Página</a>
+        if (file.type === 'PROJECT-MODULE') {
+             actions = `
+                <a href="${targetPath}" class="btn btn-primary" style="width: 100%; text-align: center; background-color: var(--accent);">ABRIR MÓDULO</a>
             `;
+        } else {
+            actions = `
+                <a href="${targetPath}" download class="btn btn-secondary">Descargar</a>
+                <a href="view.html?file=${encodeURIComponent(file.name)}" class="btn btn-primary">Ver Código</a>
+            `;
+            
+            // If it's an HTML file, allow viewing it directly
+            if (file.type === 'HTML') {
+                actions += `
+                    <a href="${targetPath}" target="_blank" class="btn btn-secondary" style="margin-top: 8px; flex-basis: 100%;">Abrir Página</a>
+                `;
+            }
         }
 
         card.innerHTML = `

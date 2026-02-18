@@ -1,0 +1,90 @@
+Documentación Técnica: Despliegue de LLM en Arquitectura Blackwell (RTX 5060 Ti)
+Fecha: 12 de Febrero, 2026
+Hardware: NVIDIA GeForce RTX 5060 Ti (Arquitectura Blackwell - Compute Capability sm_120)
+Sistema Operativo: Windows 11 + WSL2 (Ubuntu 24.04)
+Objetivo: Entrenar, convertir y desplegar un modelo GPT-2 usando bibliotecas experimentales (Nightly) para dar soporte a la Serie 50 de NVIDIA.
+
+1. El Reto Tecnológico: Arquitectura Blackwell
+Al intentar utilizar la RTX 5060 Ti con el stack de software estándar de IA (PyTorch Stable 2.5/2.6 + CUDA 12.4), se encontró un error de incompatibilidad crítico:
+
+Error: NVIDIA GeForce RTX 5060 Ti with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+
+Diagnóstico:
+La arquitectura Blackwell introduce el conjunto de instrucciones sm_120, el cual no está presente en los binarios estables actuales. Se requirió migrar a un entorno de desarrollo Nightly (Experimental).
+
+2. Configuración del Entorno "Bleeding Edge"
+Para habilitar el soporte de sm_120, se configuró un entorno virtual en WSL2 con una compilación específica de PyTorch.
+
+2.1 Instalación de PyTorch Nightly
+Se identificó que el soporte para Blackwell requiere CUDA 12.8. Sin embargo, los paquetes de visión y audio (torchvision, torchaudio) para esta versión aún no estaban publicados en los repositorios (Error 404), por lo que se procedió a una instalación modular:
+
+Limpieza de versiones previas:
+pip uninstall torch torchvision torchaudio -y
+
+Instalación exclusiva del Motor (Torch Core):
+
+Bash
+
+pip install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu128
+Instalación de dependencias auxiliares:
+pip install transformers datasets accelerate (Instaladas por separado para evitar conflictos de dependencias).
+
+2.2 Validación de Hardware
+Se ejecutó un script de verificación para confirmar que la arquitectura sm_120 era reconocida:
+
+Python
+
+import torch
+print(torch.cuda.get_arch_list())
+# Resultado: ['sm_50', ..., 'sm_90', 'sm_100', 'sm_120'] -> ÉXITO
+3. Entrenamiento del Modelo (GPT-2)
+Se utilizó el script entrenar.py adaptado para limpiar automáticamente sesiones anteriores y manejar la tokenización del texto ("El Quijote").
+
+Modelo Base: distilgpt2 (Arquitectura Transformer Decoder).
+
+Dataset: Texto plano de "El Quijote".
+
+Rendimiento: La RTX 5060 Ti procesó el entrenamiento a velocidades muy superiores a la generación anterior, completando las épocas en segundos gracias a los núcleos Tensor de nueva generación.
+
+4. Compilación y Conversión (GGUF)
+Para la conversión, se utilizó llama.cpp. Se tuvo especial cuidado de no romper el entorno Nightly.
+
+4.1 Gestión de Dependencias Crítica
+Problema: El archivo requirements.txt de llama.cpp intentaba forzar la instalación de una versión antigua de PyTorch.
+Solución: Se instalaron manualmente solo las librerías necesarias para la conversión:
+
+Bash
+
+pip install gguf protobuf sentencepiece numpy
+4.2 Compilación con CMake
+Al ser un entorno Linux moderno, se utilizó el sistema de construcción actual:
+
+Bash
+
+cmake -B build
+cmake --build build --config Release -j 8
+4.3 Exportación
+El modelo entrenado (HuggingFace format) se convirtió a GGUF (formato de cuantización universal):
+
+Bash
+
+python3 convert_hf_to_gguf.py ../modelo_quijote_hf --outfile ../quijote_5060ti.gguf
+5. Despliegue Final
+5.1 Integración en LM Studio
+Se transfirió el archivo quijote_5060ti.gguf al entorno de Windows. Se respetó la estructura de directorios estricta requerida por el software:
+
+Ruta: C:\Users\[Usuario]\.cache\lm-studio\models\Paco\Quijote5060\
+
+5.2 Superación de Barreras de Seguridad
+Windows 11 (Smart App Control) bloqueó inicialmente la ejecución del motor de inferencia por no estar firmado digitalmente.
+
+Solución: Ejecución de LM Studio con privilegios de Administrador.
+
+6. Conclusión
+El proyecto ha sido un éxito total. Se ha logrado poner en marcha una NVIDIA RTX 5060 Ti para tareas de Deep Learning antes de que exista soporte oficial estable, demostrando capacidad para:
+
+Diagnosticar errores de arquitectura de hardware (sm_120).
+
+Gestionar instalaciones de software experimental (Nightly Builds).
+
+Completar el ciclo MLOps: Entrenamiento -> Conversión -> Inferencia.
