@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found (Recuperando...)</title>
+    <style>
+        body {
+            background: #0d1117;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        a {
+            color: #58a6ff;
+        }
+    </style>
+    <script>
+        // Auto-fix Case Sensitivity URL
+        const path = window.location.pathname;
+        if (path.includes('Pagina1')) {
+            const newPath = path.replace('Pagina1', 'pagina1');
+            window.location.replace(newPath);
+        }
+
+        // Auto-fix ASI case
+        if (path.includes('ASI/')) {
+            const newPath = path.replace('ASI/', 'asi/');
+            window.location.replace(newPath);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>404 - Página no encontrada</h1>
+    <p>Estamos intentando redirigirte a la ruta correcta...</p>
+    <p>Si no sucede nada en unos segundos, prueba volver al inicio:</p>
+    <a href="https://LuisAporta.github.io/pagina1/">Volver al Inicio (Link Seguro)</a>
+
+    <h2>Proyectos Disponibles:</h2>
+    <ul style="text-align: left;">
+        <li><a href="/pagina1/asi/llm-scratch/index.html">LLM Scratch Project</a></li>
+        <li><a href="/pagina1/DI/finance/index.html">Finance Tracker</a></li>
+        <li><a href="/pagina1/DI/dashboard-servidores-proyecto/public/index.html">Dashboard</a></li>
+    </ul>
+</body>
+
+</html>
