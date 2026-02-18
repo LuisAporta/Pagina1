@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Técnica: Fase de Inferencia y Generación</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #059669;
+            --text: #334155;
+            --light: #f0fdf4;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: var(--text);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+        header {
+            border-bottom: 4px solid var(--accent);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.4rem;
+            color: var(--primary);
+            margin: 0;
+        }
+        .tag {
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-top: 50px;
+            display: flex;
+            align-items: center;
+        }
+        h2::after {
+            content: "";
+            flex: 1;
+            margin-left: 20px;
+            height: 1px;
+            background: var(--border);
+        }
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        .logic-card {
+            background: var(--light);
+            border: 1px solid #bbf7d0;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        .code-view {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            margin: 20px 0;
+            border-left: 5px solid var(--accent);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+        th {
+            background: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .flow-item {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="tag">Despliegue de Modelos</span>
+        <h1>Inferencia de Modelos Causales: <code>inference_scratch.py</code></h1>
+    </header>
+
+    <p>
+        Una vez finalizado el proceso de entrenamiento, el script de inferencia actúa como la interfaz de ejecución que permite transformar una entrada de texto (prompt) en una respuesta coherente generada por el modelo. Este documento detalla la lógica de carga, el procesamiento de tensores y los algoritmos de muestreo probabilístico empleados.
+    </p>
+
+    <h2>1. Carga del Modelo y Tokenizador</h2>
+    <p>
+        El script localiza los artefactos generados en la fase de entrenamiento dentro del directorio <code>./chef-bot-scratch-final</code>. Es fundamental que tanto el modelo como el tokenizador se carguen sincronizadamente para asegurar que el mapeo de IDs numéricos sea idéntico al utilizado durante el aprendizaje.
+    </p>
+    <div class="code-view">
+        # Carga crítica de componentes
+        tokenizer = AutoTokenizer.from_pretrained(path)
+        model = AutoModelForCausalLM.from_pretrained(path)
+    </div>
+
+    <h2>2. Flujo de Generación de Texto</h2>
+    <div class="process-flow">
+        <div class="flow-item">
+            <strong>1. Input</strong><br>Entrada del usuario formateada.
+        </div>
+        <div class="flow-item">
+            <strong>2. Encoding</strong><br>Conversión a tensores de PyTorch.
+        </div>
+        <div class="flow-item">
+            <strong>3. Forward Pass</strong><br>El modelo predice probabilidades.
+        </div>
+        <div class="flow-item">
+            <strong>4. Decoding</strong><br>Conversión de IDs a lenguaje natural.
+        </div>
+    </div>
+
+    <h2>3. Configuración del Algoritmo de Muestreo</h2>
+    <p>
+        Para evitar que el modelo sea determinista y repetitivo, se utilizan parámetros de <strong>muestreo estocástico</strong>. Estos parámetros controlan la creatividad y la coherencia del texto generado:
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Parámetro</th>
+                <th>Configuración</th>
+                <th>Explicación Técnica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>max_length</code></td>
+                <td>150</td>
+                <td>Define el límite superior de tokens generados para evitar bucles infinitos.</td>
+            </tr>
+            <tr>
+                <td><code>temperature</code></td>
+                <td>0.7</td>
+                <td>Suaviza la distribución de probabilidad. Valores bajos hacen al modelo más "preciso", valores altos más "creativo".</td>
+            </tr>
+            <tr>
+                <td><code>top_k</code></td>
+                <td>50</td>
+                <td>Filtra los 50 tokens más probables, descartando la "cola" de opciones irrelevantes.</td>
+            </tr>
+            <tr>
+                <td><code>top_p</code></td>
+                <td>0.95</td>
+                <td>Muestreo de núcleo (Nucleus Sampling): selecciona el conjunto mínimo de tokens cuya probabilidad sumada sea 0.95.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>4. Lógica de Post-procesamiento</h2>
+    <div class="logic-card">
+        <h3>Manejo de Atención y Dispositivos</h3>
+        <p>
+            El script detecta automáticamente la presencia de hardware especializado (GPU vía CUDA). Si está disponible, el modelo se transfiere a la VRAM mediante <code>model.to("cuda")</code>, lo que reduce la latencia de respuesta de segundos a milisegundos. 
+        </p>
+        <p>
+            Además, el uso de <code>pad_token_id</code> y <code>attention_mask</code> garantiza que el modelo solo procese la información relevante del prompt, ignorando el relleno necesario para la compatibilidad de dimensiones.
+        </p>
+    </div>
+
+    <h2>5. Conclusión</h2>
+    <p>
+        El script de inferencia representa la culminación del proyecto, permitiendo validar la eficacia del entrenamiento. Gracias a la combinación de <strong>Top-K</strong> y <strong>Top-P</strong>, el modelo logra un equilibrio óptimo entre la gramática aprendida y la fluidez necesaria para un asistente conversacional culinario.
+    </p>
+
+    <p style="text-align: center; color: #94a3b8; font-size: 0.8rem; margin-top: 60px; border-top: 1px solid var(--border); padding-top: 20px;">
+        Manual de Referencia para Sistemas de Inferencia Autorregresiva - 2026
+    </p>
+</div>
+
+</body>
+</html>

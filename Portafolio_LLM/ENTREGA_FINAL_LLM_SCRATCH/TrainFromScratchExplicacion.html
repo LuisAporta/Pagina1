@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Técnico: Desarrollo de Modelos de Lenguaje Causal</title>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #334155;
+            --accent: #3b82f6;
+            --bg: #ffffff;
+            --section-bg: #f8fafc;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+            color: #1e293b;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 25px;
+            background-color: #f1f5f9;
+        }
+        .report-container {
+            background: var(--bg);
+            padding: 60px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin-top: 10px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-top: 45px;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+        h3 {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-top: 30px;
+        }
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        .tech-box {
+            background: var(--section-bg);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 0.95rem;
+        }
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .code-inline {
+            background: #f1f5f9;
+            color: #ef4444;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+        .footer-note {
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: #64748b;
+            font-style: italic;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="report-container">
+    <header>
+        <h1>Informe de Ingeniería: Modelo "Chef-Bot"</h1>
+        <div class="subtitle">Entrenamiento de Arquitecturas Autoregresivas desde Inicialización Aleatoria</div>
+    </header>
+
+    <h2>1. Introducción al Proyecto</h2>
+    <p>
+        El presente documento describe la metodología técnica empleada para el entrenamiento de un modelo de lenguaje causal (Causal Language Modeling). A diferencia de los métodos tradicionales de <em>transfer learning</em>, este script inicializa un modelo de tipo Transformer con pesos aleatorios, lo que requiere un proceso de optimización más robusto y una arquitectura equilibrada para aprender gramática y contexto desde cero.
+    </p>
+
+    <h2>2. Especificaciones de la Arquitectura</h2>
+    <p>
+        Se ha optado por una configuración "Mini-GPT" basada en la arquitectura GPT-2. Esta elección se justifica por la necesidad de manejar una relación eficiente entre la capacidad expresiva del modelo y el coste computacional.
+    </p>
+    
+    <div class="tech-box">
+        <h3>Detalles de los Bloques de Transformación</h3>
+        <ul>
+            <li><strong>Atención Multicabeza (8 heads):</strong> Permite al modelo enfocar simultáneamente diferentes partes de la secuencia de entrada, facilitando la comprensión de relaciones a largo plazo entre ingredientes y pasos de cocina.</li>
+            <li><strong>Profundidad de Red (6 capas):</strong> Un equilibrio diseñado para evitar el desvanecimiento del gradiente mientras se mantiene la profundidad necesaria para aprender jerarquías lingüísticas complejas.</li>
+            <li><strong>Dimensión de Embedding (512):</strong> Espacio vectorial donde se representan los conceptos semánticos. Una dimensión de 512 es suficiente para capturar la terminología culinaria sin sobredimensionar la matriz de pesos.</li>
+        </ul>
+    </div>
+
+    <h2>3. Pipeline de Datos y Tokenización</h2>
+    <p>
+        El procesamiento de datos es la fase más crítica cuando se entrena desde cero. Se utiliza el algoritmo <strong>Byte-Pair Encoding (BPE)</strong> a través del tokenizador preentrenado de GPT-2 para garantizar que el modelo pueda descomponer palabras complejas en sub-tokens manejables.
+    </p>
+    
+    <h3>Formateo Estructural</h3>
+    <p>
+        Para que el modelo aprenda la naturaleza de "pregunta-respuesta", los datos se transforman dinámicamente. Cada entrada en el dataset se convierte en una cadena continua:
+    </p>
+    <div style="text-align: center; font-family: monospace; padding: 15px; background: #f8fafc; border: 1px dashed #cbd5e1;">
+        [BOS] User: {Instrucción} \n Assistant: {Respuesta} [EOS]
+    </div>
+    <p>
+        Se ha fijado una <strong>longitud máxima de 128 tokens</strong>. Esta decisión técnica optimiza la memoria de la GPU, permitiendo lotes (batches) más grandes y, por ende, un gradiente más estable durante la optimización.
+    </p>
+
+    <h2>4. Estrategia de Optimización y Entrenamiento</h2>
+    <p>
+        El entrenamiento se ha configurado para ejecutarse durante <strong>100 épocas</strong>. Dado que el modelo no tiene conocimiento previo, la curva de aprendizaje inicial es pronunciada.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Hiperparámetro</th>
+                <th>Valor</th>
+                <th>Justificación Técnica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Learning Rate</td>
+                <td><span class="code-inline">5e-4</span></td>
+                <td>Necesario para permitir ajustes significativos en pesos aleatorios iniciales.</td>
+            </tr>
+            <tr>
+                <td>Weight Decay</td>
+                <td><span class="code-inline">0.01</span></td>
+                <td>Previene la especialización excesiva en el ruido del dataset (Regularización L2).</td>
+            </tr>
+            <tr>
+                <td>Batch Size</td>
+                <td><span class="code-inline">4</span></td>
+                <td>Maximiza la actualización de pesos por paso dado el límite de memoria de hardware.</td>
+            </tr>
+            <tr>
+                <td>FP16</td>
+                <td>Habilitado</td>
+                <td>Uso de tensores de 16 bits para acelerar el cálculo matricial sin pérdida de precisión crítica.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>5. Fase de Consolidación y Guardado</h2>
+    <p>
+        El script implementa un sistema de <strong>Save Total Limit</strong>, conservando únicamente los dos mejores estados del modelo (checkpoints). Esto previene el agotamiento del almacenamiento en disco durante sesiones largas de entrenamiento. Al finalizar, el modelo se exporta en formato binario compatible con la librería <em>Transformers</em>, permitiendo su despliegue inmediato en entornos de producción o interfaces de chat.
+    </p>
+
+    <div class="footer-note">
+        Este informe técnico ha sido generado como documentación oficial del proceso de entrenamiento del modelo "Chef-Bot-Scratch". El modelo final reside en el directorio local indicado en el script.
+    </div>
+</div>
+
+</body>
+</html>

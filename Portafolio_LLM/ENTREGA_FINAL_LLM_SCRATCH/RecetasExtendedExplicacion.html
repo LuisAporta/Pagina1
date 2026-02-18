@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Técnico: Entrenamiento Integral de Modelos Autoregresivos</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --text: #334155;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.8;
+            color: var(--text);
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 30px;
+            background-color: #f1f5f9;
+        }
+        .container {
+            background: white;
+            padding: 80px;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 30px;
+            margin-bottom: 50px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin: 0;
+            line-height: 1.1;
+        }
+        .version {
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-top: 60px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-top: 35px;
+        }
+        p {
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+        .highlight-card {
+            background: var(--light);
+            border-left: 5px solid var(--accent);
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .code-snippet {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+        .step-list {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+        .step-list li {
+            counter-increment: step;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .step-list li::before {
+            content: counter(step);
+            background: var(--accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="version">Especificación Técnica de IA</span>
+        <h1>Desarrollo del Modelo Mini-GPT para Asistencia Culinaria</h1>
+    </header>
+
+    <h2>1. Resumen Ejecutivo del Proceso</h2>
+    <p>
+        El script <code>train_from_scratch.py</code> representa la implementación de un pipeline completo de Deep Learning. A diferencia de los modelos pre-entrenados comerciales, este proyecto se enfoca en la <strong>inicialización desde cero</strong>, lo que implica que el modelo no posee conocimientos lingüísticos previos. Su aprendizaje se basa enteramente en las asociaciones estadísticas presentes en el dataset de entrenamiento.
+    </p>
+
+    <h2>2. Ingeniería de la Arquitectura (Transformer)</h2>
+    <p>
+        Se ha diseñado una arquitectura basada en el modelo <em>Generative Pre-trained Transformer</em> (GPT). El objetivo es optimizar la <strong>capacidad de representación</strong> frente a la <strong>eficiencia de cómputo</strong>.
+    </p>
+
+    <div class="highlight-card">
+        <h3>Componentes Estructurales</h3>
+        <ul>
+            <li><strong>Mecanismo de Auto-Atención (Self-Attention):</strong> Permite que cada token de una receta (por ejemplo, "horno") mantenga una relación matemática con tokens distantes ("precalentar"), permitiendo una coherencia estructural en el texto generado.</li>
+            <li><strong>Bloques de Capas (6 unidades):</strong> Se ha reducido la profundidad para facilitar la convergencia. En un modelo entrenado desde cero, demasiadas capas pueden introducir inestabilidad en los gradientes durante las primeras fases.</li>
+            <li><strong>Normalización de Capas (LayerNorm):</strong> Se aplica para estabilizar la dinámica de entrenamiento, asegurando que las activaciones neuronales no saturen las funciones de transferencia.</li>
+        </ul>
+    </div>
+
+    <h2>3. Tratamiento de Datos y Tokenización</h2>
+    <p>
+        El éxito del modelo reside en cómo se "traduce" el lenguaje humano a vectores numéricos. Se utiliza el archivo <code>recetas_extended.jsonl</code>, que contiene pares de instrucción y respuesta.
+    </p>
+    
+    <h3>Algoritmo de Codificación</h3>
+    <p>
+        Se utiliza <strong>Byte-Pair Encoding (BPE)</strong>. Este método es robusto frente a errores ortográficos o términos técnicos culinarios, ya que si no reconoce una palabra completa, la descompone en unidades sub-palabra que sí conoce.
+    </p>
+    
+    <div class="code-snippet">
+        # Ejemplo de flujo de datos:
+        Instrucción: "¿Cómo hago un huevo frito?"
+        Tokenización: [34, 120, 45, 89, 210, ...]
+        Pad Token: Los espacios vacíos hasta 128 se rellenan con EOS para mantener tensores uniformes.
+    </div>
+
+    <h2>4. Estrategia de Hiper-parametrización</h2>
+    <p>
+        La configuración del entrenamiento ha sido ajustada para forzar una memorización profunda de los patrones del dataset culinario.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Parámetro Critico</th>
+                <th>Valor Seleccionado</th>
+                <th>Justificación Técnica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Epochs</strong></td>
+                <td>100</td>
+                <td>Ciclo extendido para asegurar que el modelo pase de la generación de ruido a la estructura lógica en un conjunto de datos limitado.</td>
+            </tr>
+            <tr>
+                <td><strong>Learning Rate</strong></td>
+                <td>5e-4</td>
+                <td>Una tasa elevada para permitir que el optimizador AdamW encuentre rápidamente la dirección del gradiente en un paisaje de pérdida inexplorado.</td>
+            </tr>
+            <tr>
+                <td><strong>Weight Decay</strong></td>
+                <td>0.01</td>
+                <td>Penalización de pesos para evitar que el modelo se vuelva "rígido" y solo pueda repetir las recetas del dataset.</td>
+            </tr>
+            <tr>
+                <td><strong>FP16 (Mixed Precision)</strong></td>
+                <td>Activado</td>
+                <td>Optimización de hardware que permite procesar más datos por segundo sin comprometer la precisión de los resultados.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>5. Pipeline de Ejecución Paso a Paso</h2>
+    <ul class="step-list">
+        <li><strong>Instanciación de la Configuración:</strong> Se define el "esqueleto" del cerebro digital sin neuronas conectadas.</li>
+        <li><strong>Mapping de Dataset:</strong> Se inyectan las marcas de control (User/Assistant) para que el modelo aprenda cuándo debe escuchar y cuándo debe hablar.</li>
+        <li><strong>Optimización (Backpropagation):</strong> Por cada receta, el modelo intenta predecir la siguiente palabra, se equivoca, y el optimizador ajusta los 50-80 millones de parámetros para reducir el error.</li>
+        <li><strong>Serialización:</strong> Se consolidan los pesos finales en un archivo <code>.bin</code> para su posterior uso en inferencia.</li>
+    </ul>
+
+    <h2>6. Conclusiones y Futuro</h2>
+    <p>
+        Al finalizar las 100 épocas, el modelo habrá desarrollado un "entendimiento" estadístico de la estructura de las recetas. Este modelo es ahora capaz de generar respuestas autónomas siguiendo el formato aprendido, representando un hito fundamental en el desarrollo de soluciones de Inteligencia Artificial personalizadas.
+    </p>
+
+    <p style="font-size: 0.8rem; border-top: 1px solid #ddd; padding-top: 20px; color: #94a3b8;">
+        Generado para: Departamento de Ingeniería de Software / Proyecto IA Culinaria. 
+        Fecha: Febrero 2026.
+    </p>
+</div>
+
+</body>
+</html>

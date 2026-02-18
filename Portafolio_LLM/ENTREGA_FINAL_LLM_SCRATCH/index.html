@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Documentación: LLM From Scratch</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --hover-color: #1f6feb;
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            flex-grow: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #8b949e;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #8b949e;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #484f58;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>LLM From Scratch</h1>
+            <p class="subtitle">Documentación Centralizada del Proyecto</p>
+        </header>
+
+        <div class="grid">
+            <a href="MemoriaProyecto.html" class="card">
+                <div class="icon">📄</div>
+                <h2>Memoria del Proyecto</h2>
+                <p>Visión general, objetivos y conclusiones del desarrollo del LLM.</p>
+            </a>
+
+            <a href="GenerateDataSet.html" class="card">
+                <div class="icon">📊</div>
+                <h2>Generación del Dataset</h2>
+                <p>Explicación del proceso de creación y limpieza de datos.</p>
+            </a>
+
+            <a href="RecetasExtendedExplicacion.html" class="card">
+                <div class="icon">🍳</div>
+                <h2>Explicación: Recetas Extended</h2>
+                <p>Detalles sobre el dataset específico de recetas utilizado.</p>
+            </a>
+
+            <a href="TrainFromScratchExplicacion.html" class="card">
+                <div class="icon">🧠</div>
+                <h2>Entrenamiento desde Cero</h2>
+                <p>Guía técnica sobre el proceso de entrenamiento del modelo.</p>
+            </a>
+
+            <a href="InferenceExplicacion.html" class="card">
+                <div class="icon">🚀</div>
+                <h2>Inferencia</h2>
+                <p>Cómo ejecutar y probar el modelo entrenado.</p>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Proyecto LLM Scratch
+    </footer>
+</body>
+
+</html>

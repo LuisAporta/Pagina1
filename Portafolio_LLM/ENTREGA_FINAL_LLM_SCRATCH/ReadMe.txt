@@ -1,0 +1,2 @@
+LLevo varios dias que no me funcinan las github pages lo hago bien y no me muestra las paginas nuevas y no se porque es hago lo mismo de siempre y nada no funcina te paso las carpetas de github porque no puedo 
+mostrarlas

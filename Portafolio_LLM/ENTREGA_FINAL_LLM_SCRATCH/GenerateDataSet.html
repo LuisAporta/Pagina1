@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explicación: generate_dataset.py</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+
+        .code-block {
+            background-color: #2d3436;
+            color: #f1f2f6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+
+        .note {
+            background-color: #e8f6f3;
+            border-left: 5px solid #1abc9c;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .filename {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Explicación del Script: generate_dataset.py</h1>
+
+    <p>Este documento explica el funcionamiento y utilidad del archivo <span class="filename">generate_dataset.py</span>
+        que se encuentra en tu proyecto.</p>
+
+    <h2>1. ¿Para qué se usa?</h2>
+    <p>El objetivo principal de este script es <strong>generar datos sintéticos masivos</strong> para entrenar a tu
+        Inteligencia Artificial (LLM).</p>
+    <p>Entrenar un modelo para que sea un "Chef" requiere miles de ejemplos. Escribir 5,000 recetas a mano sería una
+        tarea titánica. Este script automatiza ese proceso, creando miles de combinaciones de recetas coherentes en
+        cuestión de segundos.</p>
+
+    <div class="note">
+        <strong>Resultado:</strong> Al ejecutarlo, crea un archivo llamado <code>recetas_extended.jsonl</code> con
+        <strong>5,000 recetas únicas</strong> listas para el entrenamiento.
+    </div>
+
+    <h2>2. ¿Cómo funciona? (La Lógica)</h2>
+    <p>El script funciona como una "fábrica de recetas" aleatoria pero estructurada. Sigue estos pasos:</p>
+
+    <h3>A. Bases de Datos de Ingredientes</h3>
+    <p>Al principio del código, tiene listas definidas de ingredientes clasificados:</p>
+    <ul>
+        <li><strong>Proteínas:</strong> pollo, ternera, merluza, tofu...</li>
+        <li><strong>Verduras:</strong> cebolla, pimiento, zanahoria...</li>
+        <li><strong>Carbohidratos:</strong> patatas, arroz, pasta...</li>
+        <li><strong>Extras/Salsas:</strong> limón, nata, especias...</li>
+    </ul>
+
+    <h3>B. El Motor de Generación (Función <code>generar_receta</code>)</h3>
+    <p>Por cada receta que genera, hace lo siguiente:</p>
+    <ol>
+        <li><strong>Selección Aleatoria:</strong> Elige al azar entre 2 y 4 ingredientes de las listas anteriores.</li>
+        <li><strong>Creación de la Pregunta (Instruction):</strong> Simula cómo un usuario pediría la receta.
+            <br><em>Ejemplo: "Tengo pollo y arroz." o "¿Qué cocino con merluza y tomate?"</em>
+        </li>
+        <li><strong>Lógica de Cocina (El "Cerebro"):</strong>
+            <ul>
+                <li>Decide un nombre para el plato (ej: "Pollo al horno").</li>
+                <li>Elige una técnica de cocción (horno, plancha, estofado).</li>
+                <li><strong>Redacta los pasos:</strong> Tiene plantillas inteligentes. Si la técnica es "horno", escribe
+                    pasos sobre precalentar y hornear. Si es "estofado", escribe sobre hacer un sofrito y cocinar lento.
+                </li>
+            </ul>
+        </li>
+        <li><strong>Ensamblaje:</strong> Une la introducción, los pasos y la despedida.</li>
+    </ol>
+
+    <h2>3. Ejemplo de lo que genera</h2>
+    <p>El script produce líneas en formato <strong>JSONL</strong> como esta:</p>
+    <div class="code-block">
+        {
+        "instruction": "Tengo pechugas de pollo, limón y ajo.",
+        "output": "¡Claro! Puedes preparar unas 'Pechugas de Pollo al Limón'. Sella las pechugas en una sartén... [Pasos
+        generados] ... ¡Que aproveche!"
+        }
+    </div>
+
+    <h2>4. Resumen Técnico</h2>
+    <ul>
+        <li><strong>Librerías usadas:</strong> <code>random</code> (para la aleatoriedad) y <code>json</code> (para
+            guardar el archivo).</li>
+        <li><strong>Volumen:</strong> Está configurado para crear 5,000 ejemplos (bucle <code>range(5000)</code>).</li>
+        <li><strong>Utilidad:</strong> Alimentar el proceso de <em>Fine-Tuning</em> para que el modelo "Phi-3" aprenda
+            patrones de cocina variados sin que tú tengas que escribirlos uno a uno.</li>
+    </ul>
+
+</body>
+
+</html>

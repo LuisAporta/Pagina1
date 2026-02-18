@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio LLM - Luis Aporta</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --hover-color: #0ea5e9;
+            --secondary-text: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 4rem 1rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--secondary-text);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-color);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent-color), #818cf8);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-color);
+        }
+
+        .card p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .card .arrow {
+            margin-top: 1.5rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card .arrow svg {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .arrow svg {
+            transform: translateX(5px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Portafolio de Inteligencia Artificial</h1>
+        <p class="subtitle">Colección de proyectos sobre LLMs, Agentes, Fine-tuning y más.</p>
+    </header>
+
+    <main>
+        <a href="Agente/KiloCode-Agente/index.html" class="card">
+            <div>
+                <h2>Agente Inteligente</h2>
+                <p>Implementación y documentación de un agente autónomo capaz de realizar tareas complejas.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+
+        <a href="Cuantizacion/index.html" class="card">
+            <div>
+                <h2>Cuantización</h2>
+                <p>Exploración de técnicas de reducción de precisión para optimizar modelos de lenguaje.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+
+        <a href="Destilación/index.html" class="card">
+            <div>
+                <h2>Destilación de Conocimiento</h2>
+                <p>Transferencia de capacidades de modelos grandes a modelos más pequeños y eficientes.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+
+        <a href="PreEntrenamiento/index.html" class="card">
+            <div>
+                <h2>Pre-Entrenamiento</h2>
+                <p>Fases iniciales de entrenamiento de modelos LLM desde cero.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+
+        <a href="Finetuning/index.html" class="card">
+            <div>
+                <h2>Fine-tuning</h2>
+                <p>Ajuste fino de modelos pre-entrenados para tareas específicas y dominios particulares.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+
+        <a href="ENTREGA_FINAL_LLM_SCRATCH/index.html" class="card">
+            <div>
+                <h2>LLM desde Scratch</h2>
+                <p>Construcción y entrenamiento de un modelo de lenguaje grande desde los fundamentos.</p>
+            </div>
+            <div class="arrow">Ver Proyecto <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></div>
+        </a>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Luis Aporta - Portafolio de IA</p>
+    </footer>
+
+</body>
+
+</html>
