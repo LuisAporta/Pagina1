@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceApp - Diseño Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-indigo-600">FinanceApp</h1>
+            </div>
+            <nav class="flex-1 px-4 space-y-2">
+                <a href="#"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-indigo-50 text-indigo-700">
+                    <i data-lucide="layout-dashboard" class="h-5 w-5 mr-3"></i>
+                    Panel Principal
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                    <i data-lucide="wallet" class="h-5 w-5 mr-3"></i>
+                    Transacciones
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                    <i data-lucide="archive" class="h-5 w-5 mr-3"></i>
+                    Archivos
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+                    <i data-lucide="settings" class="h-5 w-5 mr-3"></i>
+                    Configuración
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200">
+                <button
+                    class="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">
+                    <i data-lucide="log-out" class="h-5 w-5 mr-3"></i>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800">Panel Principal</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Balance Card -->
+                    <div
+                        class="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 transform hover:scale-105 transition-transform duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Balance Total</p>
+                                <p class="text-2xl font-bold text-gray-900">$4,850.00</p>
+                            </div>
+                            <div class="p-3 bg-indigo-100 rounded-full">
+                                <i data-lucide="dollar-sign" class="h-6 w-6 text-indigo-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Income Card -->
+                    <div
+                        class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 transform hover:scale-105 transition-transform duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Ingresos Totales</p>
+                                <p class="text-2xl font-bold text-green-600">+$5,000.00</p>
+                            </div>
+                            <div class="p-3 bg-green-100 rounded-full">
+                                <i data-lucide="trending-up" class="h-6 w-6 text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expenses Card -->
+                    <div
+                        class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500 transform hover:scale-105 transition-transform duration-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Gastos Totales</p>
+                                <p class="text-2xl font-bold text-red-600">-$150.00</p>
+                            </div>
+                            <div class="p-3 bg-red-100 rounded-full">
+                                <i data-lucide="trending-down" class="h-6 w-6 text-red-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions Preview -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Actividad Reciente</h3>
+                    <div class="flow-root">
+                        <ul class="-my-5 divide-y divide-gray-200">
+                            <!-- Item 1 -->
+                            <li class="py-4 hover:bg-gray-50 transition-colors rounded-md p-2">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            Salario Mensual
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate">
+                                            16/02/2026
+                                        </p>
+                                    </div>
+                                    <div class="inline-flex items-center text-base font-semibold text-green-600">
+                                        +$5,000.00
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- Item 2 -->
+                            <li class="py-4 hover:bg-gray-50 transition-colors rounded-md p-2">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            Supermercado
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate">
+                                            15/02/2026
+                                        </p>
+                                    </div>
+                                    <div class="inline-flex items-center text-base font-semibold text-red-600">
+                                        -$120.00
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- Item 3 -->
+                            <li class="py-4 hover:bg-gray-50 transition-colors rounded-md p-2">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">
+                                            Uber
+                                        </p>
+                                        <p class="text-sm text-gray-500 truncate">
+                                            14/02/2026
+                                        </p>
+                                    </div>
+                                    <div class="inline-flex items-center text-base font-semibold text-red-600">
+                                        -$30.00
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Initialize Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+{
+  "translation": {
+    "welcome": "Welcome to FinanceApp",
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "files": "Files",
+    "settings": "Settings",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "amount": "Amount",
+    "category": "Category",
+    "date": "Date",
+    "description": "Description",
+    "add_transaction": "Add Transaction",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "upload_file": "Upload File",
+    "language": "Language",
+    "theme": "Theme",
+    "english": "English",
+    "spanish": "Spanish"
+  }
+}
