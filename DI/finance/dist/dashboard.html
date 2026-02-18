@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" crossorigin href="./assets/login-BbQ7D4MZ.css">
+</head>
+
+<body class="dark-theme">
+
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <div>
+                        <h1
+                            style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                            Resumen Financiero</h1>
+                        <p style="color:var(--text-muted)">Analiza tu salud económica en tiempo real</p>
+                    </div>
+                    <div style="display:flex; gap:1rem">
+                        <button id="themeToggle" class="nav-btn"
+                            style="border-radius:50%; width:45px; height:45px; display:flex; align-items:center; justify-content:center">
+                            <i class="ri-moon-line"></i>
+                        </button>
+                        <a href="transactions.html" class="btn-primary">
+                            <i class="ri-add-line"></i> Operar
+                        </a>
+                    </div>
+            </header>
+
+            <!-- Market Info Card -->
+            <div class="stat-card"
+                style="margin-bottom:2rem; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(14,165,233,0.1)); border: 1px solid var(--primary-glow);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-global-line" style="color:var(--primary)"></i>
+                        <span style="font-weight:600">DIVISAS EN VIVO</span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; align-items:center">
+                        <select id="baseCurrency" onchange="updateRates()"
+                            style="width:auto; height:35px; padding:0 0.5rem; background:transparent">
+                            <option value="USD">USD</option>
+                            <option value="EUR" selected>EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                        <i class="ri-arrow-right-line"></i>
+                        <select id="targetCurrency" onchange="updateRates()"
+                            style="width:auto; height:35px; padding:0 0.5rem; background:transparent">
+                            <option value="USD" selected>USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                </div>
+                <p id="rateDisplay" style="margin-top:1rem; font-size:1.5rem; font-weight:700">Calculando...</p>
+                <p style="font-size:0.7rem; color:var(--text-muted)">* Datos actualizados de ExchangeRate-API</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 style="color:var(--text-muted); font-size:0.9rem; font-weight:500">LIQUIDEZ TOTAL</h3>
+                    <p class="amount" id="totalBalance">€0.00</p>
+                    <p id="balanceLabel"
+                        style="font-size:0.8rem; margin-top:0.5rem; display:flex; align-items:center; gap:0.3rem">
+                        <i class="ri-database-2-line"></i> Cloud Sync
+                    </p>
+                </div>
+                <div class="stat-card income">
+                    <h3 style="font-size:0.9rem; font-weight:500">INGRESOS (MES)</h3>
+                    <p class="amount" id="monthlyIncome">€0.00</p>
+                    <div style="height:4px; background:var(--success)20; border-radius:2px; margin-top:1rem">
+                        <div id="incomeBar" style="height:100%; background:var(--success); border-radius:2px; width:0%">
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card expense">
+                    <h3 style="font-size:0.9rem; font-weight:500">GASTOS (MES)</h3>
+                    <p class="amount" id="monthlyExpense">€0.00</p>
+                    <div style="height:4px; background:var(--danger)20; border-radius:2px; margin-top:1rem">
+                        <div id="expenseBar" style="height:100%; background:var(--danger); border-radius:2px; width:0%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-box">
+                    <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-line-chart-line" style="color:var(--primary)"></i> <span
+                            id="lineChartTitle">Evolución Diaria</span>
+                    </h2>
+                    <div id="lineChartContainer" style="height:300px; position:relative">
+                        <canvas id="lineChart"></canvas>
+                        <div id="lineChartOverlay"
+                            style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--card); display:none">
+                            Escaneando datos...</div>
+                    </div>
+                </div>
+                <div class="chart-box" style="display:flex; flex-direction:column">
+                    <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-pie-chart-line" style="color:var(--secondary)"></i> Gastos por Categoría
+                    </h2>
+                    <div style="flex:1; display:flex; align-items:center; justify-content:center; position:relative">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-box" style="margin-top:1.5rem">
+                <h2 style="margin-bottom:1.5rem; font-size:1.2rem; display:flex; align-items:center; gap:0.5rem">
+                    <i class="ri-bar-chart-line" style="color:var(--success)"></i> Comparativa Mensual
+                </h2>
+                <div style="height:300px">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('dashboard');
+        requireAuth();
+
+        let charts = {};
+
+        async function initDashboard() {
+            const user = JSON.parse(localStorage.getItem('finance_session'));
+            let txs = [];
+
+            // 1. Fetch Data
+            if (window.sbClient && user) {
+                const { data } = await window.sbClient.from('transactions').select('*').eq('user_id', user.id);
+                if (data) txs = data;
+
+                // Sync total balance from profile
+                const { data: profile } = await window.sbClient.from('profiles').select('total_balance').eq('id', user.id).single();
+                if (profile) document.getElementById('totalBalance').innerText = `€${profile.total_balance.toLocaleString()}`;
+            }
+
+            // Fallback for balance
+            if (txs.length > 0 && document.getElementById('totalBalance').innerText === '€0.00') {
+                const total = txs.reduce((acc, curr) => curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
+                document.getElementById('totalBalance').innerText = `€${total.toLocaleString()}`;
+            }
+
+            // 2. Calculations for Cards
+            const now = new Date();
+            const currentMonthTxs = txs.filter(t => {
+                const d = new Date(t.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+
+            const income = currentMonthTxs.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+            const expense = currentMonthTxs.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+
+            document.getElementById('monthlyIncome').innerText = `€${income.toLocaleString()}`;
+            document.getElementById('monthlyExpense').innerText = `€${expense.toLocaleString()}`;
+
+            const totalActivity = income + expense;
+            if (totalActivity > 0) {
+                document.getElementById('incomeBar').style.width = (income / totalActivity * 100) + '%';
+                document.getElementById('expenseBar').style.width = (expense / totalActivity * 100) + '%';
+            }
+
+            // 3. Render Charts
+            renderLineChart(txs);
+            renderDoughnutChart(txs);
+            renderBarChart(txs);
+        }
+
+        function renderLineChart(txs) {
+            const container = document.getElementById('lineChartContainer');
+            const overlay = document.getElementById('lineChartOverlay');
+            const title = document.getElementById('lineChartTitle');
+
+            try {
+                if (txs.length === 0) {
+                    title.innerText = 'Evolución Diaria';
+                    overlay.style.display = 'flex';
+                    overlay.innerText = 'Sin datos registrados';
+                    return;
+                }
+                overlay.style.display = 'none';
+
+                // 1. Determine dynamic date range
+                const dates = txs.map(t => new Date(t.date).getTime());
+                let minTimestamp = Math.min(...dates);
+                let maxTimestamp = Math.max(...dates);
+
+                const oneDay = 24 * 60 * 60 * 1000;
+                let startDate = new Date(minTimestamp - oneDay);
+                let endDate = new Date(maxTimestamp + oneDay);
+
+                const diffDays = Math.ceil((endDate - startDate) / oneDay);
+                if (diffDays < 7) {
+                    const padding = Math.ceil((7 - diffDays) / 2);
+                    startDate.setDate(startDate.getDate() - padding);
+                    endDate.setDate(endDate.getDate() + padding);
+                }
+
+                const maxDays = 60;
+                const now = new Date();
+                const startLimit = new Date();
+                startLimit.setDate(now.getDate() - maxDays);
+                if (startDate < startLimit) startDate = startLimit;
+                if (endDate > now) endDate = now;
+
+                const range = [];
+                let curr = new Date(startDate);
+                while (curr <= endDate) {
+                    range.push(curr.toISOString().split('T')[0]);
+                    curr.setDate(curr.getDate() + 1);
+                }
+
+                title.innerText = `Evolución Diaria (${range.length}d)`;
+
+                // 2. Map data
+                const dataPoints = range.map(date => {
+                    return txs.filter(t => t.date.split('T')[0] === date)
+                        .reduce((acc, curr) => curr.type === 'income' ? acc + curr.amount : acc - curr.amount, 0);
+                });
+
+                let running = 0;
+                const cumulative = dataPoints.map(v => running += v);
+
+                const ctx = document.getElementById('lineChart').getContext('2d');
+                if (charts.line) charts.line.destroy();
+                charts.line = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: range.map(d => {
+                            const parts = d.split('-');
+                            return `${parts[2]}/${parts[1]}`;
+                        }),
+                        datasets: [{
+                            label: 'Saldo',
+                            data: cumulative,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: range.length > 30 ? 0 : 4,
+                            pointBackgroundColor: '#6366f1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                titleFont: { family: 'Outfit', size: 13 },
+                                bodyFont: { family: 'Outfit', size: 14, weight: 'bold' },
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: (context) => `Saldo: €${context.raw.toLocaleString()}`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grace: '10%',
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    maxTicksLimit: 6,
+                                    padding: 15,
+                                    font: { family: 'Outfit', size: 11 },
+                                    callback: v => '€' + v.toLocaleString()
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    maxTicksLimit: 8,
+                                    font: { family: 'Outfit', size: 11 }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Chart Error:", e);
+                overlay.style.display = 'flex';
+                overlay.innerText = 'Error al generar gráfica';
+            }
+        }
+
+        function renderDoughnutChart(txs) {
+            const categories = {};
+            txs.filter(t => t.type === 'expense').forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + t.amount;
+            });
+
+            const ctx = document.getElementById('doughnutChart').getContext('2d');
+            if (charts.pie) charts.pie.destroy();
+            charts.pie = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        data: Object.values(categories),
+                        backgroundColor: ['#6366f1', '#0ea5e9', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#ec4899'],
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 20 } }
+                    }
+                }
+            });
+        }
+
+        function renderBarChart(txs) {
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const incomeData = new Array(12).fill(0);
+            const expenseData = new Array(12).fill(0);
+
+            txs.forEach(t => {
+                const m = new Date(t.date).getMonth();
+                if (t.type === 'income') incomeData[m] += t.amount;
+                else expenseData[m] += t.amount;
+            });
+
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (charts.bar) charts.bar.destroy();
+            charts.bar = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Ingresos', data: incomeData, backgroundColor: '#10b981' },
+                        { label: 'Gastos', data: expenseData, backgroundColor: '#f43f5e' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { stacked: false, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+
+        async function updateRates() {
+            const base = document.getElementById('baseCurrency').value;
+            const target = document.getElementById('targetCurrency').value;
+            const display = document.getElementById('rateDisplay');
+
+            display.innerText = "Obteniendo...";
+            try {
+                const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${base}`);
+                const data = await res.json();
+                const rate = data.rates[target];
+                display.innerText = `1 ${base} = ${rate.toFixed(3)} ${target}`;
+            } catch (e) {
+                display.innerText = "API Error";
+            }
+        }
+
+        window.onload = () => {
+            initDashboard();
+            updateRates();
+        };
+    </script>
+</body>
+
+</html>

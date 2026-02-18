@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución del Proyecto - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .timeline-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .evolution-step {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 6rem;
+            align-items: center;
+        }
+
+        .evolution-step:nth-child(even) {
+            direction: rtl;
+        }
+
+        .evolution-step:nth-child(even) .step-text {
+            direction: ltr;
+        }
+
+        .step-image {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .step-image:hover {
+            transform: scale(1.02);
+        }
+
+        .prompt-quote {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+            font-family: 'Outfit', sans-serif;
+            font-style: italic;
+            color: var(--text);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .ai-rationale {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .step-number {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .tech-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--border);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="./assets/login-BbQ7D4MZ.css">
+</head>
+
+<body class="dark-theme">
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <a href="docs.html"
+                    style="color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem">
+                    <i class="ri-arrow-left-line"></i> Centro de Documentación
+                </a>
+                <h1
+                    style="background: linear-gradient(to right, var(--text), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Historia y Resolución</h1>
+                <p style="color:var(--text-muted)">Cómo transformamos prompts en una arquitectura financiera real</p>
+            </header>
+
+            <div class="timeline-container">
+
+                <!-- STEP 1: MVP -->
+                <div class="evolution-step">
+                    <div class="step-text">
+                        <span class="step-number">Hito 01: El Cimiento</span>
+                        <h2>v1.0 La Base Funcional</h2>
+                        <div class="prompt-quote">
+                            "Hazme una web de finanzas sencilla con login y Supabase para guardar mis ingresos y gastos.
+                            Que se puedan subir fotos de los tickets."
+                        </div>
+                        <div class="ai-rationale">
+                            <b>Visión Técnica:</b> En esta fase nos centramos en la infraestructura de datos.
+                            Implementamos el esquema SQL en Supabase para manejar la persistencia y configuramos el
+                            Storage para los archivos adjuntos. Fue una SPA (Single Page App) funcional pero con un
+                            diseño aún estándar.
+                        </div>
+                        <div>
+                            <span class="tech-pill">Supabase Auth</span>
+                            <span class="tech-pill">PostgreSQL</span>
+                            <span class="tech-pill">Vanilla JS</span>
+                        </div>
+                    </div>
+                    <img src="./assets/step1_mvp-jhDkyB9K.png" alt="Captura v1.0" class="step-image">
+                </div>
+
+                <!-- STEP 2: REFACTOR -->
+                <div class="evolution-step">
+                    <div class="step-text">
+                        <span class="step-number">Hito 02: Arquitectura</span>
+                        <h2>v2.0 Refactorización MPA</h2>
+                        <div class="prompt-quote">
+                            "La app se está quedando pequeña. Sepárala en páginas distintas para el Dashboard, las
+                            Transacciones y los Ajustes. Pon un menú lateral persistente."
+                        </div>
+                        <div class="ai-rationale">
+                            <b>Visión Técnica:</b> Reorganizamos el proyecto de SPA a MPA (Multi-Page Application).
+                            Creamos el núcleo <code>common.js</code> para inyectar dinámicamente el Sidebar y gestionar
+                            la sesión en todas las rutas. Esto permitió un escalado real de funciones sin colapsar el
+                            DOM.
+                        </div>
+                        <div>
+                            <span class="tech-pill">Multi-page Architecture</span>
+                            <span class="tech-pill">Modular JS</span>
+                            <span class="tech-pill">Sidebar Injection</span>
+                        </div>
+                    </div>
+                    <img src="./assets/step2_premium-Blwo2-A0.png" alt="Captura v2.0" class="step-image">
+                </div>
+
+                <!-- STEP 3: PREMIUM -->
+                <div class="evolution-step">
+                    <div class="step-text">
+                        <span class="step-number">Hito 03: Estética</span>
+                        <h2>v3.0 Premium Redesign</h2>
+                        <div class="prompt-quote">
+                            "Quiero que la app parezca futurista y de alta gama. Usa Glassmorphism, neones y añade
+                            gráficas que me digan cómo va mi saldo día a día."
+                        </div>
+                        <div class="ai-rationale">
+                            <b>Visión Técnica:</b> El gran salto visual. Implementamos un sistema de diseño basado en
+                            **Glassmorphism** (backdrops con blur) y una paleta de colores neón balanceada. Integramos
+                            <b>Chart.js</b> para procesar los datos de las transacciones y convertirlos en inteligencia
+                            financiera visual.
+                        </div>
+                        <div>
+                            <span class="tech-pill">Glassmorphism</span>
+                            <span class="tech-pill">Chart.js Integration</span>
+                            <span class="tech-pill">CSS Variables</span>
+                        </div>
+                    </div>
+                    <img src="./assets/step3_form-D1SXvWGR.png" alt="Captura v3.0" class="step-image">
+                </div>
+
+                <!-- STEP 4: POLISH -->
+                <div class="evolution-step">
+                    <div class="step-text">
+                        <span class="step-number">Hito 04: Refinamiento</span>
+                        <h2>v4.0 Pulido y Conversión</h2>
+                        <div class="prompt-quote">
+                            "El formulario es soso, mejóralo. El eje Y de las gráficas no debe ir al infinito. Añade un
+                            conversor de divisas dinámico y explícame todo el código."
+                        </div>
+                        <div class="ai-rationale">
+                            <b>Visión Técnica:</b> Pulimos la UX con controles segmentados estilo iOS. Ajustamos el
+                            algoritmo de renderizado de gráficas para mayor legibilidad y conectamos con
+                            **ExchangeRate-API** para el conversor. Finalizamos con esta expansión masiva de la
+                            documentación técnica.
+                        </div>
+                        <div>
+                            <span class="tech-pill">External API</span>
+                            <span class="tech-pill">UX Segmented Controls</span>
+                            <span class="tech-pill">Documentation Hub</span>
+                        </div>
+                    </div>
+                    <img src="./assets/step4_final-CmbrqGjd.png" alt="Captura v4.0" class="step-image">
+                </div>
+
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('docs');
+        requireAuth();
+    </script>
+</body>
+
+</html>

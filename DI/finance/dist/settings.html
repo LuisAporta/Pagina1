@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" crossorigin href="./assets/login-BbQ7D4MZ.css">
+</head>
+
+<body class="dark-theme">
+
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h1
+                        style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Configuración</h1>
+                    <p style="color:var(--text-muted)">Personaliza tu experiencia y gestiona tus datos</p>
+                </div>
+            </header>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem">
+                <!-- Profile & Preferences -->
+                <div class="chart-box" style="min-height: auto">
+                    <h3 style="margin-bottom:2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-user-settings-line" style="color:var(--primary)"></i> Preferencias
+                    </h3>
+
+                    <div class="input-group">
+                        <span
+                            style="font-size:0.9rem; color:var(--text-muted); display:block; margin-bottom:0.5rem">Idioma
+                            de la Interfaz</span>
+                        <select id="langSelect" style="padding-left:1rem">
+                            <option value="es">Español (España)</option>
+                            <option value="en">English (US)</option>
+                        </select>
+                    </div>
+
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:16px; margin-top:2rem">
+                        <div>
+                            <span style="font-weight:600; display:block">Modo Visual</span>
+                            <span style="font-size:0.8rem; color:var(--text-muted)">Alternar entre tema oscuro y
+                                claro</span>
+                        </div>
+                        <button id="themeToggle" class="btn-primary" style="padding:0.8rem">
+                            <i class="ri-contrast-2-line"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Backup & Security -->
+                <div class="chart-box" style="min-height: auto">
+                    <h3 style="margin-bottom:2rem; display:flex; align-items:center; gap:0.5rem">
+                        <i class="ri-shield-check-line" style="color:var(--success)"></i> Datos y Seguridad
+                    </h3>
+
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem">
+                        Exporta tus transacciones en formato JSON para tener una copia de seguridad externa o impórtalas
+                        desde otro dispositivo.
+                    </p>
+
+                    <div style="display:grid; gap:1rem">
+                        <button onclick="exportData()" class="btn-primary"
+                            style="background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border)">
+                            <i class="ri-download-cloud-line"></i> Exportar JSON
+                        </button>
+
+                        <div style="position:relative">
+                            <button class="btn-primary" style="width:100%; pointer-events:none">
+                                <i class="ri-upload-cloud-line"></i> Importar JSON
+                            </button>
+                            <input type="file" id="importFile" onchange="importData(event)"
+                                style="position:absolute; inset:0; opacity:0; cursor:pointer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card"
+                style="margin-top:2rem; border-color:var(--danger); background: rgba(244,63,94,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <div>
+                        <h3 style="color:var(--danger)">Zona de Peligro</h3>
+                        <p style="font-size:0.8rem; opacity:0.7">Eliminar permanentemente todos los datos de esta
+                            cuenta.</p>
+                    </div>
+                    <button class="btn-primary" style="background:var(--danger)">Cerrar Sesión Segura</button>
+                </div>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('settings');
+        requireAuth();
+
+        async function exportData() {
+            const user = JSON.parse(localStorage.getItem('finance_session'));
+            let data = [];
+            if (window.sbClient) {
+                const { data: txs } = await window.sbClient.from('transactions').select('*').eq('user_id', user.id);
+                data = txs;
+            }
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const user = JSON.parse(localStorage.getItem('finance_session'));
+                    if (window.sbClient && data.length > 0) {
+                        const prepared = data.map(item => {
+                            delete item.id;
+                            item.user_id = user.id;
+                            return item;
+                        });
+                        const { error } = await window.sbClient.from('transactions').insert(prepared);
+                        if (error) throw error;
+                        alert('¡Importación completada con éxito!');
+                        window.location.href = 'dashboard.html';
+                    }
+                } catch (err) {
+                    alert('Error al importar: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+
+</html>

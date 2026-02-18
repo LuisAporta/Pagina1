@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep-Dive Técnico - FinanceFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .code-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .code-header {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        pre {
+            margin: 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #d1d5db;
+            overflow-x: auto;
+        }
+
+        .desc-text {
+            line-height: 1.7;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .highlight-box {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="./assets/login-BbQ7D4MZ.css">
+</head>
+
+<body class="dark-theme">
+    <div id="app">
+        <aside class="sidebar"></aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <a href="docs.html"
+                    style="color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem">
+                    <i class="ri-arrow-left-line"></i> Volver al Portal de Documentación
+                </a>
+                <h1
+                    style="background: linear-gradient(to right, var(--text), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Inmersión Técnica y Programación</h1>
+                <p style="color:var(--text-muted)">Guía exhaustiva del funcionamiento interno del sistema</p>
+            </header>
+
+            <section class="stat-card" style="margin-bottom: 3rem;">
+                <h2><i class="ri-plug-2-line"></i> 1. El Ciclo de Conexión (El Cliente SDK)</h2>
+                <p class="desc-text">La aplicación utiliza el SDK oficial de **Supabase JS** para desacoplar el frontend
+                    del backend tradicional. La conexión no es persistente (no hay WebSockets abiertos en todo momento),
+                    sino que funciona mediante llamadas REST autenticadas sobre HTTP/2.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-file-code-line"></i> js/common.js - Inicialización</div>
+                    <pre>
+// Se verifica la existencia de la librería y las constantes globales
+if (typeof supabase !== 'undefined' && typeof CONFIG !== 'undefined') {
+    // Inicialización del cliente singleton utilizando el patrón factory
+    window.sbClient = supabase.createClient(
+        CONFIG.SUPABASE_URL,       // Endpoint de la REST API
+        CONFIG.SUPABASE_ANON_KEY   // Clave pública para el sistema Auth
+    );
+}</pre>
+                </div>
+                <div class="highlight-box">
+                    <p><b>Por qué funciona así:</b> Al usar <code>window.sbClient</code>, permitimos que cualquier
+                        página de la aplicación (Dashboard, Transacciones, etc.) acceda al mismo objeto de conexión sin
+                        tener que re-autenticar al usuario ni volver a instanciar el cliente.</p>
+                </div>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--secondary);">
+                <h2><i class="ri-database-2-line"></i> 2. Manipulación de Datos y Consultas</h2>
+                <p class="desc-text">Las llamadas a la base de datos se realizan mediante una interfaz fluida (Fluent
+                    Interface) que traduce el código JavaScript directamente a sentencias PostgREST en el servidor.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-dashboard-line"></i> dashboard.html - Lectura de Datos</div>
+                    <pre>
+// Ejemplo de consulta asíncrona filtrada por usuario
+const { data, error } = await window.sbClient
+    .from('transactions') // Tabla principal
+    .select('*')          // Traemos todas las columnas
+    .eq('user_id', user.id); // Cláusula WHERE de seguridad</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-exchange-dollar-line"></i> transactions.html - Inserción
+                        Segura</div>
+                    <pre>
+// El proceso de guardado incluye la vinculación automática del ID de sesión
+const txObj = {
+    amount: parseFloat(amt),
+    type: currentType, // 'income' | 'expense'
+    user_id: user.id   // El user.id proviene de localStorage.finance_session
+};
+
+const { error } = await window.sbClient
+    .from('transactions')
+    .insert([txObj]);</pre>
+                </div>
+                <p class="desc-text"><b>Seguridad RLS:</b> Aunque el código parece "abierto", Supabase bloquea cualquier
+                    petición que no cumpla las **Row Level Security Policies**. El <code>user_id</code> debe coincidir
+                    con el token JWT de la sesión, o la DB devolverá un error 403 automáticamente.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--success);">
+                <h2><i class="ri-cpu-line"></i> 3. Inteligencia en el Servidor (SQL Triggers)</h2>
+                <p class="desc-text">Para evitar desincronizaciones en el saldo, no calculamos el "Líquido" en el
+                    cliente. Usamos lógica procedimental en el servidor (**PL/pgSQL**) que se activa ante cualquier
+                    cambio.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-terminal-box-line"></i> db_setup.sql - Lógica Procedimental
+                    </div>
+                    <pre>
+-- Esta función se ejecuta en el SEGUNDO en que haces un INSERT o DELETE
+create or replace function update_total_balance()
+returns trigger as $$
+begin
+  update profiles
+  set total_balance = (
+    select coalesce(sum(case when type = 'income' then amount else -amount end), 0)
+    from transactions
+    where user_id = coalesce(new.user_id, old.user_id)
+  )
+  where id = coalesce(new.user_id, old.user_id);
+  return null;
+end;
+$$ language plpgsql;</pre>
+                </div>
+                <div class="highlight-box">
+                    <p><b>El Disparador (Trigger):</b> Hemos configurado el trigger <code>on_transaction_change</code>
+                        para que escuche los eventos <code>AFTER INSERT OR UPDATE OR DELETE</code>. Esto significa que
+                        el código de la app solo inserta una transacción, y la base de datos "mágicamente" actualiza el
+                        saldo global antes de que el dashboard se refresque.</p>
+                </div>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--primary);">
+                <h2><i class="ri-lock-password-line"></i> 5. Autenticación y Seguridad de Sesión</h2>
+                <p class="desc-text">El sistema de autenticación es el pilar de la seguridad. No solo gestiona el
+                    acceso, sino que proporciona el contexto de identidad para todas las operaciones de base de datos.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-user-follow-line"></i> Proceso de Login (login.html)</div>
+                    <pre>
+async function signIn(email, password) {
+    const { data, error } = await window.sbClient.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+    if (data.session) {
+        // Persistencia local para hidratación de UI inmediata
+        localStorage.setItem('finance_session', JSON.stringify(data.user));
+    }
+}</pre>
+                </div>
+                <div class="highlight-box">
+                    <p><b>Seguridad de Sesión:</b> La función <code>requireAuth()</code> en <code>common.js</code> actúa
+                        como un guardián (Middleware de cliente), redirigiendo al usuario al login si no se detecta un
+                        token válido. Esto evita que usuarios no autorizados accedan a rutas protegidas como el
+                        Dashboard.</p>
+                </div>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--secondary);">
+                <h2><i class="ri-api-line"></i> 6. Integración de APIs de Terceros</h2>
+                <p class="desc-text">FinanceFlow no es un sistema aislado; se comunica con servicios externos para
+                    enriquecer la experiencia del usuario.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="code-container">
+                        <div class="code-header"><i class="ri-bar-chart-2-line"></i> Visualización (Chart.js)</div>
+                        <pre style="font-size: 0.75rem;">
+new Chart(ctx, {
+    type: 'line',
+    data: { ... },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: { // Tooltips customizados
+                backgroundColor: 'rgba(15,23,42,0.9)'
+            }
+        }
+    }
+});</pre>
+                    </div>
+                    <div class="code-container">
+                        <div class="code-header"><i class="ri-money-dollar-circle-line"></i> Divisas (ExchangeRate-API)
+                        </div>
+                        <pre style="font-size: 0.75rem;">
+const res = await fetch(
+    `https://v6.exchangerate-api.com/v6/${KEY}/latest/${base}`
+);
+const data = await res.json();
+const rate = data.conversion_rates[target];</pre>
+                    </div>
+                </div>
+                <p class="desc-text"><b>Optimización de Llamadas API:</b> Implementamos un sistema de "retry" y manejo
+                    de errores para asegurar que la aplicación siga funcionando incluso si un servicio externo
+                    experimenta latencia.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--success);">
+                <h2><i class="ri-palette-line"></i> 7. UX y Estética Premium (Design Tokens)</h2>
+                <p class="desc-text">El "sentimiento" premium de la app se basa en un sistema de diseño estricto
+                    gestionado mediante variables CSS nativas.</p>
+
+                <div class="code-container" style="background: rgba(255,255,255,0.05);">
+                    <div class="code-header"><i class="ri-css3-line"></i> main.css - Design System</div>
+                    <pre>
+:root {
+    --primary: #6366f1;         /* Indigo Neon */
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    --card: rgba(30, 41, 59, 0.5); /* Glassmorphism Base */
+    --blur: blur(12px);         /* Backdrop Filter */
+}
+
+.glass-card {
+    background: var(--card);
+    backdrop-filter: var(--blur);
+    border: 1px solid var(--border);
+}</pre>
+                </div>
+                <p class="desc-text">Este enfoque modular permite cambiar todo el aspecto visual de la aplicación
+                    modificando solo unos pocos tokens en el archivo raíz. La técnica de **Glassmorphism** aporta
+                    profundidad sin sacrificar la legibilidad.</p>
+            </section>
+
+            <section class="stat-card" style="margin-bottom: 3rem; border-color: var(--warning);">
+                <h2><i class="ri-smartphone-line"></i> 8. Adaptabilidad Móvil (Responsive Engine)</h2>
+                <p class="desc-text">El sistema utiliza una arquitectura "Mobile-First" con una barra de navegación
+                    inferior específica para dispositivos táctiles.</p>
+
+                <div class="code-container">
+                    <div class="code-header"><i class="ri-layout-bottom-line"></i> common.js - Mobile Nav Injection
+                    </div>
+                    <pre>
+const mobileNav = `
+    &lt;a href="dashboard.html"&gt;&lt;i class="ri-dashboard-line"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a href="transactions.html"&gt;&lt;i class="ri-exchange-dollar-line"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;a href="settings.html"&gt;&lt;i class="ri-settings-4-line"&gt;&lt;/i&gt;&lt;/a&gt;
+`;
+// Se activa solo en resoluciones &lt; 768px via Media Queries</pre>
+                </div>
+                <p class="desc-text">Mediante flexbox y grid layouts, garantizamos que las gráficas y tablas se
+                    reorganicen verticalmente en pantallas pequeñas, manteniendo siempre accesibles los botones de
+                    acción principales.</p>
+            </section>
+
+            <div class="stat-card" style="text-align:center; background:rgba(255,255,255,0.02); border-style:dashed">
+                <p style="opacity:0.6; font-size:0.9rem">Fin de la Guía Técnica Técnica v4.1 - Documentación Explayada
+                </p>
+            </div>
+        </main>
+
+        <nav class="mobile-nav"></nav>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/common.js?v=2.0"></script>
+    <script>
+        setupNavigation('docs');
+        requireAuth();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="refresh" content="0; url=login.html" />
+  <script>
+    // Redirect Logic based on session
+    const session = localStorage.getItem('finance_session');
+    if (session) {
+      window.location.href = "dashboard.html";
+    } else {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+
+<body>
+  Redirigiendo...
+</body>
+
+</html>
